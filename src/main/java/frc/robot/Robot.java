@@ -18,6 +18,7 @@ import frc.robot.Subsystem.Shooter;
 import frc.robot.Subsystem.Snorfler;
 import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
+import frc.robot.auto.Drive2;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -58,25 +59,27 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // test_io.init();
-    Snorfler.init();
-    Revolver.init();
-    Shooter.init();
-    Injector.init();
-    Drive.init();
-    Turret.init();
+    //Snorfler.init();
+    //Revolver.init();
+    //Shooter.init();
+    //Injector.init();
+    //Drive.init();
+    //Turret.init();
+    Drive2.init();
   }
 
   @Override
   public void teleopPeriodic() {
     IO.update();
     // test_io.update();
-    Snorfler.update();
-    Revolver.update();
-    Shooter.update();
+    //Snorfler.update();
+    //Revolver.update();
+    //Shooter.update();
     //IO.shooterTSRX.set(ControlMode.Velocity, 500);
-    Injector.update();
-    Turret.update();
-    Drive.update();
+    //Injector.update();
+    //Turret.update();
+    //Drive.update();
+    Drive2.update();
   }
 
 
