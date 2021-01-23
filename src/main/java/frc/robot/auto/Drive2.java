@@ -50,8 +50,8 @@ public class Drive2 {
     private static DifferentialDrive diffDrv = new DifferentialDrive(left, right);
     private static double enc_L = 0;
     private static double enc_R = 0;
-    private static double distTPF_L = -427.35; // Left Ticks per Foot
-    private static double distTPF_R = 427.35; // Right Ticks per Foot
+    private static double distTPF_L = IO.drvMasterTPF_L; // Left Ticks per Foot
+    private static double distTPF_R = -IO.drvMasterTPF_R; // Right Ticks per Foot
     private static double dist_L = 0.0;
     private static double dist_R = 0.0;
     private static double dist_Avg = 0.0;
@@ -69,20 +69,27 @@ public class Drive2 {
     private static double distOut = 0.0; // Y (Fwd) cmd
     private static double distFixedTurn = -0.50; // Fixed value for turning
 
-    /* [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
+                 /* [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
     private static double[][] parms = { { 0.0, -130.0, 3.0, 0.4, 1.0, 0.20 },
-            /*                             */ { 0.0, 5.5, 0.5, 0.10, 1.0, 0.07 } };
+            /*                       */ { 0.0, 5.5, 0.5, 0.10, 1.0, 0.07 } };
     private static Steer steer = new Steer(parms); // Used to steer to a hdg with power for distance
 
     // Steer to heading at power for distance.
     private static int trajIdx = 0; // strCmds Index
                                     // {hdg, %pwr, dist}
-    private static double traj[][] = { { 0.0, 70.0, 7.0 }, 
+    private static double traj[][] = { { 0.0, 70.0, 7.0 },
+    /*                              */ { 0.0, 70.0, -0.4 },
     /*                              */ { 90.0, 70.0, 7.0 },
-    /*                              */ { -90.0, 70.0, 8.0 }, 
-    /*                              */ { 180.0, 70.0, 6.0 },
-    /*                              */ { 180.0, 70.0, -4.0 },
-    /*                              */ { 0.0, 70.0, -6.0 } };
+    /*                              */ { 90.0, 70.0, -0.4 },
+    /*                              */ { 225.0, 70.0, 1.4 * 7.0 },
+    /*                              */ { 225.0, 70.0, -0.4 }, 
+    /*                              */ { 90.0, 70.0, 7.0 },
+    /*                              */ { 90.0, 70.0, -0.4 },
+    /*                              */ { -45.0, 70.0, 1.4 * 7.0 }, 
+                                        { -45.0, 70.0, -0.4 },
+    /*                              */ { -180.0, 70.0, 7.0 },
+    /*                              */ { -180.0, 70.0, -0.4 },
+    /*                              */ { 350.0, 70.0, 0.0 } };
     // /* */ {90.0, 70.0, 5.0},
     // /* */ {-135.0, 70.0, 7.1},
     // /* */ {90.0, 70.0, 5.0},
@@ -143,13 +150,13 @@ public class Drive2 {
                 prvState = state;
                 break;
             case 1: // Tank Mode Drive by JS
-                diffDrv.tankDrive(JS_IO.axLeftDrive.get(), JS_IO.axRightDrive.get(), false);
+                diffDrv.tankDrive(-JS_IO.axLeftDrive.get(), -JS_IO.axRightDrive.get(), false);
                 prvState = state;
                 break;
             case 2: // Arcade Mode Drive by JS
                 hdgOut = JS_IO.axRightX.get();
                 // hdgOut = BotMath.SegLine(hdgOut, xOutAr); //Compensate for poor turning.
-                diffDrv.arcadeDrive(JS_IO.axRightDrive.get(), hdgOut, false);
+                diffDrv.arcadeDrive(-JS_IO.axRightDrive.get(), hdgOut, false);
                 prvState = state;
                 break;
             case 10: // Auto Hold Heading Mode, Fwd/Bkwd by RJSY
@@ -181,7 +188,7 @@ public class Drive2 {
                     distOut = 0.0; // Get distance output, X
                     // Apply as a arcade joystick input
                     // hdgOut = BotMath.SegLine(hdgOut, xOutAr); //Compensate for poor turning.
-                    diffDrv.arcadeDrive(distOut, hdgOut, false);
+                    diffDrv.arcadeDrive(-distOut, hdgOut, false);
 
                     // Chk if trajectory is done
                     if (steer.isHdgDone()) {
@@ -198,7 +205,7 @@ public class Drive2 {
                 distOut = strCmd[1];
                 // Apply as a arcade joystick input
                 // hdgOut = BotMath.SegLine(hdgOut, xOutAr); //Compensate for poor turning.
-                diffDrv.arcadeDrive(distOut, hdgOut, false);
+                diffDrv.arcadeDrive(-distOut, hdgOut, false);
 
                 // Chk if trajectory is done
                 if (steer.isDistDone()) {

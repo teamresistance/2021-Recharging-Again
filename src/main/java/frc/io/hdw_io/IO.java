@@ -31,25 +31,27 @@ public class IO {
     public static Relay compressorRelay = new Relay(0);
 
     // Drive
-    public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1);    //Cmds left wheels.  Includes encoders
-    public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5);  //Cmds right wheels.  Includes encoders
-    public static final double drvMasterTPF_L = 428.0;   //1024 t/r (0.5' * 3.14)/r 9:60 gr
-    public static final double drvMasterTPF_R = 428.0;   //1024 t/r (0.5' * 3.14)/r 9:60 gr
+    public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1); // Cmds left wheels. Includes encoders
+    public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
+    public static final double drvMasterTPF_L = 385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
+    public static final double drvMasterTPF_R = 385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
 
-    public static WPI_VictorSPX drvFollowerVSPX_L =  new WPI_VictorSPX(2);  //Resrvd 3 & 4 maybe
-    public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6);  //Resrvd 7 & 8 maybe
+    public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
+    public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
 
     // Shooter tbd ports
-   // public static TalonSRX shooterTSRX = new TalonSRX(9);   //Shooter motor.  Includes encoder
-    
+    // public static TalonSRX shooterTSRX = new TalonSRX(9); //Shooter motor.
+    // Includes encoder
+
     public static TalonSRX shooterTSRX = new TalonSRX(9);
     public static ISolenoid shooterHoodUp = new InvertibleSolenoid(22, 4);
 
     // Turret-- LL defines itself
-    public static Victor turretRot = new Victor(4);   //Turret rotation motor
+    public static Victor turretRot = new Victor(4); // Turret rotation motor
     public static AnalogPotentiometer turretPosition = new AnalogPotentiometer(0, -370, 190);
-    public static InvertibleDigitalInput turCCWLimitSw = new InvertibleDigitalInput(4, true); //Critical, DO NOT
-    public static InvertibleDigitalInput turCWLimitSw = new InvertibleDigitalInput(5, true);//EXCEED these limit switches
+    public static InvertibleDigitalInput turCCWLimitSw = new InvertibleDigitalInput(4, true); // Critical, DO NOT
+    public static InvertibleDigitalInput turCWLimitSw = new InvertibleDigitalInput(5, true);// EXCEED these limit
+                                                                                            // switches
 
     // Injector, injects balls in to the shooter (AKA, Columnator)
     public static VictorSPX injector4Whl = new VictorSPX(10);
@@ -65,13 +67,12 @@ public class IO {
     // Snorfler
     public static Victor snorfFeedMain = new Victor(9);
     public static Victor snorfFeedScdy = new Victor(6);
-    public static ISolenoid snorflerExt = new InvertibleSolenoid(22, 6); //Extends both feeders
+    public static ISolenoid snorflerExt = new InvertibleSolenoid(22, 6); // Extends both feeders
     public static InvertibleDigitalInput snorfHasBall = new InvertibleDigitalInput(2, false);
 
     // Climb
-    public static Victor climberHoist = new Victor(3);    //Extends climber
+    public static Victor climberHoist = new Victor(3); // Extends climber
     public static ISolenoid climberExt = new InvertibleSolenoid(22, 7);
-    
 
     // ---------- WoF, Color Sensor -----------------
     /**
@@ -85,7 +86,6 @@ public class IO {
      */
     // public static ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
-
     // Initialize any hardware here
     public static void init() {
         revTimer = new Timer(0);
@@ -96,24 +96,27 @@ public class IO {
     public static void drvsInit() {
         drvMasterTSRX_L.configFactoryDefault();
         drvMasterTSRX_R.configFactoryDefault();
-        drvMasterTSRX_L.setInverted(true);    //Inverts motor direction and encoder if attached
-        drvMasterTSRX_R.setInverted(false);     //Inverts motor direction and encoder if attached
-        drvMasterTSRX_L.setSensorPhase(false); //Adjust this to correct phasing with motor
-        drvMasterTSRX_R.setSensorPhase(false);  //Adjust this to correct phasing with motor
-        drvMasterTSRX_L.setNeutralMode(NeutralMode.Coast);
-        drvMasterTSRX_R.setNeutralMode(NeutralMode.Coast);
+        drvMasterTSRX_L.setInverted(true); // Inverts motor direction and encoder if attached
+        drvMasterTSRX_R.setInverted(false); // Inverts motor direction and encoder if attached
+        drvMasterTSRX_L.setSensorPhase(false); // Adjust this to correct phasing with motor
+        drvMasterTSRX_R.setSensorPhase(false); // Adjust this to correct phasing with motor
+        drvMasterTSRX_L.setNeutralMode(NeutralMode.Brake); // change it back
+        drvMasterTSRX_R.setNeutralMode(NeutralMode.Brake); // change it back
 
         // Tells left and right victors to follow the master
- 
-            drvFollowerVSPX_L.configFactoryDefault();
-            drvFollowerVSPX_L.setInverted(false);
-            drvFollowerVSPX_L.setNeutralMode(NeutralMode.Coast);
-            // drvFollowerVSPX_L[i].set(ControlMode.Follower, drvMasterTSRX_L.getDeviceID());
-            drvFollowerVSPX_R.configFactoryDefault();
-            drvFollowerVSPX_R.setInverted(true);
-            drvFollowerVSPX_R.setNeutralMode(NeutralMode.Coast);
-            // drvFollowerVSPX_R[i].set(ControlMode.Follower, drvMasterTSRX_R.getDeviceID());
-     
+        //TODO: change the brake stuff to coast
+
+        drvFollowerVSPX_L.configFactoryDefault();
+        drvFollowerVSPX_L.setInverted(false);
+        drvFollowerVSPX_L.setNeutralMode(NeutralMode.Brake); // change it back
+        // drvFollowerVSPX_L[i].set(ControlMode.Follower,
+        // drvMasterTSRX_L.getDeviceID());
+        drvFollowerVSPX_R.configFactoryDefault();
+        drvFollowerVSPX_R.setInverted(true);
+        drvFollowerVSPX_R.setNeutralMode(NeutralMode.Brake); // change it back
+        // drvFollowerVSPX_R[i].set(ControlMode.Follower,
+        // drvMasterTSRX_R.getDeviceID());
+
     }
 
     // Shooter, Inject & Pikup Initialize
@@ -134,25 +137,27 @@ public class IO {
         climberHoist.setInverted(false);
     }
 
-    public static int revolverCntr = 0;    // Count revolver rotations
+    public static int revolverCntr = 0; // Count revolver rotations
     public static boolean prvRevIndex = true;
 
     public static void update() {
         alarmUpdate();
-        // drvFollowerVSPX_L[0].set(ControlMode.Follower, drvMasterTSRX_L.getDeviceID());
-        // drvFollowerVSPX_R[0].set(ControlMode.Follower, drvMasterTSRX_R.getDeviceID());
+        // drvFollowerVSPX_L[0].set(ControlMode.Follower,
+        // drvMasterTSRX_L.getDeviceID());
+        // drvFollowerVSPX_R[0].set(ControlMode.Follower,
+        // drvMasterTSRX_R.getDeviceID());
 
     }
 
-    public static double revolver_HL = 15.0;    // High Amp Alarm Limit
+    public static double revolver_HL = 15.0; // High Amp Alarm Limit
     public static boolean revolver_HAA = false; // High Amp Alarm
 
     private static void alarmUpdate() {
-        
+
         SmartDashboard.putNumber("revolver HAA", pdp.getCurrent(4));
-        if( Revolver.getState() != 0){
-        if (revTimer.hasExpired(4,  Revolver.getState() ))
-            revolver_HAA = true;
-    }
+        if (Revolver.getState() != 0) {
+            if (revTimer.hasExpired(4, Revolver.getState()))
+                revolver_HAA = true;
+        }
     }
 }

@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
+import frc.io.hdw_io.LimeLight;
 import frc.io.hdw_io.test_io;
 import frc.io.joysticks.JS_IO;
 import frc.robot.Subsystem.Injector;
@@ -20,6 +21,8 @@ import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
 import frc.robot.auto.Drive2;
 import frc.robot.auto.holding.AutoSelector;
+
+import javax.naming.LimitExceededException;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -72,6 +75,7 @@ public class Robot extends TimedRobot {
     // Drive.init();
     // Turret.init();
     Drive2.init();
+    LimeLight.init();
   }
 
   @Override
@@ -85,6 +89,7 @@ public class Robot extends TimedRobot {
     // Injector.update();
     // Turret.update();
     // Drive.update();
+    LimeLight.sdbUpdate();
     Drive2.update();
   }
 

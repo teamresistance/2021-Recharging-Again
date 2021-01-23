@@ -19,4 +19,8 @@ public class Auto {
     public boolean done() {
         return finished;
     }
+
+    // public void cmdUpdate() {
+
+    // }
 }
