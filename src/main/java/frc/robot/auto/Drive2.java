@@ -121,7 +121,7 @@ public class Drive2 {
         if (JS_IO.drive2Arcade.onButtonPressed())
             state = 2; // GP 3, Y
         if (JS_IO.drive2AutoTest.onButtonPressed()) { // GP 4, B
-            state = 30; //TOOD: should this still be 40?
+            state = 30; //TODO: should this still be 40?
             trajIdx = 0;
         }
 

@@ -19,6 +19,7 @@ import frc.robot.Subsystem.Snorfler;
 import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
 import frc.robot.auto.Drive2;
+import frc.robot.auto.holding.AutoSelector;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -26,15 +27,15 @@ import edu.wpi.first.wpilibj.Relay;
 
 public class Robot extends TimedRobot {
   /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
+   * This function is run when the robot is first started up and should be used
+   * for any initialization code.
    */
   @Override
   public void robotInit() {
     IO.init();
     JS_IO.init();
     // sbdPut();
-    }
+  }
 
   @Override
   public void robotPeriodic() {
@@ -43,28 +44,33 @@ public class Robot extends TimedRobot {
     JS_IO.update();
   }
 
-
   @Override
   public void autonomousInit() {
+    AutoSelector.init();
 
+    SmartDashboard.putNumber("Path Selection", 0);
   }
-
 
   @Override
   public void autonomousPeriodic() {
+    int choice = (int) SmartDashboard.getNumber("Path Selection", 0);
 
+    AutoSelector.select(choice);
+
+    if (!AutoSelector.done()) {
+      AutoSelector.execute();
+    }
   }
-
 
   @Override
   public void teleopInit() {
     // test_io.init();
-    //Snorfler.init();
-    //Revolver.init();
-    //Shooter.init();
-    //Injector.init();
-    //Drive.init();
-    //Turret.init();
+    // Snorfler.init();
+    // Revolver.init();
+    // Shooter.init();
+    // Injector.init();
+    // Drive.init();
+    // Turret.init();
     Drive2.init();
   }
 
@@ -72,16 +78,15 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     IO.update();
     // test_io.update();
-    //Snorfler.update();
-    //Revolver.update();
-    //Shooter.update();
-    //IO.shooterTSRX.set(ControlMode.Velocity, 500);
-    //Injector.update();
-    //Turret.update();
-    //Drive.update();
+    // Snorfler.update();
+    // Revolver.update();
+    // Shooter.update();
+    // IO.shooterTSRX.set(ControlMode.Velocity, 500);
+    // Injector.update();
+    // Turret.update();
+    // Drive.update();
     Drive2.update();
   }
-
 
   @Override
   public void testPeriodic() {
@@ -89,8 +94,8 @@ public class Robot extends TimedRobot {
   }
 
   // public void sbdPut(){
-  //   //Drive Puts:
-  //   SmartDashboard.putNumber("Drive Scale", .5);
+  // //Drive Puts:
+  // SmartDashboard.putNumber("Drive Scale", .5);
   // }
 
 }

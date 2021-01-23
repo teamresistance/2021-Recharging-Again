@@ -159,6 +159,9 @@ public class JS_IO {
         drive2Arcade.setButton(leftJoystick, 11);
         drive2AutoTest.setButton(leftJoystick, 12);
 
+        resetDist.setButton(leftJoystick, 5);
+        resetGyro.setButton(leftJoystick, 3);
+
         pov_SP.setPov(coJoystick, 1);
     }
 
@@ -194,6 +197,8 @@ public class JS_IO {
         drive2Tank.setButton(gamePad, 2);
         drive2Arcade.setButton(gamePad, 3);
         drive2AutoTest.setButton(gamePad, 4);
+        resetDist.setButton(gamePad, 5);
+        resetGyro.setButton(gamePad, 6);
 
         pov_SP.setPov(gamePad, 0);
     }
