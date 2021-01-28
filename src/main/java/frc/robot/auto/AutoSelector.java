@@ -8,8 +8,10 @@ public class AutoSelector {
     //TODO: change name
     private static Auto path = new Auto(null);
 
-    public static void select() {
-        switch (selection) {
+ 
+
+    public static void init(int sel) {
+        switch (sel) {
             case 1:
                 path = new Auto(Trajectories.getCross());
                 break;
@@ -19,31 +21,29 @@ public class AutoSelector {
             default:
                 path = new Auto(Trajectories.getEmpty());
         }
-    }
-
- 
-
-    public static void init() {
-        selection = 0;
+        SmartDashboard.putNumber("autoselector selection",selection);
         path.init();
+
+        SmartDashboard.putBoolean("path initialized", true);
+        SmartDashboard.putBoolean("path executing", false);
+        SmartDashboard.putBoolean("path done", false);
     }
 
     public static void execute() {
-        select();
+        
+        SmartDashboard.putBoolean("path executing", true);
+        SmartDashboard.putBoolean("path done", false);
         path.execute();
     }
 
     public static void done() {
+        SmartDashboard.putBoolean("path executing", false);
+        SmartDashboard.putBoolean("path done", true);
         path.done();
     }
 
     public static boolean finished() {
         return path.finished();
     }
-
-    public static void setSelection(int sel) {
-        selection = sel;
-    }
-
     
 }

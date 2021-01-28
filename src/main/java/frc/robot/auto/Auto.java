@@ -128,7 +128,7 @@ public class Auto {
                     if (trajIdx < path.length) {
                         state = 0;
                     } else { // Next Traj else finished
-                        finished = true;
+                        state = 3;
                         break;
                     }
                 }
@@ -140,6 +140,7 @@ public class Auto {
     }
 
     public void done() {
+        finished = true;
         left.set(ControlMode.PercentOutput, 0);
         right.set(ControlMode.PercentOutput, 0);
     }

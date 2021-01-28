@@ -67,20 +67,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    AutoSelector.init();
-    
-    
-    SmartDashboard.putNumber("aafa", choice);
+    SmartDashboard.putNumber("choice in Robot", choice);
+    AutoSelector.init(choice);
     started = false;
     x = 0;
   }
 
   @Override
   public void autonomousPeriodic() {
-
-    AutoSelector.setSelection(choice); // always set selction, then execute
     
-    SmartDashboard.putNumber("asas", x);
+    SmartDashboard.putNumber("state in Robot", x);
     switch (x) {
       case 0:
         AutoSelector.execute();
