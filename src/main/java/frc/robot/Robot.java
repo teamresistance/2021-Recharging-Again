@@ -21,7 +21,7 @@ import frc.robot.Subsystem.Snorfler;
 import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
 import frc.robot.auto.Drive2;
-import frc.robot.auto.holding.AutoSelector;
+import frc.robot.auto.AutoSelector;
 
 import javax.naming.LimitExceededException;
 

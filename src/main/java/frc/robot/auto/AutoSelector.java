@@ -1,4 +1,4 @@
-package frc.robot.auto.holding;
+package frc.robot.auto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

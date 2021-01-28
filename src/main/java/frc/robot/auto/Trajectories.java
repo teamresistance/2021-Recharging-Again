@@ -1,4 +1,4 @@
-package frc.robot.auto.holding;
+package frc.robot.auto;
 
 //TODO: still unsure on how to take the 2D array and use it as a trajectory object
 public class Trajectories {

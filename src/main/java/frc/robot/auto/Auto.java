@@ -1,4 +1,4 @@
-package frc.robot.auto.holding;
+package frc.robot.auto;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -15,7 +15,6 @@ import frc.util.PropMath;
 public class Auto {
 
     // Hardware
-    private static boolean finished = false;
     private static WPI_TalonSRX right = IO.drvMasterTSRX_R; // right motor
     private static WPI_TalonSRX left = IO.drvMasterTSRX_L; // left motor
     private static WPI_VictorSPX rightSlave = IO.drvFollowerVSPX_R;
@@ -51,10 +50,10 @@ public class Auto {
     private static int trajIdx; // strCmds Index
 
     private static double[][] path;
+    private static boolean finished = false;
 
     public Auto(double[][] traj) {
         path = traj;
-        init();
     }
 
     public void init() {
@@ -72,6 +71,7 @@ public class Auto {
         dist_L = 0.0;
         dist_R = 0.0;
         dist_Avg = 0.0;
+        finished = false;
         steer = new Steer(parms);
     }
 
@@ -132,6 +132,9 @@ public class Auto {
                         break;
                     }
                 }
+                break;
+            case 3:
+                done();
                 break;
         }
     }
