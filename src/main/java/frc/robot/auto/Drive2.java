@@ -57,8 +57,8 @@ public class Drive2 {
     private static double dist_Avg = 0.0;
 
     // General
-    private static int state = 0; // 0=tank, 1=arcade
-    private static int prvState = 0; // 0=tank, 1=arcade
+    private static int state = 30; // 0=tank, 1=arcade
+    private static int prvState = 30; // 0=tank, 1=arcade
     private static double strCmd[] = { 0.0, 0.0 }; // Cmds returned, X, Y
     // Heading Control
     private static double hdgFB = 0.0; // Gyro reading

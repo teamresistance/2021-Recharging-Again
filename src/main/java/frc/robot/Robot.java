@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.LimeLight;
@@ -29,6 +30,15 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Relay;
 
 public class Robot extends TimedRobot {
+
+  private SendableChooser<Integer> chooser;
+  private int defaultAuto = 99;
+  private int cross = 1;
+  private int square = 2;
+  private int choice;
+  private boolean started;
+  private int x;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -37,7 +47,13 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     IO.init();
     JS_IO.init();
-    // sbdPut();
+    
+    choice = 0;
+    chooser = new SendableChooser<Integer>();
+    chooser.setDefaultOption("Off (default)", defaultAuto);
+    chooser.addOption("Cross", cross);
+    chooser.addOption("Square", square);
+    SmartDashboard.putData("Auto Selection", chooser);
   }
 
   @Override
@@ -45,23 +61,36 @@ public class Robot extends TimedRobot {
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     IO.update();
     JS_IO.update();
+    choice = chooser.getSelected();
+
   }
 
   @Override
   public void autonomousInit() {
     AutoSelector.init();
-
-    SmartDashboard.putNumber("Path Selection", 0);
+    
+    
+    SmartDashboard.putNumber("aafa", choice);
+    started = false;
+    x = 0;
   }
 
   @Override
   public void autonomousPeriodic() {
-    int choice = (int) SmartDashboard.getNumber("Path Selection", 0);
 
-    AutoSelector.select(choice);
-
-    if (!AutoSelector.done()) {
-      AutoSelector.execute();
+    AutoSelector.setSelection(choice); // always set selction, then execute
+    
+    SmartDashboard.putNumber("asas", x);
+    switch (x) {
+      case 0:
+        AutoSelector.execute();
+        if (AutoSelector.finished()) {
+          x++;
+        }
+        break;
+      case 1:
+        AutoSelector.done();
+        break;
     }
   }
 
