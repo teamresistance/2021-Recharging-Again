@@ -58,8 +58,8 @@ public class Drive2 {
     private static double dist_Avg = 0.0;
 
     // General
-    private static int state = 30; // 0=tank, 1=arcade
-    private static int prvState = 30; // 0=tank, 1=arcade
+    private static int state = 0; // 0=tank, 1=arcade
+    private static int prvState = 0; // 0=tank, 1=arcade
     private static double strCmd[] = { 0.0, 0.0 }; // Cmds returned, X, Y
     // Heading Control
     private static double hdgFB = 0.0; // Gyro reading
@@ -77,21 +77,22 @@ public class Drive2 {
 
     // Steer to heading at power for distance.
     private static int trajIdx = 0; // strCmds Index
-                                    
+            
+    //dont use negative power
     private static double traj[][] = {//{hdg, %pwr, dist}
-                                        { 0.0, 70.0, 7.0 },
-                                        { 0.0, 70.0, -0.4 },
-                                        { 90.0, 70.0, 7.0 },
-                                        { 90.0, 70.0, -0.4 },
-                                        { 225.0, 70.0, 1.4 * 7.0 },
-                                        { 225.0, 70.0, -0.4 }, 
-                                        { 90.0, 70.0, 7.0 },
-                                        { 90.0, 70.0, -0.4 },
-                                        { -45.0, 70.0, 1.4 * 7.0 }, 
-                                        { -45.0, 70.0, -0.4 },
-                                        { -180.0, 70.0, 7.0 },
-                                        { -180.0, 70.0, -0.4 },
-                                        { 350.0, 70.0, 0.0 }
+                                        { 0.0, 50.0, 7.0 },
+                                        //{ 0.0, 70.0, -0.4 },
+                                        { 90.0, 50.0, 7.0 },
+                                        //{ 90.0, 70.0, -0.4 },
+                                        { 45, -50.0, 1.4 * 7.0 },
+                                        //{ 225.0, 70.0, -0.4 }, 
+                                        { 90.0, 50.0, 7.0 },
+                                        //{ 90.0, 70.0, -0.4 },
+                                        { 135.0, -50.0, 1.4 * 7.0 }, 
+                                       // { -45.0, 70.0, -0.4 },
+                                        { 0, -50.0, 7.0 },
+                                        //{ -180.0, 70.0, -0.4 },
+                                        { 350.0, 50.0, 0.0 }
                                      };
     // /* */ {90.0, 70.0, 5.0},
     // /* */ {-135.0, 70.0, 7.1},

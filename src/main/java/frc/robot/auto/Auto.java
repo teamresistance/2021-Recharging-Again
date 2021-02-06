@@ -73,6 +73,10 @@ public class Auto {
         dist_Avg = 0.0;
         finished = false;
         steer = new Steer(parms);
+        hdgFB = 0.0;
+        hdgOut = 0.0;
+        distFB = 0.0;
+        distOut = 0.0;
     }
 
     public void execute() {

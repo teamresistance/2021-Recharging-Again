@@ -31,10 +31,11 @@ import edu.wpi.first.wpilibj.Relay;
 
 public class Robot extends TimedRobot {
 
-  private SendableChooser<Integer> chooser;
+  private SendableChooser<Integer> chooser = new SendableChooser<Integer>();
   private int defaultAuto = 99;
   private int cross = 1;
   private int square = 2;
+  private int otherCross = 3;
   private int choice;
   private boolean started;
   private int x;
@@ -53,6 +54,7 @@ public class Robot extends TimedRobot {
     chooser.setDefaultOption("Off (default)", defaultAuto);
     chooser.addOption("Cross", cross);
     chooser.addOption("Square", square);
+    chooser.addOption("Other Cross", otherCross);
     SmartDashboard.putData("Auto Selection", chooser);
   }
 

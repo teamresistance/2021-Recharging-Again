@@ -18,6 +18,8 @@ public class AutoSelector {
             case 2:
                 path = new Auto(Trajectories.getSquare());
                 break;
+            case 3:
+                path = new Auto(Trajectories.getOtherCross());
             default:
                 path = new Auto(Trajectories.getEmpty());
         }
