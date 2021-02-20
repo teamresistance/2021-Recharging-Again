@@ -63,7 +63,7 @@ public class Auto {
         right.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
         left.set(0);
         right.set(0);
-        state = 0;
+        state = -1;
         prvState = 0;
         trajIdx = 0;
         enc_L = 0;
@@ -86,6 +86,10 @@ public class Auto {
          * the new distance SP.
          */
         switch (state) {
+            case -1:
+                prvState = state;
+                state++;
+                break;
             case 0: // Init Trajectory, turn to hdg then (1) ...
                 if (prvState != state) {
                     steer.steerTo(path[trajIdx]);
