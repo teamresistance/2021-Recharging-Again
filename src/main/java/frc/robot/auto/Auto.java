@@ -1,4 +1,4 @@
-package frc.robot.auto.holding;
+package frc.robot.auto;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -15,7 +15,6 @@ import frc.util.PropMath;
 public class Auto {
 
     // Hardware
-    private static boolean finished = false;
     private static WPI_TalonSRX right = IO.drvMasterTSRX_R; // right motor
     private static WPI_TalonSRX left = IO.drvMasterTSRX_L; // left motor
     private static WPI_VictorSPX rightSlave = IO.drvFollowerVSPX_R;
@@ -51,10 +50,10 @@ public class Auto {
     private static int trajIdx; // strCmds Index
 
     private static double[][] path;
+    private static boolean finished = false;
 
     public Auto(double[][] traj) {
         path = traj;
-        init();
     }
 
     public void init() {
@@ -64,7 +63,7 @@ public class Auto {
         right.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
         left.set(0);
         right.set(0);
-        state = 0;
+        state = -1;
         prvState = 0;
         trajIdx = 0;
         enc_L = 0;
@@ -72,7 +71,12 @@ public class Auto {
         dist_L = 0.0;
         dist_R = 0.0;
         dist_Avg = 0.0;
+        finished = false;
         steer = new Steer(parms);
+        hdgFB = 0.0;
+        hdgOut = 0.0;
+        distFB = 0.0;
+        distOut = 0.0;
     }
 
     public void execute() {
@@ -82,6 +86,10 @@ public class Auto {
          * the new distance SP.
          */
         switch (state) {
+            case -1:
+                prvState = state;
+                state++;
+                break;
             case 0: // Init Trajectory, turn to hdg then (1) ...
                 if (prvState != state) {
                     steer.steerTo(path[trajIdx]);
@@ -128,15 +136,19 @@ public class Auto {
                     if (trajIdx < path.length) {
                         state = 0;
                     } else { // Next Traj else finished
-                        finished = true;
+                        state = 3;
                         break;
                     }
                 }
+                break;
+            case 3:
+                done();
                 break;
         }
     }
 
     public void done() {
+        finished = true;
         left.set(ControlMode.PercentOutput, 0);
         right.set(ControlMode.PercentOutput, 0);
     }

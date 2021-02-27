@@ -28,6 +28,7 @@ Sequence:
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 // import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -76,21 +77,22 @@ public class Drive2 {
 
     // Steer to heading at power for distance.
     private static int trajIdx = 0; // strCmds Index
-                                    
+            
+    //dont use negative power
     private static double traj[][] = {//{hdg, %pwr, dist}
-                                        { 0.0, 70.0, 7.0 },
-                                        { 0.0, 70.0, -0.4 },
-                                        { 90.0, 70.0, 7.0 },
-                                        { 90.0, 70.0, -0.4 },
-                                        { 225.0, 70.0, 1.4 * 7.0 },
-                                        { 225.0, 70.0, -0.4 }, 
-                                        { 90.0, 70.0, 7.0 },
-                                        { 90.0, 70.0, -0.4 },
-                                        { -45.0, 70.0, 1.4 * 7.0 }, 
-                                        { -45.0, 70.0, -0.4 },
-                                        { -180.0, 70.0, 7.0 },
-                                        { -180.0, 70.0, -0.4 },
-                                        { 350.0, 70.0, 0.0 }
+                                        { 0.0, 50.0, 7.0 },
+                                        //{ 0.0, 70.0, -0.4 },
+                                        { 90.0, 50.0, 7.0 },
+                                        //{ 90.0, 70.0, -0.4 },
+                                        { 45, -50.0, 1.4 * 7.0 },
+                                        //{ 225.0, 70.0, -0.4 }, 
+                                        { 90.0, 50.0, 7.0 },
+                                        //{ 90.0, 70.0, -0.4 },
+                                        { 135.0, -50.0, 1.4 * 7.0 }, 
+                                       // { -45.0, 70.0, -0.4 },
+                                        { 0, -50.0, 7.0 },
+                                        //{ -180.0, 70.0, -0.4 },
+                                        { 350.0, 50.0, 0.0 }
                                      };
     // /* */ {90.0, 70.0, 5.0},
     // /* */ {-135.0, 70.0, 7.1},

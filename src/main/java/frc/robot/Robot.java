@@ -21,7 +21,7 @@ import frc.robot.Subsystem.Snorfler;
 import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
 import frc.robot.auto.Drive2;
-import frc.robot.auto.holding.AutoSelector;
+import frc.robot.auto.AutoSelector;
 
 import javax.naming.LimitExceededException;
 
@@ -31,10 +31,11 @@ import edu.wpi.first.wpilibj.Relay;
 
 public class Robot extends TimedRobot {
 
-  private SendableChooser<Integer> chooser;
+  private SendableChooser<Integer> chooser = new SendableChooser<Integer>();
   private int defaultAuto = 99;
   private int cross = 1;
   private int square = 2;
+  private int otherCross = 3;
   private int choice;
   private boolean started;
   private int x;
@@ -53,6 +54,7 @@ public class Robot extends TimedRobot {
     chooser.setDefaultOption("Off (default)", defaultAuto);
     chooser.addOption("Cross", cross);
     chooser.addOption("Square", square);
+    chooser.addOption("Other Cross", otherCross);
     SmartDashboard.putData("Auto Selection", chooser);
   }
 
@@ -67,20 +69,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    AutoSelector.init();
-    
-    
-    SmartDashboard.putNumber("aafa", choice);
+    SmartDashboard.putNumber("choice in Robot", choice);
+    AutoSelector.init(choice);
     started = false;
     x = 0;
   }
 
   @Override
   public void autonomousPeriodic() {
-
-    AutoSelector.setSelection(choice); // always set selction, then execute
     
-    SmartDashboard.putNumber("asas", x);
+    SmartDashboard.putNumber("state in Robot", x);
     switch (x) {
       case 0:
         AutoSelector.execute();

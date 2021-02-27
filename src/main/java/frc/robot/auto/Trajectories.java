@@ -1,4 +1,4 @@
-package frc.robot.auto.holding;
+package frc.robot.auto;
 
 //TODO: still unsure on how to take the 2D array and use it as a trajectory object
 public class Trajectories {
@@ -61,5 +61,24 @@ public class Trajectories {
                 /*                              */ { -180.0, 50.0, -0.4 },
                 /*                              */ { 350.0, 50.0, 0.0 } };
         return traj;
+    }
+    
+    public static double[][] getOtherCross() {
+        double traj[][] = {//{hdg, %pwr, dist}
+        { 0.0, 50.0, 7.0 },
+        //{ 0.0, 70.0, -0.4 },
+        { 90.0, 50.0, 7.0 },
+        //{ 90.0, 70.0, -0.4 },
+        { 45, 50.0, -1.4 * 7.0 },
+        //{ 225.0, 70.0, -0.4 }, 
+        { 90.0, 50.0, 7.0 },
+        //{ 90.0, 70.0, -0.4 },
+        { 135.0, 50.0, -1.4 * 7.0 }, 
+       // { -45.0, 70.0, -0.4 },
+        { 0, 50.0, -7.0 },
+        //{ -180.0, 70.0, -0.4 },
+        { 350.0, 50.0, 0.0 }
+     };
+     return traj;
     }
 }
