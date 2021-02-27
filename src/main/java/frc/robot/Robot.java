@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.vision.LimeLight;
+import frc.io.hdw_io.vision.RPI;
 import frc.io.hdw_io.test_io;
 import frc.io.joysticks.JS_IO;
 import frc.robot.Subsystem.Injector;
@@ -102,6 +103,7 @@ public class Robot extends TimedRobot {
     Turret.init();
     //Drive2.init();
     LimeLight.init();
+    RPI.init();
   }
 
   @Override
@@ -115,6 +117,7 @@ public class Robot extends TimedRobot {
     Turret.update();
     Drive.update();
     LimeLight.sdbUpdate();
+    RPI.sdbUpdate();
     //Drive2.update();
   }
 
