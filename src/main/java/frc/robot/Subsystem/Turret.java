@@ -81,7 +81,7 @@ public class Turret {
                 cmdUpdate(.2);
                 if (LimeLight.llOnTarget() != 999) {
                     state = 1;
-                } else if (turretPot.get() > 50) {
+                } else if (turretPot.get() > 0) {
                     state = 3;
                 }
                 break;
@@ -89,21 +89,21 @@ public class Turret {
                 cmdUpdate(-.2);
                 if (LimeLight.llOnTarget() != 999) {
                     state = 1;
-                } else if (turretPot.get() < -50) {
+                } else if (turretPot.get() < 0) {
                     state = 2;
                 }
                 break;
             case 4: // reset after lime search
                 cmdUpdate(-.2);
-                if (turretPot.get() < -12) {
-                    if (turretPot.get() >= -15 && turretPot.get() <= 5) {
+                if (turretPot.get() < 0) {
+                    if (turretPot.get() >= -10 && turretPot.get() <= 10) {
                         state = 0;
                     }
                 }
             case 5: // reset after lime search
                 cmdUpdate(-.2);
-                if (turretPot.get() > 2) {
-                    if (turretPot.get() >= -15 && turretPot.get() <= 5) {
+                if (turretPot.get() > 0) {
+                    if (turretPot.get() >= -10 && turretPot.get() <= 10) {
                         state = 0;
                     }
                 }
@@ -126,9 +126,9 @@ public class Turret {
     private static void cmdUpdate(double val) {
         // if at limits do not run
 
-        if (val < 0 && turretPot.get() < -105) {
+        if (val < 0 && turretPot.get() < -120) {
             turret.set(0);
-        } else if (val > 0 && turretPot.get() > 105) {
+        } else if (val > 0 && turretPot.get() > 120) {
             turret.set(0);
         } else {
             if (val > 0 && atLimitRight) {

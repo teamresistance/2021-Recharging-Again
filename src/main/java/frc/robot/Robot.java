@@ -20,7 +20,7 @@ import frc.robot.Subsystem.Shooter;
 import frc.robot.Subsystem.Snorfler;
 import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
-import frc.robot.auto.Drive2;
+//import frc.robot.auto.Drive2;
 import frc.robot.auto.AutoSelector;
 
 import javax.naming.LimitExceededException;
@@ -94,30 +94,28 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // test_io.init();
-    // Snorfler.init();
-    // Revolver.init();
-    // Shooter.init();
-    // Injector.init();
-    // Drive.init();
-    // Turret.init();
-    Drive2.init();
+    Snorfler.init();
+    Revolver.init();
+    Shooter.init();
+    Injector.init();
+    Drive.init();
+    Turret.init();
+    //Drive2.init();
     LimeLight.init();
   }
 
   @Override
   public void teleopPeriodic() {
     IO.update();
-    // test_io.update();
-    // Snorfler.update();
-    // Revolver.update();
-    // Shooter.update();
-    // IO.shooterTSRX.set(ControlMode.Velocity, 500);
-    // Injector.update();
-    // Turret.update();
-    // Drive.update();
+    Snorfler.update();
+    Revolver.update();
+    Shooter.update();
+    IO.shooterTSRX.set(ControlMode.Velocity, 500);
+    Injector.update();
+    Turret.update();
+    Drive.update();
     LimeLight.sdbUpdate();
-    Drive2.update();
+    //Drive2.update();
   }
 
   @Override

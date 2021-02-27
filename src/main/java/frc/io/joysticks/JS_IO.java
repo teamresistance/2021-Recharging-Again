@@ -28,62 +28,60 @@ public class JS_IO {
     public static int jsConfig = 0; // 0=Joysticks, 1=gamePad only, 2=left Joystick only
                                     // 3=Mixed LJS & GP, 4=Nintendo Pad
     // Declare all possible Joysticks
-    public static Joystick leftJoystick = new Joystick(0); // Left JS
-    public static Joystick rightJoystick = new Joystick(1); // Right JS
+     public static Joystick leftJoystick = new Joystick(0); // Left JS
+     public static Joystick rightJoystick = new Joystick(1); // Right JS
     public static Joystick coJoystick = new Joystick(2); // Co-Dvr JS
     public static Joystick gamePad = new Joystick(3); // Normal mode only (not Dual Trigger mode)
     // public static Joystick neoPad = new Joystick(4); // Nintendo style gamepad
-    // public static Joystick arJS[] = { leftJoystick, rightJoystick, coJoystick,
-    // gamePad };
+    // public static Joystick arJS[] = { leftJoystick, rightJoystick, coJoystick, gamePad };
     // Declare all stick control
 
     // Drive
-    public static Button btnScaledDrive = new Button(); // scale the drive
-    public static Button btnInvOrientation = new Button(); // invert the orientation of the robot (joystick: forwards
-                                                           // becomes backwards for robot and same for backwards)
+    public static Button btnScaledDrive = new Button(); //scale the drive
+    public static Button btnInvOrientation = new Button(); //invert the orientation of the robot (joystick: forwards becomes backwards for robot and same for backwards)
     public static Button btnHoldZero = new Button();
     public static Button btnHold180 = new Button();
 
     public static Axis axLeftDrive = new Axis(); // Left Drive
     public static Axis axRightDrive = new Axis(); // Right Drive
 
-    // Shooter
+    //Shooter
     public static Button btnRampShooter = new Button();
     public static Button btnFireShooter = new Button();
+    public static Button btnSlowFire = new Button();
 
-    // Revolver
+    //Revolver
     public static Button btnIndex = new Button();
 
-    // Snorfler
+    //Snorfler
     public static Button btnLowerSnorfler = new Button();
     public static Button btnReverseSnorfler = new Button();
 
-    // Turret
+    //Turret
     public static Axis axTurretRot = new Axis(); // Rotate turret
     public static Button btnLimeAim = new Button();
     public static Button btnLimeSearch = new Button();
 
-    // Climb
+    //Climb
     public static Axis axClimb = new Axis();
     public static Button btnClimb = new Button();
     public static Button btnClimbOFF = new Button();
 
-    // All
+    //All
     public static Button allStop = new Button(); // stops all parts of the shooter sequence
     public static Button btnStop = new Button();
+    //Misc
+    public static Button record  = new Button();
 
-    // Misc
-    public static Button record = new Button();
-
-    // Auto
-    public static Button drive2Off = new Button();
-    public static Button drive2Tank = new Button();
-    public static Button drive2Arcade = new Button();
-    public static Button drive2AutoTest = new Button();
-    public static Button resetGyro = new Button();
-    public static Button resetDist = new Button();
-    public static Pov pov_SP = new Pov();
-    public static Axis axRightX = new Axis();
+    // // Auto
+    // public static Button drive2Off = new Button();
+    // public static Button drive2Tank = new Button();
+    // public static Button drive2Arcade = new Button();
+    // public static Button drive2AutoTest = new Button();
+    // public static Button resetGyro = new Button();
+    // public static Button resetDist = new Button();
+    // public static Pov pov_SP = new Pov();
+    // public static Axis axRightX = new Axis();
 
     // Constructor
     public JS_IO() {
@@ -132,75 +130,74 @@ public class JS_IO {
         axLeftDrive.setAxis(leftJoystick, 1);
         axRightDrive.setAxis(rightJoystick, 1);
         axTurretRot.setAxis(coJoystick, 0);
-        axRightX.setAxis(rightJoystick, 0);
-        // axClimb.setAxis(coJoystick, 1);
+       // axClimb.setAxis(coJoystick, 1);
 
-        // Drive buttons
+        //Drive buttons
         btnScaledDrive.setButton(rightJoystick, 3);
         btnInvOrientation.setButton(rightJoystick, 1);
 
-        // snorfler buttons
-        btnReverseSnorfler.setButton(coJoystick, 5);
+        //snorfler buttons
+        btnReverseSnorfler.setButton(coJoystick,5);
         btnLowerSnorfler.setButton(coJoystick, 3);
 
-        // turret buttons
+        //turret buttons
         btnLimeSearch.setButton(coJoystick, 12);
         btnLimeAim.setButton(coJoystick, 10);
 
-        // shooting buttons
+        //shooting buttons
         btnRampShooter.setButton(coJoystick, 1);
         btnFireShooter.setButton(coJoystick, 4);
+        btnSlowFire.setButton(coJoystick, 2);
         btnIndex.setButton(coJoystick, 6);
 
         btnStop.setButton(coJoystick, 11);
 
-        drive2Off.setButton(leftJoystick, 10);
-        drive2Tank.setButton(leftJoystick, 9);
-        drive2Arcade.setButton(leftJoystick, 11);
-        drive2AutoTest.setButton(leftJoystick, 12);
+        // drive2Off.setButton(leftJoystick, 10);
+        // drive2Tank.setButton(leftJoystick, 9);
+        // drive2Arcade.setButton(leftJoystick, 11);
+        // drive2AutoTest.setButton(leftJoystick, 12);
 
-        resetDist.setButton(leftJoystick, 5);
-        resetGyro.setButton(leftJoystick, 3);
+        // resetDist.setButton(leftJoystick, 5);
+        // resetGyro.setButton(leftJoystick, 3);
 
-        pov_SP.setPov(coJoystick, 1);
+        // pov_SP.setPov(coJoystick, 1);
     }
 
     // ----- gamePad only --------
     private static void A_GP() {
-
         // All stick axisesssss
-        axLeftDrive.setAxis(gamePad, 1); // left stick Y
-        axRightDrive.setAxis(gamePad, 5); // right stick Y
-        axTurretRot.setAxis(gamePad, 0); // Neg = CW, Pos = CCW (left stick X?)
-        axRightX.setAxis(gamePad, 4);
+        axLeftDrive.setAxis(gamePad, 1); //left stick Y
+        axRightDrive.setAxis(gamePad, 5); //right stick Y
+        axTurretRot.setAxis(gamePad, 4); // Neg = CW, Pos = CCW (left stick X?)
 
-        // Drive buttons
-        btnScaledDrive.setButton(gamePad, 5); // L1
-        btnInvOrientation.setButton(gamePad, 10); // r-stick push
+        //Drive buttons
+        btnScaledDrive.setButton(gamePad, 5); //L1
+        btnInvOrientation.setButton(gamePad, 10); //r-stick push
 
-        // snorfler buttons
-        btnReverseSnorfler.setButton(gamePad, 9); // l-stick push
-        //btnLowerSnorfler.setButton(gamePad, 1); // A
+        //snorfler buttons
+        btnReverseSnorfler.setButton(gamePad,9); //l-stick push
+        btnLowerSnorfler.setButton(gamePad, 1); //A
 
-        // turret buttons
-        //btnLimeSearch.setButton(gamePad, 4); // Y
-        btnLimeAim.setButton(gamePad, 6); // R1
+        //turret buttons
+        btnLimeSearch.setButton(gamePad, 4); //Y
+        btnLimeAim.setButton(gamePad, 6); //R1
 
-        // shooting buttons
-        //btnRampShooter.setButton(gamePad, 3); // X
-        //btnFireShooter.setButton(gamePad, 2); // B
-        btnIndex.setButton(gamePad, 7); // Back
+        //shooting buttons
+        btnRampShooter.setButton(gamePad, 3); //X
+        btnFireShooter.setButton(gamePad, 2); //B
+        //btnSlowFire.setButton(gamePad, ???);
+        btnIndex.setButton(gamePad, 7); //Back
 
-        btnStop.setButton(gamePad, 8); // start
+        btnStop.setButton(gamePad, 8); //start
 
-        drive2Off.setButton(gamePad, 1);
-        drive2Tank.setButton(gamePad, 2);
-        drive2Arcade.setButton(gamePad, 3);
-        drive2AutoTest.setButton(gamePad, 4);
-        resetDist.setButton(gamePad, 5);
-        resetGyro.setButton(gamePad, 6);
+        // drive2Off.setButton(gamePad, 1);
+        // drive2Tank.setButton(gamePad, 2);
+        // drive2Arcade.setButton(gamePad, 3);
+        // drive2AutoTest.setButton(gamePad, 4);
+        // resetDist.setButton(gamePad, 5);
+        // resetGyro.setButton(gamePad, 6);
 
-        pov_SP.setPov(gamePad, 0);
+        // pov_SP.setPov(gamePad, 0);
     }
 
     // ----------- Case Default -----------------

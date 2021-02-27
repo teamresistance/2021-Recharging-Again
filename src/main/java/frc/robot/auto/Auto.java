@@ -176,8 +176,6 @@ public class Auto {
 
     private void sdbUpdate() {
         SmartDashboard.putNumber("Auto Step", state); // Set by JS btns
-        SmartDashboard.putNumber("JS Y", JS_IO.axRightDrive.get());// Set by JS R Y
-        SmartDashboard.putNumber("JS X", JS_IO.axRightX.get());// Set by JS R X
 
         SmartDashboard.putNumber("Hdg FB", hdgFB);
         SmartDashboard.putNumber("Hdg Out", hdgOut);

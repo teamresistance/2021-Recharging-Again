@@ -31,11 +31,11 @@ public class Injector {
 
     private static int state = 0;
 
-    private static double injector4WhlPct = 1.0;    // Pct for 4 wheel injector
-    private static double injectorPUPct = 1.0;      // Pct for the Pickup wheel
+    private static double injector4WhlPct = 1.0; // Pct for 4 wheel injector
+    private static double injectorPUPct = 1.0; // Pct for the Pickup wheel
 
-    private static Timer delayTimer = new Timer(0.25);  //Timer used to delay status for motor ramp up/dn
-    private static boolean isRunning = false;   // Signal others Injector is running.
+    private static Timer delayTimer = new Timer(0.25); // Timer used to delay status for motor ramp up/dn
+    private static boolean isRunning = false; // Signal others Injector is running.
 
     // initialzer
     public static void init() {
@@ -47,12 +47,12 @@ public class Injector {
 
     // Determinator of Injector state
     public static void determ() {
-        if (JS_IO.btnFireShooter.isDown()){
-             state = 1;
+        if (JS_IO.btnFireShooter.isDown() || JS_IO.btnSlowFire.isDown()) {
+            state = 1;
         }
-        if (JS_IO.btnStop.isDown()){
+        if (JS_IO.btnStop.isDown()) {
             state = 0;
-        } 
+        }
     }
 
     // State Machine for Injector
@@ -60,33 +60,33 @@ public class Injector {
         determ();
         sdbUpdate();
         switch (state) {
-        case 0: // All Off.  injector4Whl Off injectorPU Off injectorFlip Retracted
-            cmdUpdate(false, false, false);
-            isRunning = false;
-            break;
-        case 1: // All On.  Set isRunning true after delay.  Time to speed up.
-            if(Shooter.closeToSpeed()){
-                cmdUpdate(true, true, false);
-            }else{
+            case 0: // All Off. injector4Whl Off injectorPU Off injectorFlip Retracted
                 cmdUpdate(false, false, false);
-            }
-               //Starts timer and checks it
-               if(Shooter.isAtSpeed()){
-                state = 2;
-               }
-            break;
-        case 2:
-        isRunning = true;
-        cmdUpdate(true, true, true);
-        if(Revolver.hasUnloaded()){
-            state = 0;
-        }
-               break;
+                isRunning = false;
+                break;
+            case 1: // All On. Set isRunning true after delay. Time to speed up.
+                if (Shooter.closeToSpeed()) {
+                    cmdUpdate(true, true, false);
+                } else {
+                    cmdUpdate(false, false, false);
+                }
+                // Starts timer and checks it
+                if (Shooter.isAtSpeed()) {
+                    state = 2;
+                }
+                break;
+            case 2:
+                isRunning = true;
+                cmdUpdate(true, true, true);
+                if (Revolver.hasUnloaded() || Revolver.hasShot()) {
+                    state = 0;
+                }
+                break;
 
-        default: // Default
-            cmdUpdate(false, false, false);
-            System.out.println("Invalid Injector state - " + state);
-            break;
+            default: // Default
+                cmdUpdate(false, false, false);
+                System.out.println("Invalid Injector state - " + state);
+                break;
         }
 
     }
