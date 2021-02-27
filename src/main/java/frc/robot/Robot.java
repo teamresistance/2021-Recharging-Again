@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
-import frc.io.hdw_io.LimeLight;
+import frc.io.hdw_io.vision.LimeLight;
 import frc.io.hdw_io.test_io;
 import frc.io.joysticks.JS_IO;
 import frc.robot.Subsystem.Injector;

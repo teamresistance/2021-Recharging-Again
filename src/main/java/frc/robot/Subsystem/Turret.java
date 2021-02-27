@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.InvertibleDigitalInput;
-import frc.io.hdw_io.LimeLight;
+import frc.io.hdw_io.vision.LimeLight;
 import frc.io.joysticks.JS_IO;
 import frc.util.PropMath;
 

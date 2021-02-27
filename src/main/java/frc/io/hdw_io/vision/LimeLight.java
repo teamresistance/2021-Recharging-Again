@@ -1,4 +1,4 @@
-package frc.io.hdw_io;
+package frc.io.hdw_io.vision;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
