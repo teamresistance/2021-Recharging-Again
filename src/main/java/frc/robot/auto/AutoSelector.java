@@ -20,8 +20,10 @@ public class AutoSelector {
                 break;
             case 3:
                 path = new Auto(Trajectories.getOtherCross());
+                break;
             default:
                 path = new Auto(Trajectories.getEmpty());
+                break;
         }
         SmartDashboard.putNumber("autoselector selection",selection);
         path.init();
