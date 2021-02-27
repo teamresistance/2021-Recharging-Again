@@ -7,6 +7,7 @@ public class AutoSelector {
     private static int selection;
     //TODO: change name
     private static Auto path = new Auto(null);
+    private static Auto2 path2 = new Auto2(null);
 
  
 
@@ -21,12 +22,16 @@ public class AutoSelector {
             case 3:
                 path = new Auto(Trajectories.getOtherCross(70.0));
                 break;
+            case 4:
+                path2 = new Auto2(Trajectories.getTest(70.0));
+                break;
             default:
                 path = new Auto(Trajectories.getEmpty(0));
                 break;
         }
         SmartDashboard.putNumber("autoselector selection",selection);
-        path.init();
+        //path.init();
+        path2.init();
 
         SmartDashboard.putBoolean("path initialized", true);
         SmartDashboard.putBoolean("path executing", false);
@@ -37,17 +42,20 @@ public class AutoSelector {
         
         SmartDashboard.putBoolean("path executing", true);
         SmartDashboard.putBoolean("path done", false);
-        path.execute();
+        //path.execute();
+        path2.execute();
     }
 
     public static void done() {
         SmartDashboard.putBoolean("path executing", false);
         SmartDashboard.putBoolean("path done", true);
-        path.done();
+        //path.done();
+        path2.done();
     }
 
-    public static boolean finished() {
-        return path.finished();
+    public static boolean finished(boolean lol) {
+            return path2.finished();
+        
     }
     
 }

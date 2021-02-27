@@ -1,13 +1,13 @@
 package frc.robot.auto;
 
+import frc.robot.auto.functions.AutoFunction;
+import frc.robot.auto.functions.PointNTurn;
+
 //TODO: still unsure on how to take the 2D array and use it as a trajectory object
 public class Trajectories {
 
     // each trajectory/path/automode is stored in each method
     // name each method by the path its doing
-
-    // the number at the end of each trajectory piece represents a function (turn and move, subsystem activation, radial turn, etc.)
-    // NOTE: 0 = ..., 1 = ..., 2 = ...
 
 
     public static double[][] getEmpty(double pwr) {
@@ -84,5 +84,16 @@ public class Trajectories {
         { 350.0, pwr, 0.0 }
      };
      return traj;
+    }
+
+    public static AutoFunction[] getTest(double pwr) {
+        AutoFunction traj[] = {
+            new PointNTurn(0, pwr, 7),
+            new PointNTurn(90, pwr, 7),
+            new PointNTurn(180, pwr, 7),
+            new PointNTurn(270, pwr, 7),
+            new PointNTurn(350, pwr, 0)
+        };
+        return traj;
     }
 }

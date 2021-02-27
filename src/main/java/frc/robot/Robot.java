@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
   private int cross = 1;
   private int square = 2;
   private int otherCross = 3;
+  private int test = 4;
   private int choice;
   private boolean started;
   private int x;
@@ -56,6 +57,7 @@ public class Robot extends TimedRobot {
     chooser.addOption("Cross", cross);
     chooser.addOption("Square", square);
     chooser.addOption("Other Cross", otherCross);
+    chooser.addOption("test", test);
     SmartDashboard.putData("Auto Selection", chooser);
   }
 
@@ -83,7 +85,7 @@ public class Robot extends TimedRobot {
     switch (x) {
       case 0:
         AutoSelector.execute();
-        if (AutoSelector.finished()) {
+        if (AutoSelector.finished(false)) {
           x++;
         }
         break;
