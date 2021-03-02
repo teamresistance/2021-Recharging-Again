@@ -97,29 +97,29 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    Snorfler.init();
-    Revolver.init();
-    Shooter.init();
-    Injector.init();
-    Drive.init();
-    Turret.init();
-    //Drive2.init();
-    LimeLight.init();
-    RPI.init();
+    // Snorfler.init();
+    // Revolver.init();
+    // Shooter.init();
+    // Injector.init();
+     Drive.init();
+    // Turret.init();
+    // //Drive2.init();
+    // LimeLight.init();
+    // RPI.init();
   }
 
   @Override
   public void teleopPeriodic() {
-    IO.update();
-    Snorfler.update();
-    Revolver.update();
-    Shooter.update();
-    IO.shooterTSRX.set(ControlMode.Velocity, 500);
-    Injector.update();
-    Turret.update();
-    Drive.update();
-    LimeLight.sdbUpdate();
-    RPI.sdbUpdate();
+    // IO.update();
+    // Snorfler.update();
+    // Revolver.update();
+    // Shooter.update();
+    // IO.shooterTSRX.set(ControlMode.Velocity, 500);
+    // Injector.update();
+    // Turret.update();
+     Drive.update();
+    // LimeLight.sdbUpdate();
+    // RPI.sdbUpdate();
     //Drive2.update();
   }
 
