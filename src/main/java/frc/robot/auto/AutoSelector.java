@@ -1,6 +1,7 @@
 package frc.robot.auto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.IO;
 
 public class AutoSelector {
 
@@ -32,14 +33,14 @@ public class AutoSelector {
         SmartDashboard.putNumber("autoselector selection",selection);
         //path.init();
         path2.init();
-
+        SmartDashboard.putNumber("navX", IO.navX.getAngle());
         SmartDashboard.putBoolean("path initialized", true);
         SmartDashboard.putBoolean("path executing", false);
         SmartDashboard.putBoolean("path done", false);
     }
 
     public static void execute() {
-        
+        SmartDashboard.putNumber("navX", IO.navX.getAngle());
         SmartDashboard.putBoolean("path executing", true);
         SmartDashboard.putBoolean("path done", false);
         //path.execute();
@@ -47,6 +48,7 @@ public class AutoSelector {
     }
 
     public static void done() {
+        SmartDashboard.putNumber("navX", IO.navX.getAngle());
         SmartDashboard.putBoolean("path executing", false);
         SmartDashboard.putBoolean("path done", true);
         //path.done();

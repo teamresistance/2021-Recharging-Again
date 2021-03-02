@@ -1,5 +1,6 @@
 package frc.robot.auto.functions;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -52,7 +53,6 @@ public class PointNTurn extends AutoFunction {
     private double dist = 0.0;
     private double traj[] = {};
 
-
     public PointNTurn(double eHdg, double ePwr, double eDist) {
         hdg = eHdg;
         pwr = ePwr;
@@ -61,7 +61,6 @@ public class PointNTurn extends AutoFunction {
 
     public void init() {
         finished = false;
-        IO.navX.reset();
         left.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
         right.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
         left.set(0);
@@ -90,7 +89,7 @@ public class PointNTurn extends AutoFunction {
                 break;
             case 0: // Init Trajectory, turn to hdg then (1) ...
                 if (prvState != state) {
-                    steer.steerTo(hdg,pwr,dist);
+                    steer.steerTo(hdg, pwr, dist);
                     resetDist();
                 } else {
                     // Calc heading & dist output. rotation X, speed Y
@@ -109,7 +108,7 @@ public class PointNTurn extends AutoFunction {
                 }
                 prvState = state;
                 break;
-                case 1: // steer Auto Heading and Dist
+            case 1: // steer Auto Heading and Dist
                 // Calc heading & dist output. rotation X, speed Y
                 strCmd = steer.update(hdgFB, dist_Avg);
                 hdgOut = strCmd[0];
@@ -139,6 +138,8 @@ public class PointNTurn extends AutoFunction {
 
     public void done() {
         finished = true;
+        left.set(ControlMode.PercentOutput, 0);
+        right.set(ControlMode.PercentOutput, 0);
     }
 
     public boolean finished() {
@@ -166,7 +167,7 @@ public class PointNTurn extends AutoFunction {
         left.setSelectedSensorPosition(0, 0, 0);
         right.setSelectedSensorPosition(0, 0, 0);
     }
-    
+
     private void sdbInit() {
         SmartDashboard.putNumber("PnT Step", state);
 

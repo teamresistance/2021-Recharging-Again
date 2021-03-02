@@ -3,6 +3,7 @@ package frc.robot.auto;
 import javax.xml.namespace.QName;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.IO;
 import frc.robot.auto.functions.*;
 
 public class Auto2 {
@@ -24,6 +25,7 @@ public class Auto2 {
         idx = 0;
         x = 0;
         overallFin = false;
+        IO.navX.reset();
     }
 
     public void execute() {
@@ -50,7 +52,7 @@ public class Auto2 {
                 break;
             case 2:
                 idx++;
-                if (idx < traj.length - 1) {
+                if (idx < traj.length) {
                     autoStep = 0;
                 } else { // Next Traj else finished
                     autoStep = 3;

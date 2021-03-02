@@ -80,7 +80,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    
     SmartDashboard.putNumber("state in Robot", x);
     switch (x) {
       case 0:
