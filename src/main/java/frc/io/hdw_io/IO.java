@@ -123,7 +123,7 @@ public class IO {
     public static void motorsInit() {
         shooterTSRX.configFactoryDefault();
         shooterTSRX.setInverted(false);
-        shooterTSRX.setNeutralMode(NeutralMode.Coast);
+        shooterTSRX.setNeutralMode(NeutralMode.Brake);
 
         injector4Whl.configFactoryDefault();
         injector4Whl.setInverted(true);

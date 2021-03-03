@@ -80,7 +80,7 @@ public class Shooter {
 
         switch (state) {
             case 0: // off
-                cmdUpdate(0, true);
+                cmdUpdate(0, false);
                 break;
             case 1: // on
                     // shooter.set(ControlMode.Velocity, 300);
