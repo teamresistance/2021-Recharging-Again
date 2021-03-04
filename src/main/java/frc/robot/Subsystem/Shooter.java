@@ -36,7 +36,7 @@ public class Shooter {
     private static int rpmFour = 0;
     private static int atSpeedDeadband = 200; // tbd, in rpm
     private static double rpmToTpc = .07833333; // TBD rpm to ticks per cycle (100ms)
-    private static boolean shooterToggle = false;
+    private static boolean shooterToggle = true;
     // 47 ticks per 1 rotation
 
     private static double kF = 2.5;

@@ -170,94 +170,94 @@ public class Revolver {
                 }
                 break;
 
-            // ------------ Slow Unloading --------------
+            // // ------------ Slow Unloading --------------
+            // // case 14:
+            // // cmdUpdate(0.0);
+            // // // Turret.isOnTarget() &&
+            // // if (Shooter.isAtSpeed() && Injector.isRunning()) { // if at speed and on
+            // // target
+            // // state++;
+            // // isFull = false;
+            // // }
+            // // break;
+            // // case 15:
+            // // cmdUpdate(.6 * unloadPct);
+            // // if (delayTimer.hasExpired(3.5, state)) { // waiting for all balls
+            // // hasUnloaded = true;
+            // // state++;
+            // // }
+            // // break;
+            // // case 16:
+            // // cmdUpdate(loadPct);
+            // // if (atOneRevolution.get()) {
+            // // hasUnloaded = false;
+            // // state = 0;
+            // // }
+            // // break;
+
+            // // slow fire 2
             // case 14:
-            // cmdUpdate(0.0);
-            // // Turret.isOnTarget() &&
-            // if (Shooter.isAtSpeed() && Injector.isRunning()) { // if at speed and on
-            // target
-            // state++;
-            // isFull = false;
-            // }
-            // break;
+            //     cmdUpdate(0.0);
+            //     // Turret.isOnTarget() &&
+            //     if (Shooter.isAtSpeed() && Injector.isRunning()) { // if at speed and on target
+            //         isFull = false;
+            //         state++;
+            //     }
+            //     break;
             // case 15:
-            // cmdUpdate(.6 * unloadPct);
-            // if (delayTimer.hasExpired(3.5, state)) { // waiting for all balls
-            // hasUnloaded = true;
-            // state++;
-            // }
-            // break;
+            //     cmdUpdate(0.0);
+            //     if (slowFireCnt == 5) {
+            //         hasUnloaded = true;
+            //         state = 18;
+            //     } else {
+            //         state = 16;
+            //     }
+            //     break;
             // case 16:
-            // cmdUpdate(loadPct);
-            // if (atOneRevolution.get()) {
-            // hasUnloaded = false;
-            // state = 0;
-            // }
-            // break;
+            //     cmdUpdate(unloadPct);
+            //     slowFireCnt++;
+            //     state++;
+            //     break;
+            // case 17:
+            //     cmdUpdate(unloadPct);
+            //     if (delayTimer.hasExpired(0.25, state) && atOneRevolution.get()) {
+            //         cmdUpdate(0.0);
+            //         state = 15;
+            //     }
+            //     break;
+            // case 18:
+            //     cmdUpdate(loadPct);
+            //     if (atOneRevolution.get()) {
+            //         hasUnloaded = false;
+            //         state = 0;
+            //     }
+            //     break;
 
-            // slow fire 2
-            case 14:
-                cmdUpdate(0.0);
-                // Turret.isOnTarget() &&
-                if (Shooter.isAtSpeed() && Injector.isRunning()) { // if at speed and on target
-                    isFull = false;
-                    state++;
-                }
-                break;
-            case 15:
-                cmdUpdate(0.0);
-                if (slowFireCnt == 5) {
-                    hasUnloaded = true;
-                    state = 18;
-                } else {
-                    state = 16;
-                }
-                break;
-            case 16:
-                cmdUpdate(unloadPct);
-                slowFireCnt++;
-                state++;
-                break;
-            case 17:
-                cmdUpdate(unloadPct);
-                if (delayTimer.hasExpired(0.25, state) && atOneRevolution.get()) {
-                    cmdUpdate(0.0);
-                    state = 15;
-                }
-                break;
-            case 18:
-                cmdUpdate(loadPct);
-                if (atOneRevolution.get()) {
-                    hasUnloaded = false;
-                    state = 0;
-                }
-                break;
+            // // ------------ Single Fire -------------------
+            // case 25:
+            //     if (Shooter.isAtSpeed() && Injector.isRunning()) {
+            //         state++;
+            //     } // end at state 4??
+            //     break;
+            // case 26:
+            //     cmdUpdate(unloadPct);
+            //     if (delayTimer.hasExpired(1, state) && atOneRevolution.get()) {
+            //         hasShot = true;
+            //         state++;
+            //     }
+            // case 27:
+            //     cmdUpdate(loadPct);
+            //     if (atOneRevolution.get()) {
+            //         hasShot = false;
 
-            // ------------ Single Fire -------------------
-            case 25:
-                if (Shooter.isAtSpeed() && Injector.isRunning()) {
-                    state++;
-                } // end at state 4??
-                break;
-            case 26:
-                cmdUpdate(unloadPct);
-                if (delayTimer.hasExpired(1, state) && atOneRevolution.get()) {
-                    hasShot = true;
-                    state++;
-                }
-            case 27:
-                cmdUpdate(loadPct);
-                if (atOneRevolution.get()) {
-                    hasShot = false;
-
-                    if (isFull()) {
-                        isFull = false;
-                        state = 30;
-                    } else {
-                        state = 40;
-                    }
-                }
-                break;
+            //         if (isFull()) {
+            //             isFull = false;
+            //             state = 30;
+            //         } else {
+            //             state = 40;
+            //         }
+            //     }
+            //     break;
             case 40:
                 cmdUpdate(0.0);
                 if (nextSpaceOpen.get()) {
