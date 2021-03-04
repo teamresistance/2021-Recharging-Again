@@ -148,8 +148,8 @@ public class JS_IO {
         btnLimeAim.setButton(coJoystick, 10);
 
         //shooting buttons
-        btnRampShooter.setButton(coJoystick, 1);
-        btnFireShooter.setButton(coJoystick, 4);
+        btnRampShooter.setButton(coJoystick, 3);
+        btnFireShooter.setButton(coJoystick, 1);
         btnSlowFire.setButton(coJoystick, 2);
         btnIndex.setButton(coJoystick, 6);
 
