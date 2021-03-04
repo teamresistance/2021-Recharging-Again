@@ -80,7 +80,12 @@ public class Shooter {
         SmartDashboard.putData("RPM Selection", rpmChoose);
     }
 
+    /**
+     * Determine any state that needs to interupt the present state, usually by way of a JS button but
+     * can be caused by other events.
+     */
     private static void determ() {
+        //Original code.  Seemed ... excessive
         if (JS_IO.btnRampShooter.onButtonPressed()) {
             if (shooterToggle) {
                 state = 1;
@@ -89,6 +94,12 @@ public class Shooter {
                 state = 0;
                 shooterToggle = !shooterToggle;
             }
+        }
+
+        //Option 1, only checks onButtonPressed
+        if (JS_IO.btnRampShooter.onButtonPressed()) {
+            state = shooterToggle ? 1 : 0;
+            shooterToggle = !shooterToggle;
         }
 
         if (JS_IO.allStop.onButtonPressed())
