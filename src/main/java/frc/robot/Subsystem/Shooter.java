@@ -16,15 +16,18 @@ package frc.robot.Subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.Encoder;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.ISolenoid;
 import frc.io.joysticks.JS_IO;
 
 public class Shooter {
-    private static TalonSRX shooter = IO.shooterTSRX;
+    private static WPI_TalonSRX shooter = IO.shooterTSRX;
+    private static Encoder encSh = IO.shooter_Encoder;
     private static ISolenoid ballHood = IO.shooterHoodUp;
 
     private static int state;
@@ -63,7 +66,7 @@ public class Shooter {
         shooter.enableVoltageCompensation(true);
         shooter.configVoltageCompSaturation(12, 0);
         shooter.configVoltageMeasurementFilter(32, 0);
-        shooter.setSelectedSensorPosition(0, 0, 0);
+        encSh.reset();
 
         cmdUpdate(0.0, false);
         state = 0;
@@ -81,22 +84,10 @@ public class Shooter {
     }
 
     /**
-     * Determine any state that needs to interupt the present state, usually by way of a JS button but
-     * can be caused by other events.
+     * Determine any state that needs to interupt the present state, usually by way
+     * of a JS button but can be caused by other events.
      */
     private static void determ() {
-        //Original code.  Seemed ... excessive
-        if (JS_IO.btnRampShooter.onButtonPressed()) {
-            if (shooterToggle) {
-                state = 1;
-                shooterToggle = !shooterToggle;
-            } else {
-                state = 0;
-                shooterToggle = !shooterToggle;
-            }
-        }
-
-        //Option 1, only checks onButtonPressed
         if (JS_IO.btnRampShooter.onButtonPressed()) {
             state = shooterToggle ? 1 : 0;
             shooterToggle = !shooterToggle;
@@ -138,11 +129,10 @@ public class Shooter {
     public static void cmdUpdate(double spd, boolean cmdVel) { // control through velocity or percent
         if (cmdVel) { // Math.abs(spd) * rpmToTpc
             shooter.set(ControlMode.Velocity, Math.abs(spd) * rpmToTpc);
-            SmartDashboard.putNumber("test", shooter.getClosedLoopTarget());
         } else {
             shooter.set(ControlMode.PercentOutput, Math.abs(spd));
         }
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 > 100) { // if not running, keep hood down
+        if (shooter.getSelectedSensorVelocity() * 600 / 47 > 2000) { // if not running, keep hood down
             ballHood.set(true);
         } else {
             ballHood.set(false);
@@ -167,7 +157,7 @@ public class Shooter {
         rpmChoose.addOption("RPM 3", rpmThree);
         rpmChoose.addOption("RPM 4", rpmThree);
         SmartDashboard.putNumber("Shooter State", state);
-        SmartDashboard.putNumber("FlyWheel Encoder", shooter.getSelectedSensorPosition());
+        SmartDashboard.putNumber("FlyWheel Encoder", encSh.ticks());
         SmartDashboard.putNumber("FlyWheel Velocity", shooter.getSelectedSensorVelocity());
         SmartDashboard.putNumber("Flywheel RPM", shooter.getSelectedSensorVelocity() * 600 / 47);
         SmartDashboard.putBoolean("Shooter On", ((state == 1) ? true : false));

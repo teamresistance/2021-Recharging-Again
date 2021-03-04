@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.Encoder;
 import frc.io.hdw_io.IO;
 import frc.io.joysticks.JS_IO;
 import frc.util.PropMath;
@@ -39,6 +40,8 @@ public class Drive {
     private static TalonSRX right = IO.drvMasterTSRX_R;
     private static VictorSPX leftSlave = IO.drvFollowerVSPX_L;
     private static VictorSPX rightSlave = IO.drvFollowerVSPX_R;
+    private static Encoder encL = IO.drvEnc_L;
+    private static Encoder encR = IO.drvEnc_R;
 
     // Assignments used by DiffDrv. Slaves sent same command.
     private static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
@@ -48,21 +51,7 @@ public class Drive {
     private static double[] strCmd;
     private static double hdgFB;
 
-    private static double enc_L;
-
-    private static double enc_R;
-
-    private static double dist_L;
-
-    private static double distTPF_L;
-
-    private static double dist_R;
-
-    private static double distTPF_R;
-
     private static double dist_Avg;
-
-    private static double distFB;
 
     private static double hdgOut;
 
@@ -159,14 +148,14 @@ public class Drive {
             // TODO: This doesn't work. Talons followers don't work in Diff Drive.
             case 3: // hold 0
                 steer.steerTo(0, 100.0, 0.0);
-                strCmd = steer.update(hdgFB, dist_Avg);
+                strCmd = steer.update(hdgFB, distFB());
                 hdgOut = strCmd[0];
                 diffDrv_M.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
                 diffDrv_S.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
                 break;
             case 4: // hold 180
                 steer.steerTo(180, 100.0, 0.0);
-                strCmd = steer.update(hdgFB, dist_Avg);
+                strCmd = steer.update(hdgFB, distFB());
                 hdgOut = strCmd[0];
                 diffDrv_M.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
                 diffDrv_S.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
@@ -181,20 +170,14 @@ public class Drive {
     public static void sdbUpdate() {
         SmartDashboard.putNumber("Driver State", state);
         scale = SmartDashboard.getNumber("Drive Scale", -0.5);
-        SmartDashboard.putNumber("Right Drive Enc", right.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Left Drive Enc", left.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Right Drive Enc", encL.ticks());
+        SmartDashboard.putNumber("Left Drive Enc", encR.ticks());
         SmartDashboard.putBoolean("scaled", scaled);
         SmartDashboard.putBoolean("inverted", inverted);
     }
 
     public static int getState() {
         return state;
-    }
-
-    public static void otherUpdate() {
-        hdgFB = PropMath.normalizeTo180(IO.navX.getAngle());
-        distFB = calcDist();
-
     }
 
     public static void cmdUpdate(double lSpeed, double rSpeed) {
@@ -206,12 +189,8 @@ public class Drive {
         // rightSlave.set(ControlMode.PercentOutput, rSpeed);
     }
 
-    private static double calcDist() {
-        enc_L = left.getSelectedSensorPosition();
-        enc_R = right.getSelectedSensorPosition();
-        dist_L = enc_L / distTPF_L;
-        dist_R = enc_R / distTPF_R;
-        dist_Avg = (dist_L + dist_R) / 2.0;
+    private static double distFB() {
+        dist_Avg = (encL.feet() + encR.feet()) / 2.0;
         return dist_Avg;
     }
 }
