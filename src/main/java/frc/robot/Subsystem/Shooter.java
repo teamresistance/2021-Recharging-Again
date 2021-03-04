@@ -52,11 +52,11 @@ public class Shooter {
     public static void init() {
         SmartDashboard.putNumber("kP", kP);
         SmartDashboard.putNumber("kF", kF);
-        SmartDashboard.putNumber("setpoint RPM", setpointRPM);
-        SmartDashboard.putNumber("RPM 1", rpmOne);
-        SmartDashboard.putNumber("RPM 2", rpmTwo);
-        SmartDashboard.putNumber("RPM 3", rpmThree);
-        SmartDashboard.putNumber("RPM 4", rpmFour);
+        SmartDashboard.putNumber("Shooter/setpoint RPM", setpointRPM);
+        SmartDashboard.putNumber("Shooter/RPM 1", rpmOne);
+        SmartDashboard.putNumber("Shooter/RPM 2", rpmTwo);
+        SmartDashboard.putNumber("Shooter/RPM 3", rpmThree);
+        SmartDashboard.putNumber("Shooter/RPM 4", rpmFour);
         ballHood.set(false);
         shooter.config_kF(0, kF);
         shooter.config_kP(0, kP);
@@ -79,8 +79,8 @@ public class Shooter {
         rpmChoose.addOption("RPM 1", rpmOne);
         rpmChoose.addOption("RPM 2", rpmTwo);
         rpmChoose.addOption("RPM 3", rpmThree);
-        rpmChoose.addOption("RPM 4", rpmThree);
-        SmartDashboard.putData("RPM Selection", rpmChoose);
+        rpmChoose.addOption("RPM 4", rpmFour);
+        SmartDashboard.putData("Shooter/RPM Selection", rpmChoose);
     }
 
     /**
@@ -88,9 +88,14 @@ public class Shooter {
      * of a JS button but can be caused by other events.
      */
     private static void determ() {
+        // if (JS_IO.btnRampShooter.onButtonPressed()) {
+        //     state = shooterToggle ? 1 : 0;
+        //     shooterToggle = !shooterToggle;
+        // }
+
+        // 2nd option
         if (JS_IO.btnRampShooter.onButtonPressed()) {
-            state = shooterToggle ? 1 : 0;
-            shooterToggle = !shooterToggle;
+            state = state != 1 ? 1 : 0;
         }
 
         if (JS_IO.allStop.onButtonPressed())
@@ -102,11 +107,10 @@ public class Shooter {
         determ();
 
         switch (state) {
-            case 0: // off
+            case 0: // off - percentoutput (so that no negative power is sent to the motor)
                 cmdUpdate(0, false);
                 break;
             case 1: // on
-                    // shooter.set(ControlMode.Velocity, 300);
                 shootRPM = rpmChoose.getSelected();
                 cmdUpdate(shootRPM, true);
 
@@ -132,6 +136,7 @@ public class Shooter {
         } else {
             shooter.set(ControlMode.PercentOutput, Math.abs(spd));
         }
+
         if (shooter.getSelectedSensorVelocity() * 600 / 47 > 2000) { // if not running, keep hood down
             ballHood.set(true);
         } else {
@@ -147,15 +152,15 @@ public class Shooter {
         kP = SmartDashboard.getNumber("kP", kP);
         shooter.config_kF(0, kF);
         shooter.config_kP(0, kP);
-        setpointRPM = (int) SmartDashboard.getNumber("setpoint RPM", 4000);
-        rpmOne = (int) SmartDashboard.getNumber("RPM 1", rpmOne);
-        rpmTwo = (int) SmartDashboard.getNumber("RPM 2", rpmTwo);
-        rpmThree = (int) SmartDashboard.getNumber("RPM 3", rpmThree);
-        rpmFour = (int) SmartDashboard.getNumber("RPM 4", rpmFour);
+        setpointRPM = (int) SmartDashboard.getNumber("Shooter/setpoint RPM", 4000);
+        rpmOne = (int) SmartDashboard.getNumber("Shooter/RPM 1", rpmOne);
+        rpmTwo = (int) SmartDashboard.getNumber("Shooter/RPM 2", rpmTwo);
+        rpmThree = (int) SmartDashboard.getNumber("Shooter/RPM 3", rpmThree);
+        rpmFour = (int) SmartDashboard.getNumber("Shooter/RPM 4", rpmFour);
         rpmChoose.addOption("RPM 1", rpmOne);
         rpmChoose.addOption("RPM 2", rpmTwo);
         rpmChoose.addOption("RPM 3", rpmThree);
-        rpmChoose.addOption("RPM 4", rpmThree);
+        rpmChoose.addOption("RPM 4", rpmFour);
         SmartDashboard.putNumber("Shooter State", state);
         SmartDashboard.putNumber("FlyWheel Encoder", encSh.ticks());
         SmartDashboard.putNumber("FlyWheel Velocity", shooter.getSelectedSensorVelocity());

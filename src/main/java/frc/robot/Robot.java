@@ -116,7 +116,7 @@ public class Robot extends TimedRobot {
     Injector.update();
     Turret.update();
     Drive.update();
-    LimeLight.sdbUpdate();
+    LimeLight.update(); // Changed from sbdUpdate - AS
     RPI.sdbUpdate();
     //Drive2.update();
   }
