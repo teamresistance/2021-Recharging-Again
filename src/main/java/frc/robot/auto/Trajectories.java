@@ -116,10 +116,11 @@ public class Trajectories {
     public static AutoFunction[] getSlalom(double pwr) {
         AutoFunction traj[] = {
             new PointNTurn(-30, pwr, 4.3),
-            new PointNTurn(0,pwr, 9.6),
+            new PointNTurn(0, pwr, 9.6),
             new PointNTurn(30, pwr, 6.2),
             new PointNTurn(-30, pwr, 5),
             new PointNTurn(-135, pwr, 5),
+            new PointNTurn(135, pwr, 6.2),
             new PointNTurn(180, pwr, 9.6),
             new PointNTurn(-135, pwr, 4.3)
         };
