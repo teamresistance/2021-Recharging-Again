@@ -13,19 +13,16 @@ public class AutoSelector {
     public static void init(int sel) {
         switch (sel) {
             case 1:
-                path = new Auto(Trajectories.getCross(70.0));
+                path = new Auto(Trajectories.getSlalom(65));
                 break;
             case 2:
                 path = new Auto(Trajectories.getSquare(70.0));
-                break;
-            case 3:
-                path = new Auto(Trajectories.getOtherCross(70.0));
                 break;
             default:
                 path = new Auto(Trajectories.getEmpty(0));
                 break;
         }
-        SmartDashboard.putNumber("autoselector selection",selection);
+        SmartDashboard.putNumber("autoselector selection",sel);
         path.init();
 
         SmartDashboard.putBoolean("path initialized", true);

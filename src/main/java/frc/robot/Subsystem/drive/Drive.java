@@ -172,6 +172,8 @@ public class Drive {
         scale = SmartDashboard.getNumber("Drive Scale", -0.5);
         SmartDashboard.putNumber("Right Drive Enc", encL.ticks());
         SmartDashboard.putNumber("Left Drive Enc", encR.ticks());
+        SmartDashboard.putNumber("dist L", encL.feet());
+        SmartDashboard.putNumber("dist R", encR.feet());
         SmartDashboard.putBoolean("scaled", scaled);
         SmartDashboard.putBoolean("inverted", inverted);
     }

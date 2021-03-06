@@ -167,7 +167,7 @@ public class Auto {
     }
 
     private static double distFB() {
-        return (encL.feet() + encR.feet() / 2.0);
+        return (encL.feet() + encR.feet()) / 2.0;
     }
 
     private static double hdgFB() {

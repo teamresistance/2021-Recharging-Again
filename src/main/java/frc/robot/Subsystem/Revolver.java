@@ -56,9 +56,10 @@ public class Revolver {
         if (JS_IO.btnFireShooter.isDown())
             state = 11; // Unload
 
-        if (JS_IO.btnSlowFire.isDown()) {
-            state = 14;
-            slowFireCnt = 0;
+        //single fire test
+        if (JS_IO.btnSlowFire.onButtonPressed()) {
+            state = 25;
+            //slowFireCnt = 0;
         }
 
         if (JS_IO.btnStop.isDown())
@@ -72,6 +73,7 @@ public class Revolver {
         if (Snorfler.hasBall() && state != 1 && !isFull) {
             state = 1; // Load
         }
+
 
         if (IO.revolver_HAA && state < 90) { // jammed Ball
             state = 90; // Clear jammed ball
@@ -103,7 +105,7 @@ public class Revolver {
                     state = 19;
                 }
                 break;
-            case 19: //settling time????
+            case 19: // settling time????
                 cmdUpdate(0);
                 if (delayTimer.hasExpired(0.1, state) && !atOneRevolution.get()) {
                     state = 4;
@@ -225,45 +227,30 @@ public class Revolver {
             // }
             // break;
 
-            // // ------------ Single Fire -------------------
-            // case 25:
-            // if (Shooter.isAtSpeed() && Injector.isRunning()) {
-            // state++;
-            // } // end at state 4??
-            // break;
-            // case 26:
-            // cmdUpdate(unloadPct);
-            // if (delayTimer.hasExpired(1, state) && atOneRevolution.get()) {
-            // hasShot = true;
-            // state++;
-            // }
-            // case 27:
-            // cmdUpdate(loadPct);
-            // if (atOneRevolution.get()) {
-            // hasShot = false;
-
-            // if (isFull()) {
-            // isFull = false;
-            // state = 30;
-            // } else {
-            // state = 40;
-            // }
-            // }
-            // break;
-            // case 40:
-            //     cmdUpdate(0.0);
-            //     if (nextSpaceOpen.get()) {
-            //         state = 41;
-            //     }
-            //     break;
-            // case 41:
-            //     cmdUpdate(loadPct);
-            //     if (nextSpaceOpen.get() && atOneRevolution.get()) {
-            //         state = 40;
-            //     } else {
-            //         state = 0;
-            //     }
-            //     break;
+            // ------------ Single Fire -------------------
+            case 25:
+                if (Shooter.isAtSpeed() && Injector.isRunning()) {
+                    state++;
+                } // end at state 4??
+                break;
+            case 26:
+                cmdUpdate(unloadPct);
+                if (delayTimer.hasExpired(.3, state) && atOneRevolution.get()) {
+                    hasShot = true;
+                    state++;
+                }
+            case 27:
+                cmdUpdate(loadPct);
+                if (atOneRevolution.get() && delayTimer.hasExpired(.3, state)) {
+                    hasShot = false;
+                    if (isFull()) {
+                        isFull = false;
+                        state = 30;
+                    } else {
+                        state = 30;
+                    }
+                }
+                break;
             // ------------ Reindex for missed slot -------------------
             case 30: // reindex, Check for open slot
                 cmdUpdate(0.0);
