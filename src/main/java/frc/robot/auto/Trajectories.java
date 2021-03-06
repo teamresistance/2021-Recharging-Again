@@ -98,4 +98,32 @@ public class Trajectories {
         AutoFunction traj[] = { new CurveTurn(.7, .8, 10) };
         return traj;
     }
+
+    // public static double[][] getSlalom(double pwr) {
+    //     double traj[][] = {
+    //         {-30.0, pwr, 4.3}, //Go to pt 1 (8' x 5')
+    //         {0, pwr, 9.6}, //Go to pt 2 (9' x 7')
+    //         {30, pwr, 6.2}, //Go to pt 3 (15' x 7'11")
+    //         {-30, pwr, 5},
+    //         {-135, pwr, 5}, //Go to pt 4 (19' x 7'6")
+    //         {135, pwr, 6.2}, //Go to pt 5 (22'6" x 5')
+    //         {180, pwr, 9.6},
+    //         {-135, pwr, 4.3}
+    //     };
+    //  return traj;
+    // }
+
+    public static AutoFunction[] getSlalom(double pwr) {
+        AutoFunction traj[] = {
+            new PointNTurn(-30, pwr, 4.3),
+            new PointNTurn(0,pwr, 9.6),
+            new PointNTurn(30, pwr, 6.2),
+            new PointNTurn(-30, pwr, 5),
+            new PointNTurn(-135, pwr, 5),
+            new PointNTurn(180, pwr, 9.6),
+            new PointNTurn(-135, pwr, 4.3)
+        };
+        return traj;
+    }
+    
 }

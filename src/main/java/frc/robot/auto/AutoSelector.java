@@ -24,7 +24,7 @@ public class AutoSelector {
                 path = new Auto(Trajectories.getOtherCross(70.0));
                 break;
             case 4:
-                path2 = new Auto2(Trajectories.getTest(70.0));
+                path2 = new Auto2(Trajectories.getSlalom(70.0));
                 break;
             default:
                 path = new Auto(Trajectories.getEmpty(0));

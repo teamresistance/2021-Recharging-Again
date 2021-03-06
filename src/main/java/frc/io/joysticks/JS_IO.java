@@ -207,5 +207,22 @@ public class JS_IO {
         axLeftDrive.setAxis(null, 0);
         axRightDrive.setAxis(null, 0);
         axTurretRot.setAxis(null, 0);
+
+        
+        btnScaledDrive.setButton(null, 0); //scale the drive
+        btnInvOrientation.setButton(null, 0); //invert the orientation of the robot (joystick: forwards becomes backwards for robot and same for backwards)
+        btnHoldZero.setButton(null, 0);
+        btnHold180.setButton(null, 0);    
+        btnRampShooter.setButton(null, 0);
+        btnFireShooter.setButton(null, 0);
+        btnSlowFire.setButton(null, 0);
+        btnIndex.setButton(null, 0);
+        btnLowerSnorfler.setButton(null, 0);
+        btnReverseSnorfler.setButton(null, 0);
+        btnLimeAim.setButton(null, 0);
+        btnLimeSearch.setButton(null, 0);
+        btnClimb.setButton(null, 0);
+        btnClimbOFF.setButton(null, 0);    
+        //limeLightOnOff.setButton(null, 0);
     }
 }

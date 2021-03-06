@@ -34,8 +34,10 @@ public class IO {
     public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1); // Cmds left wheels. Includes encoders
     public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
     public static final double drvMasterTPF_L = 385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
-    public static final double drvMasterTPF_R = 385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
-
+    public static final double drvMasterTPF_R = -385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
+    public static Encoder drvEnc_L = new Encoder(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
+    public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
+    
     public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
     public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
 
@@ -43,7 +45,8 @@ public class IO {
     // public static TalonSRX shooterTSRX = new TalonSRX(9); //Shooter motor.
     // Includes encoder
 
-    public static TalonSRX shooterTSRX = new TalonSRX(9);
+    public static WPI_TalonSRX shooterTSRX = new WPI_TalonSRX(9);
+    public static Encoder shooter_Encoder = new Encoder(shooterTSRX, 0);
     public static ISolenoid shooterHoodUp = new InvertibleSolenoid(22, 4);
 
     // Turret-- LL defines itself
@@ -117,13 +120,15 @@ public class IO {
         // drvFollowerVSPX_R[i].set(ControlMode.Follower,
         // drvMasterTSRX_R.getDeviceID());
 
+        drvMasterTSRX_L.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+        drvMasterTSRX_R.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
     }
 
     // Shooter, Inject & Pikup Initialize
     public static void motorsInit() {
         shooterTSRX.configFactoryDefault();
         shooterTSRX.setInverted(false);
-        shooterTSRX.setNeutralMode(NeutralMode.Coast);
+        shooterTSRX.setNeutralMode(NeutralMode.Brake);
 
         injector4Whl.configFactoryDefault();
         injector4Whl.setInverted(true);
@@ -159,5 +164,10 @@ public class IO {
             if (revTimer.hasExpired(4, Revolver.getState()))
                 revolver_HAA = true;
         }
+    }
+
+    public static void follow() {
+        drvFollowerVSPX_L.follow(drvMasterTSRX_L);
+        drvFollowerVSPX_R.follow(drvMasterTSRX_R);
     }
 }
