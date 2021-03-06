@@ -7,8 +7,8 @@ import frc.io.joysticks.JS_IO;
 
 public class LimeLight {
     private static NetworkTable limeTable = NetworkTableInstance.getDefault().getTable("limelight");
-    private static double ledmode = 0, cammode = 0, pipeline = 0;
-    private static boolean limeLightToggle = false; // Turns green light on and off so Robert is not blinded - AS
+    private static double ledmode = 0, cammode = 0, pipeline = 1;
+    private static boolean limeLightToggle = true; // Turns green light on and off so Robert is not blinded - AS
     public static int state = 0;
 
     public static void init() {
@@ -16,6 +16,7 @@ public class LimeLight {
         SmartDashboard.putNumber("led mode", ledmode);
         SmartDashboard.putNumber("cam mode", cammode);
         SmartDashboard.putNumber("pipeline", pipeline);
+        state = 0;
     }
 
     public static boolean llHasTarget() {
@@ -62,7 +63,7 @@ public class LimeLight {
     }
 
     public static void setLEDOff(){
-        limeTable.getEntry("ledmode").setNumber(0);
+        limeTable.getEntry("ledMode").setNumber(1);
     }
 
     // set vision (0) or driver mode (1)
@@ -113,6 +114,7 @@ public class LimeLight {
         SmartDashboard.putNumber("limelight x offset", getLLX());
         SmartDashboard.putNumber("limelight y offset", getLLY());
         SmartDashboard.putNumber("limelight percent area", getLLArea() * 100);
+        SmartDashboard.putNumber("LL state", state);
 
         cammode = SmartDashboard.getNumber("cam mode", cammode);
         setCamMode();

@@ -112,7 +112,6 @@ public class Robot extends TimedRobot {
     Snorfler.update();
     Revolver.update();
     Shooter.update();
-    IO.shooterTSRX.set(ControlMode.Velocity, 500);
     Injector.update();
     Turret.update();
     Drive.update();

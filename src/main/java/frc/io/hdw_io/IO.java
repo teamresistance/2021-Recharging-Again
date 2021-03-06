@@ -34,7 +34,7 @@ public class IO {
     public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1); // Cmds left wheels. Includes encoders
     public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
     public static final double drvMasterTPF_L = 385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
-    public static final double drvMasterTPF_R = 385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
+    public static final double drvMasterTPF_R = -385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
     public static Encoder drvEnc_L = new Encoder(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
     public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
 
