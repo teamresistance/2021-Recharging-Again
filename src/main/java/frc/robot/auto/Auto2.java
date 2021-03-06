@@ -26,7 +26,7 @@ public class Auto2 {
         x = 0;
         overallFin = false;
         IO.navX.reset();
-    }
+    } 
 
     public void execute() {
         switch (autoStep) {

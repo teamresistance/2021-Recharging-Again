@@ -94,7 +94,7 @@ public class Auto {
                 if (prvState != state) {
                     steer.steerTo(path[trajIdx]);
                     resetDist();
-                } else {
+                } else { 
                     // Calc heading & dist output. rotation X, speed Y
                     strCmd = steer.update(hdgFB, dist_Avg);
                     hdgOut = strCmd[0]; // Get hdg output, Y

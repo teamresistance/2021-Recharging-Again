@@ -72,6 +72,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    Revolver.init();
     SmartDashboard.putNumber("choice in Robot", choice);
     AutoSelector.init(choice);
     started = false;
@@ -80,6 +81,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    Revolver.update();
     SmartDashboard.putNumber("state in Robot", x);
     switch (x) {
       case 0:
