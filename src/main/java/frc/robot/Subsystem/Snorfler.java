@@ -21,8 +21,8 @@ public class Snorfler {
     private static Timer startUpTimer;
     private static boolean startUp;
 
-    private static double feederSpeed = .7;
-    private static double loaderSpeed = .7;
+    public static double feederSpeed = .7;
+    public static double loaderSpeed = .7;
 
     public static void init() {
 
@@ -155,7 +155,7 @@ public class Snorfler {
 
     }
 
-    private static void cmdUpdate(boolean snorfOuterSoleOut, boolean snorfInnerSoleOut, double snorfFeederSpd,
+    public static void cmdUpdate(boolean snorfOuterSoleOut, boolean snorfInnerSoleOut, double snorfFeederSpd,
             double snorfLoaderSpd) {
         snorfExtendV.set(snorfOuterSoleOut);
 
