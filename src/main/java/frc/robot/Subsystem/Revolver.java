@@ -235,13 +235,13 @@ public class Revolver {
                 break;
             case 26:
                 cmdUpdate(unloadPct);
-                if (delayTimer.hasExpired(.3, state) && atOneRevolution.get()) {
+                if (atOneRevolution.get()) {
                     hasShot = true;
                     state++;
                 }
             case 27:
                 cmdUpdate(loadPct);
-                if (atOneRevolution.get() && delayTimer.hasExpired(.3, state)) {
+                if (atOneRevolution.get() && delayTimer.hasExpired(.25, state)) {
                     hasShot = false;
                     if (isFull()) {
                         isFull = false;
