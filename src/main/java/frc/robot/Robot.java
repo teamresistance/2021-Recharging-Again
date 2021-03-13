@@ -35,11 +35,14 @@ public class Robot extends TimedRobot {
   private SendableChooser<Integer> chooser = new SendableChooser<Integer>();
   private int defaultAuto = 99;
   private int slalom = 1;
-  private int square = 2;
-  private int otherCross = 3;
-  private int test = 4;
+  private int barrel = 2;
+  private int bounce = 3;
+  private int rPathA = 4;
+  private int bPathA = 5;
+  private int rPathB = 6;
+  private int bPathB = 7;
+  private int square = 20;
   private int choice;
-  private boolean started;
   private int x;
 
   /**
@@ -50,14 +53,18 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     IO.init();
     JS_IO.init();
-    
+
     choice = 0;
     chooser = new SendableChooser<Integer>();
     chooser.setDefaultOption("Off (default)", defaultAuto);
     chooser.addOption("Slalom", slalom);
+    chooser.addOption("Barrel", barrel);
+    chooser.addOption("Bounce", bounce);
+    chooser.addOption("Red Path A", rPathA);
+    chooser.addOption("Blue Path A", bPathA);
+    chooser.addOption("Red Path B", rPathB);
+    chooser.addOption("Blue Path B", bPathB);
     chooser.addOption("Square", square);
-    chooser.addOption("Other Cross", otherCross);
-    chooser.addOption("test", test);
     SmartDashboard.putData("Auto Selection", chooser);
   }
 
@@ -75,7 +82,6 @@ public class Robot extends TimedRobot {
     Revolver.init();
     SmartDashboard.putNumber("choice in Robot", choice);
     AutoSelector.init(choice);
-    started = false;
     x = 0;
   }
 
@@ -86,7 +92,7 @@ public class Robot extends TimedRobot {
     switch (x) {
       case 0:
         AutoSelector.execute();
-        if (AutoSelector.finished(false)) {
+        if (AutoSelector.finished()) {
           x++;
         }
         break;
@@ -98,15 +104,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-     Snorfler.init();
-     Revolver.init();
+    Snorfler.init();
+    Revolver.init();
     Shooter.init();
-     Injector.init();
-     Drive.init();
+    Injector.init();
+    Drive.init();
     Turret.init();
-    // //Drive2.init();
-     LimeLight.init();
-     RPI.init();
+    //Drive2.init();
+    LimeLight.init();
+    RPI.init();
   }
 
   @Override
@@ -120,7 +126,7 @@ public class Robot extends TimedRobot {
     Drive.update();
     LimeLight.update(); // Changed from sbdUpdate - AS
     RPI.sdbUpdate();
-    //Drive2.update();
+    // Drive2.update();
   }
 
   @Override
