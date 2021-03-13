@@ -36,7 +36,8 @@ public class Robot extends TimedRobot {
   private int defaultAuto = 99;
   private int slalom = 1;
   private int square = 2;
-  //private int otherCross = 3;
+  private int otherCross = 3;
+  private int test = 4;
   private int choice;
   private boolean started;
   private int x;
@@ -55,7 +56,8 @@ public class Robot extends TimedRobot {
     chooser.setDefaultOption("Off (default)", defaultAuto);
     chooser.addOption("Slalom", slalom);
     chooser.addOption("Square", square);
-    //chooser.addOption("Other Cross", otherCross);
+    chooser.addOption("Other Cross", otherCross);
+    chooser.addOption("test", test);
     SmartDashboard.putData("Auto Selection", chooser);
   }
 
@@ -70,6 +72,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    Revolver.init();
     SmartDashboard.putNumber("choice in Robot", choice);
     AutoSelector.init(choice);
     started = false;
@@ -78,12 +81,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    
+    Revolver.update();
     SmartDashboard.putNumber("state in Robot", x);
     switch (x) {
       case 0:
         AutoSelector.execute();
-        if (AutoSelector.finished()) {
+        if (AutoSelector.finished(false)) {
           x++;
         }
         break;
@@ -95,15 +98,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    Snorfler.init();
-    Revolver.init();
+     Snorfler.init();
+     Revolver.init();
     Shooter.init();
-    Injector.init();
-    Drive.init();
+     Injector.init();
+     Drive.init();
     Turret.init();
-    //Drive2.init();
-    LimeLight.init();
-    RPI.init();
+    // //Drive2.init();
+     LimeLight.init();
+     RPI.init();
   }
 
   @Override

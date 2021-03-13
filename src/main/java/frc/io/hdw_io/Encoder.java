@@ -15,7 +15,7 @@ public class Encoder {
         talonCtlr = escPort;
         tpf = _tpf;
     }
-    
+  
     public double ticks(){
         return talonCtlr.getSelectedSensorPosition();
     }

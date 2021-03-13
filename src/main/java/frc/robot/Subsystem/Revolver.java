@@ -31,7 +31,8 @@ public class Revolver {
     private static InvertibleDigitalInput ballInSnorfler = IO.snorfHasBall;
     private static InvertibleDigitalInput nextSpaceOpen = IO.revolNextSpaceOpen;
 
-    private static int state = 0;
+    public static int state = 0;
+    private static boolean locked = false;
     private static int ballCnt = 0; // Increment when a ball is loaded. Clear on unload.
     private static boolean isFull = false;
     private static boolean jammedBall = false; // Jammed ball, attempt to clear by reversing
@@ -52,9 +53,9 @@ public class Revolver {
         revolver.set(0.0);
     }
 
-    private static void determ() { // determinator of state
-        if (JS_IO.btnFireShooter.isDown())
-            state = 11; // Unload
+    public static void determ() { // determinator of state
+            if (JS_IO.btnFireShooter.isDown())
+                state = 11; // Unload
 
         //single fire test
         if (JS_IO.btnSlowFire.onButtonPressed()) {

@@ -1,19 +1,20 @@
-package frc.robot.auto;
+package frc.robot.auto.functions;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import org.opencv.core.Point;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.Encoder;
 import frc.io.hdw_io.IO;
-import frc.io.joysticks.JS_IO;
 import frc.robot.Subsystem.drive.Steer;
 import frc.util.PropMath;
 
-public class Auto {
+public class PointNTurn extends AutoFunction {
 
     // Hardware
     private static DifferentialDrive diffDrv = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
@@ -21,38 +22,38 @@ public class Auto {
     private static Encoder encR = IO.drvEnc_R;
 
     // General
-    private static int state;
-    private static int prvState;
-    private static double strCmd[] = { 0.0, 0.0 }; // Cmds returned, X, Y
+    private int state;
+    private int prvState;
+    private double strCmd[] = { 0.0, 0.0 }; // Cmds returned, X, Y
     // Heading Control
-    private static double hdgOut = 0.0; // X (Hdg) output
+    private double hdgOut = 0.0; // X (Hdg) output
     // Distance Control
-    private static double distOut = 0.0; // Y (Fwd) cmd
+    private double distOut = 0.0; // Y (Fwd) cmd
 
     /* [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
-    private static double[][] parms = { { 0.0, -130.0, 3.0, 0.4, 1.0, 0.20 },
+    private double[][] parms = { { 0.0, -130.0, 3.0, 0.4, 1.0, 0.20 },
             /*                       */ { 0.0, 5.5, 0.5, 0.10, 1.0, 0.07 } };
 
-    private static Steer steer; // Used to steer to a hdg with power for distance
+    private Steer steer; // Used to steer to a hdg with power for distance
 
-    // Steer to heading at power for distance.
-    private static int trajIdx; // strCmds Index
+    private boolean finished = false;
+    private double hdg = 0.0;
+    private double pwr = 0.0;
+    private double dist = 0.0;
+    private double traj[] = {};
 
-    private static double[][] path;
-    private static boolean finished = false;
-
-    public Auto(double[][] traj) {
-        path = traj;
+    public PointNTurn(double eHdg, double ePwr, double eDist) {
+        hdg = eHdg;
+        pwr = ePwr;
+        dist = eDist;
     }
 
     public void init() {
-        sdbInit();
-        IO.navX.reset();
+        finished = false;
         resetDist();
         diffDrv.tankDrive(0, 0);
         state = -1;
         prvState = 0;
-        trajIdx = 0;
         finished = false;
         steer = new Steer(parms);
         hdgOut = 0.0;
@@ -61,10 +62,6 @@ public class Auto {
 
     public void execute() {
         update();
-        /*
-         * This rotates to the heading then resets the dist. and starts running out to
-         * the new distance SP.
-         */
         switch (state) {
             case -1:
                 prvState = state;
@@ -72,9 +69,9 @@ public class Auto {
                 break;
             case 0: // Init Trajectory, turn to hdg then (1) ...
                 if (prvState != state) {
-                    steer.steerTo(path[trajIdx]);
+                    steer.steerTo(hdg, pwr, dist);
                     resetDist();
-                } else { 
+                } else {
                     // Calc heading & dist output. rotation X, speed Y
                     strCmd = steer.update(hdgFB(), distFB());
                     hdgOut = strCmd[0]; // Get hdg output, Y
@@ -110,16 +107,8 @@ public class Auto {
                 diffDrv.arcadeDrive(0.0, 0.0);
                 if (prvState != state) {
                     prvState = state; // Let other states see change of state, COS
-                } else {
-                    trajIdx++;
-
-                    if (trajIdx < path.length) {
-                        state = 0;
-                    } else { // Next Traj else finished
-                        state = 3;
-                        break;
-                    }
                 }
+                state++;
                 break;
             case 3:
                 done();
@@ -142,7 +131,7 @@ public class Auto {
     }
 
     private void sdbInit() {
-        SmartDashboard.putNumber("Auto Step", state);
+        SmartDashboard.putNumber("PnT Step", state);
 
         SmartDashboard.putNumber("Hdg Out", hdgOut);
         SmartDashboard.putNumber("Dist Out", distOut);
@@ -163,7 +152,6 @@ public class Auto {
         SmartDashboard.putNumber("Dist A", distFB());
         SmartDashboard.putNumber("Dist FB", distFB());
         SmartDashboard.putNumber("Dist Out", distOut);
-        SmartDashboard.putNumber("Traj Idx", trajIdx);
     }
 
     private static double distFB() {
