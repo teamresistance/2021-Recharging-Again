@@ -131,6 +131,7 @@ public class Shooter {
     }
 
     public static void cmdUpdate(double spd, boolean cmdVel) { // control through velocity or percent
+        shooter.set(ControlMode.Disabled, 0);
         if (cmdVel) { // Math.abs(spd) * rpmToTpc
             shooter.set(ControlMode.Velocity, Math.abs(spd) * rpmToTpc);
         } else {

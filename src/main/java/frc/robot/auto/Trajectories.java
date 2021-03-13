@@ -30,16 +30,33 @@ public class Trajectories {
     // return traj;
     // }
 
+    // public static AutoFunction[] getSlalom(double pwr) {
+    //     AutoFunction traj[] = {
+    //         new PointNTurn(0, pwr, 2.4), 
+    //         new PointNTurn(-47, pwr, 6), 
+    //         new PointNTurn(0, pwr, 9.2),
+    //         new PointNTurn(53, pwr, 6), 
+    //         new PointNTurn(-50, pwr, 3.8), 
+    //         new PointNTurn(-135, pwr, 3.8),
+    //         new PointNTurn(135, pwr, 7.5), 
+    //         new PointNTurn(180, pwr, 9.2), 
+    //         new PointNTurn(-135, pwr, 4.3) 
+    //     };
+    //     return traj;
+    // }
+
     public static AutoFunction[] getSlalom(double pwr) {
-        AutoFunction traj[] = { 
-            new PointNTurn(-30, pwr, 4.3), 
-            new PointNTurn(0, pwr, 9.6),
-            new PointNTurn(30, pwr, 6.2), 
-            new PointNTurn(-30, pwr, 5), 
-            new PointNTurn(-135, pwr, 5),
-            new PointNTurn(135, pwr, 6.2), 
-            new PointNTurn(180, pwr, 9.6), 
-            new PointNTurn(-135, pwr, 4.3) 
+        AutoFunction traj[] = {
+            new PointNTurn(0, pwr, 2.5), 
+            new PointNTurn(-49, pwr, 5.57), 
+            new PointNTurn(0, pwr, 8.2),
+            new PointNTurn(55, pwr, 5.87), 
+            new PointNTurn(-45, pwr, 4.14), 
+            new PointNTurn(-135, pwr, 3.54),
+            new PointNTurn(130, pwr, 6.57), 
+            new PointNTurn(180, pwr, 8.3), 
+            new PointNTurn(-125, pwr, 5.57),
+            new PointNTurn(180, pwr, 2.5)
         };
         return traj;
     }
@@ -63,19 +80,39 @@ public class Trajectories {
 
     // }
 
-    public static AutoFunction[] getBarrel(double pwr) {
+    // public static AutoFunction[] getBarrel(double pwr) {
+    //     AutoFunction[] traj = {
+    //         new PointNTurn(0, pwr, 8.75),
+    //         new PointNTurn(90, pwr, 2.5),
+    //         new PointNTurn(180, pwr, 2.5),
+    //         new PointNTurn(-90, pwr, 3.75),
+    //         new PointNTurn(0, pwr, 10.5),
+    //         new PointNTurn(-90, pwr, 3.75),
+    //         new PointNTurn(-180, pwr, 4.25),
+    //         new PointNTurn(45, pwr, 10.6),
+    //         new PointNTurn(-56.3, pwr, 4.5),
+    //         new PointNTurn(180, pwr, 22.5),
+    //      };
+    //     return traj;
+    // }
+
+
+    public static AutoFunction[] getBarrel(double pwr){
         AutoFunction[] traj = {
-            new PointNTurn(0, pwr, 8.75),
-            new PointNTurn(90, pwr, 2.5),
-            new PointNTurn(180, pwr, 2.5),
-            new PointNTurn(-90, pwr, 3.75),
-            new PointNTurn(0, pwr, 10.5),
-            new PointNTurn(-90, pwr, 3.75),
-            new PointNTurn(-180, pwr, 4.25),
-            new PointNTurn(45, pwr, 10.6),
-            new PointNTurn(-56.3, pwr, 4.5),
-            new PointNTurn(180, pwr, 22.5),
-         };
+            new PointNTurn(0,pwr,8.4),
+            new PointNTurn(45,pwr,3.2),
+            new PointNTurn(135,pwr, 3.6),
+            new PointNTurn(-135, pwr, 3.54), //
+            new PointNTurn(-45,pwr, 3.54), //fix these two angles bc its going out of bounds
+            new PointNTurn(0,pwr, 5.8),
+            new PointNTurn(-45, pwr, 3.54),
+            new PointNTurn(-135, pwr, 3.54),
+            new PointNTurn(135, pwr, 4.1),
+            new PointNTurn(45, pwr, 9.7),
+            new PointNTurn(-45, pwr, 3.7),
+            new PointNTurn(-135, pwr, 3.54),
+            new PointNTurn(177, pwr, 20)
+        };
         return traj;
     }
 

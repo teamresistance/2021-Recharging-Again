@@ -50,6 +50,8 @@ public class PointNTurn extends AutoFunction {
     }
 
     public void init() {
+        IO.drvMasterTSRX_L.set(ControlMode.Disabled, 0);
+        IO.drvMasterTSRX_R.set(ControlMode.Disabled, 0);
         finished = false;
         resetDist();
         diffDrv.tankDrive(0, 0);

@@ -61,8 +61,9 @@ public class CurveTurn extends AutoFunction {
 
     public void done() {
         finished = true;
-        left.set(ControlMode.PercentOutput, 0);
-        right.set(ControlMode.PercentOutput, 0);
+        diffDrv.tankDrive(0, 0);
+        left.set(ControlMode.Disabled, 0);
+        right.set(ControlMode.Disabled, 0;);
     }
 
     public void update() {

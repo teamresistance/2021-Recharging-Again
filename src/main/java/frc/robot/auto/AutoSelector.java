@@ -91,4 +91,8 @@ public class AutoSelector {
 
     }
 
+    public static void disable() {
+        path.disable();
+    }
+
 }

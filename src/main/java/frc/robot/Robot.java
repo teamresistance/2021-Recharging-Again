@@ -104,6 +104,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    AutoSelector.disable();
     Snorfler.init();
     Revolver.init();
     Shooter.init();

@@ -63,6 +63,8 @@ public class Drive {
         scaleToggle = true;
         inverted = false;
         scaled = false;
+        // IO.drvMasterTSRX_L.set(ControlMode.Disabled, 0);
+        // IO.drvMasterTSRX_R.set(ControlMode.Disabled, 0);
     }
 
     // Determine the drive mode.
@@ -150,15 +152,15 @@ public class Drive {
                 steer.steerTo(0, 100.0, 0.0);
                 strCmd = steer.update(hdgFB, distFB());
                 hdgOut = strCmd[0];
-                diffDrv_M.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
-                diffDrv_S.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
+                // diffDrv_M.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
+                // diffDrv_S.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
                 break;
             case 4: // hold 180
                 steer.steerTo(180, 100.0, 0.0);
                 strCmd = steer.update(hdgFB, distFB());
                 hdgOut = strCmd[0];
-                diffDrv_M.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
-                diffDrv_S.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
+                // diffDrv_M.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
+                // diffDrv_S.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
                 break;
             default:
                 cmdUpdate(0, 0);
@@ -183,10 +185,10 @@ public class Drive {
     }
 
     public static void cmdUpdate(double lSpeed, double rSpeed) {
-        left.set(ControlMode.PercentOutput, lSpeed);
-        right.set(ControlMode.PercentOutput, -rSpeed);
-        leftSlave.follow(left);
-        rightSlave.follow(right);
+        // left.set(ControlMode.PercentOutput, lSpeed);
+        // right.set(ControlMode.PercentOutput, -rSpeed);
+        diffDrv_M.tankDrive(lSpeed, rSpeed);
+        IO.follow();
         // leftSlave.set(ControlMode.PercentOutput, lSpeed);
         // rightSlave.set(ControlMode.PercentOutput, rSpeed);
     }

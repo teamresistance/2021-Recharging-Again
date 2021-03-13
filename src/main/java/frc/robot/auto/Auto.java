@@ -2,6 +2,8 @@ package frc.robot.auto;
 
 import javax.xml.namespace.QName;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.robot.auto.functions.*;
@@ -19,6 +21,7 @@ public class Auto {
     }
 
     public void init() {
+        disable();
         for (AutoFunction af : traj) {
             af.init();
         }
@@ -74,6 +77,12 @@ public class Auto {
 
     public boolean finished() {
         return overallFin;
+    }
+
+    public void disable() {
+        IO.drvMasterTSRX_L.set(ControlMode.Disabled, 0);
+        IO.drvMasterTSRX_R.set(ControlMode.Disabled, 0);
+        
     }
 
     public void sdbInit() {
