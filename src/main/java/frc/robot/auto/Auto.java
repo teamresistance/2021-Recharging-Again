@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.Encoder;
 import frc.io.hdw_io.IO;
 import frc.io.joysticks.JS_IO;
 import frc.robot.Subsystem.drive.Steer;
@@ -15,29 +16,17 @@ import frc.util.PropMath;
 public class Auto {
 
     // Hardware
-    private static WPI_TalonSRX right = IO.drvMasterTSRX_R; // right motor
-    private static WPI_TalonSRX left = IO.drvMasterTSRX_L; // left motor
-    private static WPI_VictorSPX rightSlave = IO.drvFollowerVSPX_R;
-    private static WPI_VictorSPX leftSlave = IO.drvFollowerVSPX_L;
-    private static DifferentialDrive diffDrv = new DifferentialDrive(left, right);
-    private static double distTPF_L = IO.drvMasterTPF_L; // Left Ticks per Foot
-    private static double distTPF_R = -IO.drvMasterTPF_R; // Right Ticks per Foot
-
-    private static double enc_L;
-    private static double enc_R;
-    private static double dist_L;
-    private static double dist_R;
-    private static double dist_Avg;
+    private static DifferentialDrive diffDrv = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
+    private static Encoder encL = IO.drvEnc_L;
+    private static Encoder encR = IO.drvEnc_R;
 
     // General
     private static int state;
     private static int prvState;
     private static double strCmd[] = { 0.0, 0.0 }; // Cmds returned, X, Y
     // Heading Control
-    private static double hdgFB = 0.0; // Gyro reading
     private static double hdgOut = 0.0; // X (Hdg) output
     // Distance Control
-    private static double distFB = 0.0; // Dist reading
     private static double distOut = 0.0; // Y (Fwd) cmd
 
     /* [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
@@ -59,23 +48,14 @@ public class Auto {
     public void init() {
         sdbInit();
         IO.navX.reset();
-        left.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-        right.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-        left.set(0);
-        right.set(0);
+        resetDist();
+        diffDrv.tankDrive(0, 0);
         state = -1;
         prvState = 0;
         trajIdx = 0;
-        enc_L = 0;
-        enc_R = 0;
-        dist_L = 0.0;
-        dist_R = 0.0;
-        dist_Avg = 0.0;
         finished = false;
         steer = new Steer(parms);
-        hdgFB = 0.0;
         hdgOut = 0.0;
-        distFB = 0.0;
         distOut = 0.0;
     }
 
@@ -96,7 +76,7 @@ public class Auto {
                     resetDist();
                 } else { 
                     // Calc heading & dist output. rotation X, speed Y
-                    strCmd = steer.update(hdgFB, dist_Avg);
+                    strCmd = steer.update(hdgFB(), distFB());
                     hdgOut = strCmd[0]; // Get hdg output, Y
                     distOut = 0.0; // Get distance output, X
                     // Apply as a arcade joystick input
@@ -113,7 +93,7 @@ public class Auto {
                 break;
             case 1: // steer Auto Heading and Dist
                 // Calc heading & dist output. rotation X, speed Y
-                strCmd = steer.update(hdgFB, dist_Avg);
+                strCmd = steer.update(hdgFB(), distFB());
                 hdgOut = strCmd[0];
                 distOut = strCmd[1];
                 // Apply as a arcade joystick input
@@ -149,8 +129,7 @@ public class Auto {
 
     public void done() {
         finished = true;
-        left.set(ControlMode.PercentOutput, 0);
-        right.set(ControlMode.PercentOutput, 0);
+        diffDrv.tankDrive(0, 0);
     }
 
     public boolean finished() {
@@ -159,10 +138,7 @@ public class Auto {
 
     public void update() {
         sdbUpdate();
-        leftSlave.follow(left);
-        rightSlave.follow(right);
-        hdgFB = PropMath.normalizeTo180(IO.navX.getAngle());
-        distFB = calcDist();
+        IO.follow();
     }
 
     private void sdbInit() {
@@ -170,39 +146,36 @@ public class Auto {
 
         SmartDashboard.putNumber("Hdg Out", hdgOut);
         SmartDashboard.putNumber("Dist Out", distOut);
-        SmartDashboard.putNumber("DistM L", distTPF_L);
-        SmartDashboard.putNumber("DistM R", distTPF_R);
+        SmartDashboard.putNumber("DistM L", encL.tpf());
+        SmartDashboard.putNumber("DistM R", encR.tpf());
     }
 
     private void sdbUpdate() {
         SmartDashboard.putNumber("Auto Step", state); // Set by JS btns
 
-        SmartDashboard.putNumber("Hdg FB", hdgFB);
+        SmartDashboard.putNumber("Hdg FB", hdgFB());
         SmartDashboard.putNumber("Hdg Out", hdgOut);
 
-        SmartDashboard.putNumber("Enc L", enc_L);
-        SmartDashboard.putNumber("Enc R", enc_R);
-        distTPF_L = SmartDashboard.getNumber("DistM L", distTPF_L);
-        distTPF_R = SmartDashboard.getNumber("DistM R", distTPF_R);
-        SmartDashboard.putNumber("Dist L", dist_L);
-        SmartDashboard.putNumber("Dist R", dist_R);
-        SmartDashboard.putNumber("Dist A", dist_Avg);
-        SmartDashboard.putNumber("Dist FB", distFB);
+        SmartDashboard.putNumber("Enc L", encL.ticks());
+        SmartDashboard.putNumber("Enc R", encR.ticks());
+        SmartDashboard.putNumber("Dist L", encL.feet());
+        SmartDashboard.putNumber("Dist R", encR.feet());
+        SmartDashboard.putNumber("Dist A", distFB());
+        SmartDashboard.putNumber("Dist FB", distFB());
         SmartDashboard.putNumber("Dist Out", distOut);
         SmartDashboard.putNumber("Traj Idx", trajIdx);
     }
 
-    private static double calcDist() {
-        enc_L = left.getSelectedSensorPosition();
-        enc_R = right.getSelectedSensorPosition();
-        dist_L = enc_L / distTPF_L;
-        dist_R = enc_R / distTPF_R;
-        dist_Avg = (dist_L + dist_R) / 2.0;
-        return dist_Avg;
+    private static double distFB() {
+        return (encL.feet() + encR.feet()) / 2.0;
+    }
+
+    private static double hdgFB() {
+        return PropMath.normalizeTo180(IO.navX.getAngle());
     }
 
     private static void resetDist() {
-        left.setSelectedSensorPosition(0, 0, 0);
-        right.setSelectedSensorPosition(0, 0, 0);
+        encL.reset();
+        encR.reset();
     }
 }

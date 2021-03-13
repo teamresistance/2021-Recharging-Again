@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 
   private SendableChooser<Integer> chooser = new SendableChooser<Integer>();
   private int defaultAuto = 99;
-  private int cross = 1;
+  private int slalom = 1;
   private int square = 2;
   private int otherCross = 3;
   private int test = 4;
@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
     choice = 0;
     chooser = new SendableChooser<Integer>();
     chooser.setDefaultOption("Off (default)", defaultAuto);
-    chooser.addOption("Cross", cross);
+    chooser.addOption("Slalom", slalom);
     chooser.addOption("Square", square);
     chooser.addOption("Other Cross", otherCross);
     chooser.addOption("test", test);
@@ -98,29 +98,28 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // Snorfler.init();
-    // Revolver.init();
-    // Shooter.init();
-    // Injector.init();
+     Snorfler.init();
+     Revolver.init();
+    Shooter.init();
+     Injector.init();
      Drive.init();
-    // Turret.init();
+    Turret.init();
     // //Drive2.init();
-    // LimeLight.init();
-    // RPI.init();
+     LimeLight.init();
+     RPI.init();
   }
 
   @Override
   public void teleopPeriodic() {
-    // IO.update();
-    // Snorfler.update();
-    // Revolver.update();
-    // Shooter.update();
-    // IO.shooterTSRX.set(ControlMode.Velocity, 500);
-    // Injector.update();
-    // Turret.update();
-     Drive.update();
-    // LimeLight.sdbUpdate();
-    // RPI.sdbUpdate();
+    IO.update();
+    Snorfler.update();
+    Revolver.update();
+    Shooter.update();
+    Injector.update();
+    Turret.update();
+    Drive.update();
+    LimeLight.update(); // Changed from sbdUpdate - AS
+    RPI.sdbUpdate();
     //Drive2.update();
   }
 

@@ -67,6 +67,9 @@ public class JS_IO {
     public static Button btnClimb = new Button();
     public static Button btnClimbOFF = new Button();
 
+    // LimeLight - AS
+    public static Button limeLightOnOff = new Button();
+
     //All
     public static Button allStop = new Button(); // stops all parts of the shooter sequence
     public static Button btnStop = new Button();
@@ -145,12 +148,15 @@ public class JS_IO {
         btnLimeAim.setButton(coJoystick, 10);
 
         //shooting buttons
-        btnRampShooter.setButton(coJoystick, 1);
-        btnFireShooter.setButton(coJoystick, 4);
+        btnRampShooter.setButton(coJoystick, 4);
+        btnFireShooter.setButton(coJoystick, 1);
         btnSlowFire.setButton(coJoystick, 2);
         btnIndex.setButton(coJoystick, 6);
 
         btnStop.setButton(coJoystick, 11);
+
+         // Limelight Buttons - AS
+         limeLightOnOff.setButton(rightJoystick, 2);
 
         // drive2Off.setButton(leftJoystick, 10);
         // drive2Tank.setButton(leftJoystick, 9);
@@ -202,12 +208,10 @@ public class JS_IO {
 
     // ----------- Case Default -----------------
     private static void CaseDefault() {
-
         // All stick axisesssss
         axLeftDrive.setAxis(null, 0);
         axRightDrive.setAxis(null, 0);
         axTurretRot.setAxis(null, 0);
-
         
         btnScaledDrive.setButton(null, 0); //scale the drive
         btnInvOrientation.setButton(null, 0); //invert the orientation of the robot (joystick: forwards becomes backwards for robot and same for backwards)
@@ -223,6 +227,6 @@ public class JS_IO {
         btnLimeSearch.setButton(null, 0);
         btnClimb.setButton(null, 0);
         btnClimbOFF.setButton(null, 0);    
-        //limeLightOnOff.setButton(null, 0);
+        limeLightOnOff.setButton(null, 0);
     }
 }

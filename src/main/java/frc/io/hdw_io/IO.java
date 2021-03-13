@@ -37,7 +37,6 @@ public class IO {
     public static final double drvMasterTPF_R = -385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
     public static Encoder drvEnc_L = new Encoder(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
     public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
-    
     public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
     public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
 

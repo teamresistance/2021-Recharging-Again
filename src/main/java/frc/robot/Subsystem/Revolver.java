@@ -22,10 +22,8 @@ import frc.io.hdw_io.InvertibleSolenoid;
 import frc.io.joysticks.JS_IO;
 import frc.util.Timer;
 
-
 // CHANGES: ONE BANNER SENSOR UNDER(?) THE BALL
 //          BANNER SENSOR ON FEED NOT ON SUCK 
-
 
 public class Revolver {
     private static Victor revolver = IO.revolverRot;
@@ -47,7 +45,6 @@ public class Revolver {
 
     private static Timer delayTimer = new Timer(0.5);
 
-
     public static void init() { // initialze
         hasUnloaded = false;
         hasShot = false;
@@ -57,20 +54,18 @@ public class Revolver {
     }
 
     public static void determ() { // determinator of state
-        if (!locked) {
             if (JS_IO.btnFireShooter.isDown())
                 state = 11; // Unload
-        }
 
-        if (!locked) {
-            if (JS_IO.btnSlowFire.isDown()) {
-                state = 14;
-                slowFireCnt = 0;
-            }
+        //single fire test
+        if (JS_IO.btnSlowFire.onButtonPressed()) {
+            state = 25;
+            //slowFireCnt = 0;
         }
 
         if (JS_IO.btnStop.isDown())
             state = 0;
+
         if (JS_IO.btnIndex.isDown()) {
             ballCnt = 0;
             state = 30;
@@ -79,6 +74,7 @@ public class Revolver {
         if (Snorfler.hasBall() && state != 1 && !isFull) {
             state = 1; // Load
         }
+
 
         if (IO.revolver_HAA && state < 90) { // jammed Ball
             state = 90; // Clear jammed ball
@@ -109,14 +105,12 @@ public class Revolver {
                     cmdUpdate(0.0);
                     state = 19;
                 }
-                ;
                 break;
-            case 19:
+            case 19: // settling time????
                 cmdUpdate(0);
                 if (delayTimer.hasExpired(0.1, state) && !atOneRevolution.get()) {
                     state = 4;
                 }
-                ;
                 break;
             case 4: // Done goto state 0
                 cmdUpdate(0);
@@ -157,7 +151,7 @@ public class Revolver {
                 break;
             case 12: // start unloading (revolver)
                 cmdUpdate(unloadPct);
-                if (delayTimer.hasExpired(1.5, state)) { // waiting for all balls
+                if (delayTimer.hasExpired(3.0, state)) { // waiting for all balls
                     hasUnloaded = true;
                     state++;
                 }
@@ -170,68 +164,69 @@ public class Revolver {
                 }
                 break;
 
-            // ------------ Slow Unloading --------------
+            // // ------------ Slow Unloading --------------
+            // // case 14:
+            // // cmdUpdate(0.0);
+            // // // Turret.isOnTarget() &&
+            // // if (Shooter.isAtSpeed() && Injector.isRunning()) { // if at speed and on
+            // // target
+            // // state++;
+            // // isFull = false;
+            // // }
+            // // break;
+            // // case 15:
+            // // cmdUpdate(.6 * unloadPct);
+            // // if (delayTimer.hasExpired(3.5, state)) { // waiting for all balls
+            // // hasUnloaded = true;
+            // // state++;
+            // // }
+            // // break;
+            // // case 16:
+            // // cmdUpdate(loadPct);
+            // // if (atOneRevolution.get()) {
+            // // hasUnloaded = false;
+            // // state = 0;
+            // // }
+            // // break;
+
+            // // slow fire 2
             // case 14:
             // cmdUpdate(0.0);
             // // Turret.isOnTarget() &&
             // if (Shooter.isAtSpeed() && Injector.isRunning()) { // if at speed and on
             // target
-            // state++;
             // isFull = false;
+            // state++;
             // }
             // break;
             // case 15:
-            // cmdUpdate(.6 * unloadPct);
-            // if (delayTimer.hasExpired(3.5, state)) { // waiting for all balls
+            // cmdUpdate(0.0);
+            // if (slowFireCnt == 5) {
             // hasUnloaded = true;
-            // state++;
+            // state = 18;
+            // } else {
+            // state = 16;
             // }
             // break;
             // case 16:
+            // cmdUpdate(unloadPct);
+            // slowFireCnt++;
+            // state++;
+            // break;
+            // case 17:
+            // cmdUpdate(unloadPct);
+            // if (delayTimer.hasExpired(0.25, state) && atOneRevolution.get()) {
+            // cmdUpdate(0.0);
+            // state = 15;
+            // }
+            // break;
+            // case 18:
             // cmdUpdate(loadPct);
             // if (atOneRevolution.get()) {
             // hasUnloaded = false;
             // state = 0;
             // }
             // break;
-
-            // slow fire 2
-            case 14:
-                cmdUpdate(0.0);
-                // Turret.isOnTarget() &&
-                if (Shooter.isAtSpeed() && Injector.isRunning()) { // if at speed and on target
-                    isFull = false;
-                    state++;
-                }
-                break;
-            case 15:
-                cmdUpdate(0.0);
-                if (slowFireCnt == 5) {
-                    hasUnloaded = true;
-                    state = 18;
-                } else {
-                    state = 16;
-                }
-                break;
-            case 16:
-                cmdUpdate(unloadPct);
-                slowFireCnt++;
-                state++;
-                break;
-            case 17:
-                cmdUpdate(unloadPct);
-                if (delayTimer.hasExpired(0.25, state) && atOneRevolution.get()) {
-                    cmdUpdate(0.0);
-                    state = 15;
-                }
-                break;
-            case 18:
-                cmdUpdate(loadPct);
-                if (atOneRevolution.get()) {
-                    hasUnloaded = false;
-                    state = 0;
-                }
-                break;
 
             // ------------ Single Fire -------------------
             case 25:
@@ -241,35 +236,20 @@ public class Revolver {
                 break;
             case 26:
                 cmdUpdate(unloadPct);
-                if (delayTimer.hasExpired(1, state) && atOneRevolution.get()) {
+                if (atOneRevolution.get()) {
                     hasShot = true;
                     state++;
                 }
             case 27:
                 cmdUpdate(loadPct);
-                if (atOneRevolution.get()) {
+                if (atOneRevolution.get() && delayTimer.hasExpired(.25, state)) {
                     hasShot = false;
-
                     if (isFull()) {
                         isFull = false;
                         state = 30;
                     } else {
-                        state = 40;
+                        state = 30;
                     }
-                }
-                break;
-            case 40:
-                cmdUpdate(0.0);
-                if (nextSpaceOpen.get()) {
-                    state = 41;
-                }
-                break;
-            case 41:
-                cmdUpdate(loadPct);
-                if (nextSpaceOpen.get() && atOneRevolution.get()) {
-                    state = 40;
-                } else {
-                    state = 0;
                 }
                 break;
             // ------------ Reindex for missed slot -------------------
