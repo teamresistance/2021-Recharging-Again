@@ -121,22 +121,40 @@ public class Trajectories {
     }
 
     public static AutoFunction[] getRPathA(double pwr) {
-        AutoFunction[] traj = { };
+        AutoFunction[] traj = {
+            new PointNTurn(0, pwr, 5),
+            new PointNTurn(26, pwr, 5.6),
+            new PointNTurn(-71, pwr, 7.9),
+            new PointNTurn(0, pwr, 12.5)
+         };
         return traj;
     }
 
     public static AutoFunction[] getBPathA(double pwr) {
-        AutoFunction[] traj = { };
+        AutoFunction[] traj = { 
+            new PointNTurn(22, pwr, 13.5),
+            new PointNTurn(-71, pwr, 7.9),
+            new PointNTurn(27, pwr, 11.1)
+        };
         return traj;
     }
 
     public static AutoFunction[] getRPathB(double pwr) {
-        AutoFunction[] traj = { };
+        AutoFunction[] traj = {
+            new PointNTurn(-26, pwr, 5.6),
+            new PointNTurn(45, pwr, 7.1),
+            new PointNTurn(-45, pwr, 7.1),
+            new PointNTurn(-14, pwr, 10.3)
+         };
         return traj;
     }
 
     public static AutoFunction[] getBPathB(double pwr) {
-        AutoFunction[] traj = { };
+        AutoFunction[] traj = {
+            new PointNTurn(11, pwr, 12.7),
+            new PointNTurn(-45, pwr, 7.1),
+            new PointNTurn(45, pwr, 10.6)
+         };
         return traj;
     }
 
