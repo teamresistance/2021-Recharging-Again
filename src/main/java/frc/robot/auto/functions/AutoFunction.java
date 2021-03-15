@@ -10,8 +10,10 @@ public abstract class AutoFunction {
 
 
     public void init() {
-        IO.drvMasterTSRX_L.set(ControlMode.Disabled, 0);
-        IO.drvMasterTSRX_R.set(ControlMode.Disabled, 0);
+        IO.diffDrv_M.tankDrive(0.0, 0.0);
+        IO.follow();
+        // IO.drvMasterTSRX_L.set(ControlMode.Disabled, 0);
+        // IO.drvMasterTSRX_R.set(ControlMode.Disabled, 0);
         sdbInit();
         finished = false;
     }
