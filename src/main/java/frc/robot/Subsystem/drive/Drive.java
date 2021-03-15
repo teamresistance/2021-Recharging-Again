@@ -36,16 +36,17 @@ public class Drive {
     // Don't think will work. Don't think we can do this. May not be able to
     // send cmds to slaves by DiffDrv AND define Followers.
     // Assignments used by ControlMode. Slaves "follow" masters.
-    private static TalonSRX left = IO.drvMasterTSRX_L;
-    private static TalonSRX right = IO.drvMasterTSRX_R;
-    private static VictorSPX leftSlave = IO.drvFollowerVSPX_L;
-    private static VictorSPX rightSlave = IO.drvFollowerVSPX_R;
+    // private static TalonSRX left = IO.drvMasterTSRX_L;
+    // private static TalonSRX right = IO.drvMasterTSRX_R;
+    // private static VictorSPX leftSlave = IO.drvFollowerVSPX_L;
+    // private static VictorSPX rightSlave = IO.drvFollowerVSPX_R;
     private static Encoder encL = IO.drvEnc_L;
     private static Encoder encR = IO.drvEnc_R;
 
     // Assignments used by DiffDrv. Slaves sent same command.
-    private static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
-    private static DifferentialDrive diffDrv_S = new DifferentialDrive(IO.drvFollowerVSPX_L, IO.drvFollowerVSPX_R);
+    private static DifferentialDrive diffDrv_M = IO.diffDrv_M;
+    // private static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
+    // private static DifferentialDrive diffDrv_S = new DifferentialDrive(IO.drvFollowerVSPX_L, IO.drvFollowerVSPX_R);
 
     private static Steer steer = new Steer();
     private static double[] strCmd;

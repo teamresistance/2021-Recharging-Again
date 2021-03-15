@@ -17,7 +17,8 @@ import frc.util.PropMath;
 public class PointNTurn extends AutoFunction {
 
     // Hardware
-    private static DifferentialDrive diffDrv = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
+    private static DifferentialDrive diffDrv = IO.diffDrv_M;
+    // private static DifferentialDrive diffDrv = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
     private static Encoder encL = IO.drvEnc_L;
     private static Encoder encR = IO.drvEnc_R;
 

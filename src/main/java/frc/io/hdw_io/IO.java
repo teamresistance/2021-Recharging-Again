@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Subsystem.Revolver;
 import frc.util.Timer;
@@ -33,12 +34,14 @@ public class IO {
     // Drive
     public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1); // Cmds left wheels. Includes encoders
     public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
+    public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Control to follow Masters in follow() below
+    public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Control to follow Masters in follow() below
+    public static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
+
     public static final double drvMasterTPF_L = 385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
     public static final double drvMasterTPF_R = -385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
     public static Encoder drvEnc_L = new Encoder(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
     public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
-    public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
-    public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
 
     // Shooter tbd ports
     // public static TalonSRX shooterTSRX = new TalonSRX(9); //Shooter motor.
