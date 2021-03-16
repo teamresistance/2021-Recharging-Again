@@ -32,9 +32,9 @@ public class Revolver {
     private static boolean hasShot;             //??
     private static int slowFireCnt = 0;         //??
 
-    private static double revPct = 0.50;        // Spd when Indexing
+    private static double revPct = 0.25;        // Spd when Indexing
 
-    private static Timer delayTimer = new Timer(0.5);
+    private static Timer delayTimer = new Timer(0.50);
 
     public static void init() { // initialze
         hasUnloaded = false;
@@ -45,24 +45,26 @@ public class Revolver {
     }
 
     public static void determ() { // determinator of state
-        if (JS_IO.btnFireShooter.isDown()) state = 11; // Unload
+
+
+        // if (JS_IO.btnFireShooter.isDown()) state = 11; // Unload
 
         //single fire test
-        if (JS_IO.btnSlowFire.onButtonPressed()) state = 25;
+        if (JS_IO.btnSlowFire.onButtonPressed()) state = 1;
             //slowFireCnt = 0;
 
-        if (JS_IO.btnStop.isDown()) state = 0;
+        // if (JS_IO.btnStop.isDown()) state = 0;
 
-        if (JS_IO.btnIndex.isDown()) {
-            ballCnt = 0;
-            state = 30;
-        }
+        // if (JS_IO.btnIndex.isDown()) {
+        //     ballCnt = 0;
+        //     state = 30;
+        // }
 
-        if (Snorfler.hasBall() && state != 1 && !isFull) state = 1; // Load
+        // if (Snorfler.hasBall() && state != 1 && !isFull) state = 1; // Load
 
-        if (IO.revolver_HAA && state < 90) { // jammed Ball
-            state = 90; // Clear jammed ball
-        }
+        // if (IO.revolver_HAA && state < 90) { // jammed Ball
+        //     state = 90; // Clear jammed ball
+        // }
     }
 
     public static void update() { // cases for state of revolver
@@ -72,7 +74,7 @@ public class Revolver {
         switch (state) {
             case 0: // everything off, revolverSpeed. Waiting for Load or Unload.
                 cmdUpdate(0.0);
-                if (delayTimer.hasExpired(0.05, state)) state++; // Initialize timer for covTrgr
+                if (delayTimer.hasExpired(0.05, state)); // Initialize timer for covTrgr
                 break;
             // ------------ Start indexing --------------------
             case 1: // wait some time ... if needed
