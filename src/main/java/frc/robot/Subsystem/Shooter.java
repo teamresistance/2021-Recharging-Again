@@ -31,12 +31,10 @@ public class Shooter {
     private static ISolenoid ballHood = IO.shooterHoodUp;
 
     private static int state;
-    private static int shootRPM = 0;
-    private static int setpointRPM = 5500; // (original RPM)
-    private static int rpmOne = 0;
-    private static int rpmTwo = 0;
-    private static int rpmThree = 0;
-    private static int rpmFour = 0;
+    // private static int shootRPM = 0;
+    // private static int setpointRPM = 5500; // (original RPM)
+    private static Integer rpmWSP = 3000; // (original RPM)
+    private static int rpmSPAdj = 3800;
     private static int atSpeedDeadband = 200; // tbd, in rpm
     private static double rpmToTpc = .07833333; // TBD rpm to ticks per cycle (100ms)
     private static boolean shooterToggle = true;
@@ -47,17 +45,15 @@ public class Shooter {
     private static double kI = 0;
     private static double kD = 0;
 
-    private static SendableChooser<Integer> rpmChoose = new SendableChooser<Integer>();
+    private static SendableChooser<Integer> rpmChsr = new SendableChooser<Integer>();
+    private static String[] rpmName  = {"RPM1", "RPM2", "RPM3", "RPM4", "RPM_Adj"};
+    private static Integer[] rpmSP = {5500, 5000, 4500, 4000, -1};
 
     public static void init() {
-        SmartDashboard.putNumber("kP", kP);
-        SmartDashboard.putNumber("kF", kF);
-        SmartDashboard.putNumber("Shooter/setpoint RPM", setpointRPM);
-        SmartDashboard.putNumber("Shooter/RPM 1", rpmOne);
-        SmartDashboard.putNumber("Shooter/RPM 2", rpmTwo);
-        SmartDashboard.putNumber("Shooter/RPM 3", rpmThree);
-        SmartDashboard.putNumber("Shooter/RPM 4", rpmFour);
+        sdbInit();
+
         ballHood.set(false);
+
         shooter.config_kF(0, kF);
         shooter.config_kP(0, kP);
         shooter.config_kI(0, kI);
@@ -73,14 +69,6 @@ public class Shooter {
         rpmToTpc = .07833333;
         shooterToggle = true;
 
-        shootRPM = 0;
-        rpmChoose = new SendableChooser<Integer>();
-        rpmChoose.setDefaultOption("Original RPM (5500)", setpointRPM);
-        rpmChoose.addOption("RPM 1", rpmOne);
-        rpmChoose.addOption("RPM 2", rpmTwo);
-        rpmChoose.addOption("RPM 3", rpmThree);
-        rpmChoose.addOption("RPM 4", rpmFour);
-        SmartDashboard.putData("Shooter/RPM Selection", rpmChoose);
     }
 
     /**
@@ -111,20 +99,19 @@ public class Shooter {
                 cmdUpdate(0, false);
                 break;
             case 1: // on
-                shootRPM = rpmChoose.getSelected();
-                cmdUpdate(shootRPM, true);
+                cmdUpdate(rpmWSP, true);
 
                 break;
             default: // all off
-                cmdUpdate(0, true);
+                cmdUpdate(0, false);
                 break;
 
         }
     }
 
     public static boolean isAtSpeed() { // if it's within it's setpoint deadband
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (setpointRPM)
-                && shooter.getSelectedSensorVelocity() * 600 / 47 <= (setpointRPM + atSpeedDeadband)) {
+        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP) &&
+            shooter.getSelectedSensorVelocity() * 600 / 47 <= (rpmWSP + atSpeedDeadband)) {
             return true;
         }
         return false;
@@ -144,33 +131,53 @@ public class Shooter {
             ballHood.set(false);
         }
 
-        SmartDashboard.putNumber("spd", spd);
-        SmartDashboard.putNumber("vel input", rpmToTpc);
+        SmartDashboard.putNumber("Shooter/cmdUpd/spd", spd);
+        SmartDashboard.putNumber("Shooter/cmdUpd/vel input", rpmToTpc);
     }
 
+    public static Double[] rpmSPd = new Double[rpmSP.length];       //Testing array sdb stuff
+    public static void sdbInit() {
+        SmartDashboard.putNumber("Shooter/RPM/kP", kP);
+        SmartDashboard.putNumber("Shooter/RPM/kF", kF);
+
+        rpmChsr = new SendableChooser<Integer>();
+        rpmSPd[0] = (double)rpmSP[0];                       //Testing array sdb stuff
+        rpmChsr.setDefaultOption(rpmName[0] + "-" + rpmSP[0], rpmSP[0]);
+        for(int i=1; i < rpmSP.length; i++){
+            rpmChsr.addOption(rpmName[i] + "-" + rpmSP[i], rpmSP[i]);
+            rpmSPd[i] = (double)rpmSP[i];                       //Testing array sdb stuff
+        }
+        SmartDashboard.putData("Shooter/RPM/Selection", rpmChsr);
+        SmartDashboard.putNumberArray("Shooter/RPM/ArTestNum", rpmSPd); //Testing array sdb stuff
+        SmartDashboard.putNumber("Shooter/RPM/Adj SP", rpmSPAdj);
+    }
+ 
     public static void sdbUpdate() {
-        kF = SmartDashboard.getNumber("kF", kF);
-        kP = SmartDashboard.getNumber("kP", kP);
+        kF = SmartDashboard.getNumber("Shooter/RPM/kF", kF);
+        kP = SmartDashboard.getNumber("Shooter/RPM/kP", kP);
         shooter.config_kF(0, kF);
         shooter.config_kP(0, kP);
-        setpointRPM = (int) SmartDashboard.getNumber("Shooter/setpoint RPM", 4000);
-        rpmOne = (int) SmartDashboard.getNumber("Shooter/RPM 1", rpmOne);
-        rpmTwo = (int) SmartDashboard.getNumber("Shooter/RPM 2", rpmTwo);
-        rpmThree = (int) SmartDashboard.getNumber("Shooter/RPM 3", rpmThree);
-        rpmFour = (int) SmartDashboard.getNumber("Shooter/RPM 4", rpmFour);
-        rpmChoose.addOption("RPM 1", rpmOne);
-        rpmChoose.addOption("RPM 2", rpmTwo);
-        rpmChoose.addOption("RPM 3", rpmThree);
-        rpmChoose.addOption("RPM 4", rpmFour);
-        SmartDashboard.putNumber("Shooter State", state);
-        SmartDashboard.putNumber("FlyWheel Encoder", encSh.ticks());
-        SmartDashboard.putNumber("FlyWheel Velocity", shooter.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("Flywheel RPM", shooter.getSelectedSensorVelocity() * 600 / 47);
-        SmartDashboard.putBoolean("Shooter On", ((state == 1) ? true : false));
-        SmartDashboard.putBoolean("isAtSpeed", isAtSpeed());
-        SmartDashboard.putNumber("flywheel current", shooter.getStatorCurrent());
-        SmartDashboard.putNumber("flywheel curr pdp", IO.pdp.getCurrent(13));
-        SmartDashboard.putBoolean("shooterToggle", shooterToggle);
+
+        rpmWSP = rpmChsr.getSelected();
+        if(rpmWSP == null || rpmWSP < 0) rpmWSP = rpmSPAdj;
+
+        SmartDashboard.putNumber("Shooter/RPM/Wkg SP", rpmWSP);
+        rpmSPAdj = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP", rpmSPAdj);
+
+        SmartDashboard.putNumber("Shooter/State", state);
+        SmartDashboard.putBoolean("Shooter/On", ((state == 1) ? true : false));
+        SmartDashboard.putBoolean("Shooter/isAtSpeed", isAtSpeed());
+        SmartDashboard.putBoolean("Shooter/shooterToggle", shooterToggle);
+
+        SmartDashboard.putNumber("Shooter/FlyWheel/Encoder", encSh.ticks());
+        SmartDashboard.putNumber("Shooter/FlyWheel/Velocity", shooter.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Shooter/Flywheel/RPM", shooter.getSelectedSensorVelocity() * 600 / 47);
+        SmartDashboard.putNumber("Shooter/Flywheel/SRX curr", shooter.getStatorCurrent());
+        SmartDashboard.putNumber("Shooter/Flywheel/pdp curr", IO.pdp.getCurrent(13));
+
+        // rpmSP = (int) SmartDashboard.getNumberArray("Shooter/ArTestNum", rpmSPd);
+        // rpmWSP = (int)rpmSP[0];
+        // SmartDashboard.putNumber("Shooter/rpmWSP", rpmWSP);
     }
 
     public static int getState() {
@@ -178,7 +185,7 @@ public class Shooter {
     }
 
     public static boolean closeToSpeed() {
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (setpointRPM - 400)) {
+        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP - 400)) {
             return true;
         }
         return false;
