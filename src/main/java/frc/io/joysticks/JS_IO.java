@@ -26,7 +26,7 @@ import frc.io.joysticks.Pov;
 //Declares all joysticks, buttons, axis & pov's.
 public class JS_IO {
     public static int jsConfig = 0; // 0=Joysticks, 1=gamePad only, 2=left Joystick only
-                                    // 3=Mixed LJS & GP, 4=Nintendo Pad
+                                    // 3=Mixed LJS & GP, 4=Nintendo Pad, 5=Norm2JS no CoDrvr
     // Declare all possible Joysticks
      public static Joystick leftJoystick = new Joystick(0); // Left JS
      public static Joystick rightJoystick = new Joystick(1); // Right JS
@@ -117,6 +117,10 @@ public class JS_IO {
                 A_GP();
                 break;
 
+            case 5: // Normal 2 joystick config No CoDrvr
+                Norm2JS();
+                break;
+
             default: // Bad assignment
                 // CaseDefault();
                 break;
@@ -167,6 +171,40 @@ public class JS_IO {
         // resetGyro.setButton(leftJoystick, 3);
 
         // pov_SP.setPov(coJoystick, 1);
+    }
+
+    // ----------- Normal 2 Joysticks -------------
+    private static void Norm2JS() {
+
+        // All stick axisesssss
+        axLeftDrive.setAxis(leftJoystick, 1);
+        axRightDrive.setAxis(rightJoystick, 1);
+        axTurretRot.setAxis(coJoystick, 0);
+       // axClimb.setAxis(coJoystick, 1);
+
+        //Drive buttons
+        // btnScaledDrive.setButton(rightJoystick, 3);
+        // btnInvOrientation.setButton(rightJoystick, 1);
+
+        //snorfler buttons
+        btnReverseSnorfler.setButton(rightJoystick,5);
+        btnLowerSnorfler.setButton(rightJoystick, 3);
+
+        //turret buttons
+        btnLimeSearch.setButton(rightJoystick, 12);
+        btnLimeAim.setButton(   rightJoystick, 10);
+
+        //shooting buttons
+        btnRampShooter.setButton(rightJoystick, 4);
+        btnFireShooter.setButton(rightJoystick, 1);
+        btnSlowFire.setButton(rightJoystick, 2);
+        btnIndex.setButton(rightJoystick, 6);
+
+        btnStop.setButton(rightJoystick, 11);
+
+         // Limelight Buttons - AS
+         limeLightOnOff.setButton(leftJoystick, 2);
+
     }
 
     // ----- gamePad only --------
