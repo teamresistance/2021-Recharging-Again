@@ -5,9 +5,9 @@ History:
 A - 1/20/20 - Original Release
 
 Desc: Handles the shoooter subsystem
-    0- everything off
-    1- shooter up to speed, hood up
-    default- everything off
+    0- everything off by pct
+    1- shooter on by vel (rpm) up to speed, hood up
+    default- everything off bby  pct.
     
     Buttons:
 
@@ -15,7 +15,6 @@ Desc: Handles the shoooter subsystem
 package frc.robot.Subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -30,31 +29,30 @@ public class Shooter {
     private static Encoder encSh = IO.shooter_Encoder;
     private static ISolenoid ballHood = IO.shooterHoodUp;
 
-    private static int state;
-    // private static int shootRPM = 0;
-    // private static int setpointRPM = 5500; // (original RPM)
-    private static Integer rpmWSP = 3000; // (original RPM)
-    private static int rpmSPAdj = 3800;
-    private static int atSpeedDeadband = 200; // tbd, in rpm
-    private static double rpmToTpc = .07833333; // TBD rpm to ticks per cycle (100ms)
-    private static boolean shooterToggle = true;
-    // 47 ticks per 1 rotation
+    private static int state;               //Shooter state machine.  0=Off by pct, 1=On by velocity, RPM
+    private static Integer rpmWSP = 3000;   //Working RPM setpoint
+    private static int rpmSPAdj = 3800;     //Adjustable RPM setpoint when choosen
+    private static int atSpeedDeadband = 200;   // tbd, in rpm  ???
+    private static double rpmToTpc = .07833333; // TBD rpm to ticks per cycle (100ms)  // 47 ticks per 1 rotation
+    private static boolean shooterToggle = true;//?????
 
-    private static double kF = 2.5;
-    private static double kP = 100;
-    private static double kI = 0;
-    private static double kD = 0;
+    private static double kF = 2.5;     //TalonSRX feedforward
+    private static double kP = 100;     //TalonSRX Proportional band
+    private static double kI = 0;       //TalonSRX Intgral term
+    private static double kD = 0;       //TalonSRX Differential term
 
+    //RPM Chooser.  Allows driver to select pre-select RPMs.  [0]is default [last] is adjustable
     private static SendableChooser<Integer> rpmChsr = new SendableChooser<Integer>();
-    private static String[] rpmName  = {"RPM1", "RPM2", "RPM3", "RPM4", "RPM_Adj"};
-    private static Integer[] rpmSP = {5500, 5000, 4500, 4000, -1};
+    private static String[] rpmName  = {"RPM1", "RPM2", "RPM3", "RPM4", "RPM_Adj"}; //Names assigned (+ "-value")
+    private static Integer[] rpmSP = {5500, 5000, 4500, 4000, -1};                  //Values to use (return)
 
+    /**Initialize Shooter stuff.  Called from telopInit (maybe robotInit(?)) in Robot.java */
     public static void init() {
         sdbInit();
 
         ballHood.set(false);
 
-        shooter.config_kF(0, kF);
+        shooter.config_kF(0, kF);   //Send configuration parms to TalonSRX
         shooter.config_kP(0, kP);
         shooter.config_kI(0, kI);
         shooter.config_kD(0, kD);
@@ -64,11 +62,10 @@ public class Shooter {
         shooter.configVoltageMeasurementFilter(32, 0);
         encSh.reset();
 
-        cmdUpdate(0.0, false);
-        state = 0;
-        rpmToTpc = .07833333;
-        shooterToggle = true;
-
+        cmdUpdate(0.0, false);      //Turn motor off with pct
+        state = 0;                  //Start at state 0
+        rpmToTpc = .07833333;       //MAke sure this hasn't chgd????
+        shooterToggle = true;       //????
     }
 
     /**
@@ -90,6 +87,7 @@ public class Shooter {
             state = 99;
     }
 
+    /**Update Shooter.  Called from teleopPeriodic in robot.java */
     public static void update() {
         sdbUpdate();
         determ();
@@ -109,20 +107,17 @@ public class Shooter {
         }
     }
 
-    public static boolean isAtSpeed() { // if it's within it's setpoint deadband
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP) &&
-            shooter.getSelectedSensorVelocity() * 600 / 47 <= (rpmWSP + atSpeedDeadband)) {
-            return true;
-        }
-        return false;
-    }
-
-    public static void cmdUpdate(double spd, boolean cmdVel) { // control through velocity or percent
+    /**
+     * Issue spd setting as rpmSP if isVelCmd true else as percent cmd.
+     * @param spd - cmd to issue to Flywheel Talon motor controller as rpm or percentage
+     * @param isVelCmd - spd should be issued as rpm setpoint else as a percenetage output.
+     */
+    public static void cmdUpdate(double spd, boolean isVelCmd) { // control through velocity or percent
         shooter.set(ControlMode.Disabled, 0);
-        if (cmdVel) { // Math.abs(spd) * rpmToTpc
-            shooter.set(ControlMode.Velocity, Math.abs(spd) * rpmToTpc);
+        if (isVelCmd) { // Math.abs(spd) * rpmToTpc
+            shooter.set(ControlMode.Velocity, Math.abs(spd) * rpmToTpc);    // control as velocity (RPM)
         } else {
-            shooter.set(ControlMode.PercentOutput, Math.abs(spd));
+            shooter.set(ControlMode.PercentOutput, Math.abs(spd));          // control as percentage output
         }
 
         if (shooter.getSelectedSensorVelocity() * 600 / 47 > 2000) { // if not running, keep hood down
@@ -135,59 +130,77 @@ public class Shooter {
         SmartDashboard.putNumber("Shooter/cmdUpd/vel input", rpmToTpc);
     }
 
-    public static Double[] rpmSPd = new Double[rpmSP.length];       //Testing array sdb stuff
+    /*-------------------------  SDB Stuff --------------------------------------
+    /**Initialize sdb & chooser */
     public static void sdbInit() {
-        SmartDashboard.putNumber("Shooter/RPM/kP", kP);
-        SmartDashboard.putNumber("Shooter/RPM/kF", kF);
+        SmartDashboard.putNumber("Shooter/RPM/kP", kP);     //Put kP on sdb
+        SmartDashboard.putNumber("Shooter/RPM/kF", kF);     //Put kF on sdb
 
+        //This initiates the RPm Chooser
         rpmChsr = new SendableChooser<Integer>();
-        rpmSPd[0] = (double)rpmSP[0];                       //Testing array sdb stuff
         rpmChsr.setDefaultOption(rpmName[0] + "-" + rpmSP[0], rpmSP[0]);
         for(int i=1; i < rpmSP.length; i++){
             rpmChsr.addOption(rpmName[i] + "-" + rpmSP[i], rpmSP[i]);
-            rpmSPd[i] = (double)rpmSP[i];                       //Testing array sdb stuff
         }
-        SmartDashboard.putData("Shooter/RPM/Selection", rpmChsr);
-        SmartDashboard.putNumberArray("Shooter/RPM/ArTestNum", rpmSPd); //Testing array sdb stuff
-        SmartDashboard.putNumber("Shooter/RPM/Adj SP", rpmSPAdj);
+        SmartDashboard.putData("Shooter/RPM/Selection", rpmChsr);   //Put rpmChsr on sdb
+        SmartDashboard.putNumber("Shooter/RPM/Adj SP", rpmSPAdj);   //Put rpmSPAdj on sdb
     }
  
     public static void sdbUpdate() {
-        kF = SmartDashboard.getNumber("Shooter/RPM/kF", kF);
-        kP = SmartDashboard.getNumber("Shooter/RPM/kP", kP);
-        shooter.config_kF(0, kF);
-        shooter.config_kP(0, kP);
+        kF = SmartDashboard.getNumber("Shooter/RPM/kF", kF);    //Get kP from sdb
+        kP = SmartDashboard.getNumber("Shooter/RPM/kP", kP);    //Get kF from sdb
+        shooter.config_kF(0, kF);                               //Send kP new value to Talon
+        shooter.config_kP(0, kP);                               //Send kF new value to Talon
 
-        rpmWSP = rpmChsr.getSelected();
-        if(rpmWSP == null || rpmWSP < 0) rpmWSP = rpmSPAdj;
+        rpmSPAdj = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP", rpmSPAdj);  //Get the adjustable RPM SP from sdb
+        rpmWSP = rpmChsr.getSelected();                         //Get selected RPM SP value from rpmChsr
+        if(rpmWSP == null || rpmWSP < 0) rpmWSP = rpmSPAdj;     //If value is -1 (last choice) use adjustable SP
+        SmartDashboard.putNumber("Shooter/RPM/Wkg SP", rpmWSP); //Put the working RPM SP,rpmWSP
 
-        SmartDashboard.putNumber("Shooter/RPM/Wkg SP", rpmWSP);
-        rpmSPAdj = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP", rpmSPAdj);
-
+        //Put general Shooter info on sdb
         SmartDashboard.putNumber("Shooter/State", state);
         SmartDashboard.putBoolean("Shooter/On", ((state == 1) ? true : false));
         SmartDashboard.putBoolean("Shooter/isAtSpeed", isAtSpeed());
         SmartDashboard.putBoolean("Shooter/shooterToggle", shooterToggle);
 
+        //Put Flywheel info on sdb
         SmartDashboard.putNumber("Shooter/FlyWheel/Encoder", encSh.ticks());
         SmartDashboard.putNumber("Shooter/FlyWheel/Velocity", shooter.getSelectedSensorVelocity());
         SmartDashboard.putNumber("Shooter/Flywheel/RPM", shooter.getSelectedSensorVelocity() * 600 / 47);
         SmartDashboard.putNumber("Shooter/Flywheel/SRX curr", shooter.getStatorCurrent());
         SmartDashboard.putNumber("Shooter/Flywheel/pdp curr", IO.pdp.getCurrent(13));
-
-        // rpmSP = (int) SmartDashboard.getNumberArray("Shooter/ArTestNum", rpmSPd);
-        // rpmWSP = (int)rpmSP[0];
-        // SmartDashboard.putNumber("Shooter/rpmWSP", rpmWSP);
     }
 
+    //------------------------------ Shooter statuses and misc. -------------------------
+    /**
+     * Probably shouldn't use this bc the states can change.  Use statuses.
+     * @return - present state of Shooter state machine.
+     */
     public static int getState() {
         return state;
     }
 
+    /**
+     * 
+     * @return - Is within 400 rpm of setpoint, rpmWSP
+     */
     public static boolean closeToSpeed() {
         if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP - 400)) {
             return true;
         }
         return false;
     }
+
+    /**
+     * 
+     * @return - RPM FB is GTE setpoint & LTE SP + deadband.   ---???
+     */
+    public static boolean isAtSpeed() { // if it's within it's setpoint deadband
+        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP) &&
+            shooter.getSelectedSensorVelocity() * 600 / 47 <= (rpmWSP + atSpeedDeadband)) {
+            return true;
+        }
+        return false;
+    }
+
 }
