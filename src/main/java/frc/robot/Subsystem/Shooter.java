@@ -1,17 +1,3 @@
-/*
-Original Author: Jim & Anthony
-
-History:
-A - 1/20/20 - Original Release
-
-Desc: Handles the shoooter subsystem
-    0- everything off by pct
-    1- shooter on by vel (rpm) up to speed, hood up
-    default- everything off bby  pct.
-    
-    Buttons:
-
-*/
 package frc.robot.Subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -24,6 +10,20 @@ import frc.io.hdw_io.IO;
 import frc.io.hdw_io.ISolenoid;
 import frc.io.joysticks.JS_IO;
 
+/**
+Original Author: Jim & Anthony
+<p>
+History:  1/20/20 - Original Release
+<p>.      2/2021 - KB - Added Chooser for RPM SPs
+
+Desc: Handles the shoooter subsystem
+<p>    0- everything off by pct
+<p>    1- shooter on by vel (rpm) up to speed, hood up
+<p>    default- everything off bby  pct.
+<p>    
+<p>    Buttons:
+<p>
+*/
 public class Shooter {
     private static WPI_TalonSRX shooter = IO.shooterTSRX;
     private static Encoder encSh = IO.shooter_Encoder;
