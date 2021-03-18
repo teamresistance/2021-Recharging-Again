@@ -144,6 +144,8 @@ public class Shooter {
             ballHood.set(false);
         }
 
+
+
         SmartDashboard.putNumber("spd", spd);
         SmartDashboard.putNumber("vel input", rpmToTpc);
     }
@@ -182,5 +184,15 @@ public class Shooter {
             return true;
         }
         return false;
+    }
+
+    public static void bangbang(double rpmInTpc) {
+        shooter.set(ControlMode.Velocity, rpmInTpc);
+
+        if (shooter.getSelectedSensorVelocity() < rpmInTpc) {
+            shooter.set(ControlMode.PercentOutput, 100);
+        } else {
+            shooter.set(ControlMode.Velocity, rpmInTpc);
+        }
     }
 }

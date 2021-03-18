@@ -40,7 +40,7 @@ public class Revolver {
     private static boolean hasShot;
     private static int slowFireCnt = 0;
 
-    private static double loadPct = 0.15; // Spd when loading
+    private static double loadPct = 0.15; // Spd when loading.... increase?
     private static double unloadPct = 0.25; // Spd when unloading
 
     private static Timer delayTimer = new Timer(0.5);

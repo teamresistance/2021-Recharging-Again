@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Subsystem.Revolver;
 import frc.util.Timer;
@@ -39,10 +40,7 @@ public class IO {
     public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
     public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
     public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
-
-    // Shooter tbd ports
-    // public static TalonSRX shooterTSRX = new TalonSRX(9); //Shooter motor.
-    // Includes encoder
+    public static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
 
     public static WPI_TalonSRX shooterTSRX = new WPI_TalonSRX(9);
     public static Encoder shooter_Encoder = new Encoder(shooterTSRX, 0);

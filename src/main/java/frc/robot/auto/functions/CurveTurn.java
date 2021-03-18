@@ -15,7 +15,7 @@ public class CurveTurn extends AutoFunction {
     private WPI_TalonSRX left = IO.drvMasterTSRX_L; // left motor
     private WPI_VictorSPX rightSlave = IO.drvFollowerVSPX_R;
     private WPI_VictorSPX leftSlave = IO.drvFollowerVSPX_L;
-    private DifferentialDrive diffDrv = new DifferentialDrive(left, right);
+    private DifferentialDrive diffDrv = IO.diffDrv_M;
 
     private int state;
     private int prvState;
@@ -35,8 +35,10 @@ public class CurveTurn extends AutoFunction {
 
     public void init() {
         finished = false;
-        left.set(0);
-        right.set(0);
+        diffDrv.curvatureDrive(0.0, 0.0, false);
+        IO.follow();
+        // left.set(0);
+        // right.set(0);
         state = -1;
         prvState = 0;
     }
@@ -62,14 +64,15 @@ public class CurveTurn extends AutoFunction {
     public void done() {
         finished = true;
         diffDrv.tankDrive(0, 0);
-        left.set(ControlMode.Disabled, 0);
-        right.set(ControlMode.Disabled, 0;);
+        // left.set(ControlMode.Disabled, 0);
+        // right.set(ControlMode.Disabled, 0);
     }
 
     public void update() {
         //sdbUpdate();
-        leftSlave.follow(left);
-        rightSlave.follow(right);
+        // leftSlave.follow(left);
+        // rightSlave.follow(right);
+        IO.follow();
     }
     
 }
