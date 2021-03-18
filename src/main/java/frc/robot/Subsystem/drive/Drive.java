@@ -70,53 +70,22 @@ public class Drive {
     // Determine the drive mode.
     // TODO: How does the driver return to unscaled, normal mode?
     public static void determ() {
-        /**
-         * if (JS_IO.btnScaledDrive.isDown()) { if(state != 1){ state = 1; }else{ state
-         * = 0; } }
-         */
-
         if (JS_IO.btnInvOrientation.onButtonPressed()) {
             if (invToggle) {
-                if (scaled) {
-                    state = 2;
-                } else {
-                    state = 5;
-                }
-                invToggle = !invToggle;
+                state = scaled ? 2 : 5;
             } else {
-                if (scaled) {
-                    state = 1;
-                } else {
-                    state = 0;
-                }
-                invToggle = !invToggle;
+                state = scaled ? 1 : 0;
             }
+            invToggle = !invToggle;
         }
 
         if (JS_IO.btnScaledDrive.onButtonPressed()) {
             if (scaleToggle) {
-                if (inverted) {
-                    state = 2;
-                } else {
-                    state = 1;
-                }
-                scaleToggle = !scaleToggle;
+                state = inverted ? 2 : 1;
             } else {
-                if (inverted) {
-                    state = 5;
-                } else {
-                    state = 0;
-                }
-                scaleToggle = !scaleToggle;
+                state = inverted ? 5 : 0;
             }
-        }
-
-        if (JS_IO.btnHoldZero.isDown()) {
-            state = 3;
-        }
-
-        if (JS_IO.btnHold180.isDown()) {
-            state = 4;
+            scaleToggle = !scaleToggle;
         }
     }
 
