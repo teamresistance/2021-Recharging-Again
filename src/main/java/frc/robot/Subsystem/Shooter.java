@@ -11,19 +11,32 @@ import frc.io.hdw_io.ISolenoid;
 import frc.io.joysticks.JS_IO;
 
 /**
-Original Author: Jim & Anthony
-<p>
-History:  1/20/20 - Original Release
-<p>.      2/2021 - KB - Added Chooser for RPM SPs
-
-Desc: Handles the shoooter subsystem
-<p>    0- everything off by pct
-<p>    1- shooter on by vel (rpm) up to speed, hood up
-<p>    default- everything off bby  pct.
-<p>    
-<p>    Buttons:
-<p>
-*/
+ * Original Author: Jim & Anthony
+ * <p>
+ * <p> History:
+ * <p>  1/20/20 - Original Release
+ * <p>  2/2021 - KB - Added Chooser for RPM SPs
+ * <p>
+ * <p> Desc: Handles the shoooter subsystem
+ * <p> Note: Works with Injector and Revolver.  The Injector controls a flipper, pickup wheel & 4-wheel injector.
+ * The Revolver holds the balls until ready to shoot then can deliever them one at a time thru the Injector to the Shooter.
+ * So, the Shooter comes up to speed then requests the Injector then request the Revolver.  
+ * The Revolver also works with the Snofler to gather and store the balls.
+ * <p> 
+ * <p> determ: When button rampUp(3) if state == 0 goto state 1 else goto state 0, shut it all down, initialize.
+ * <p> 
+ * <p> Seq of Operation - Shooter
+ * <p> Init - System is initialized off.  All requests off and retracted.
+ * <p> 0.  Initialized.  Shooter disabled, flywheel off, injector Disabled (4-wheel off, pickup off, flipper down),
+ *  hood down. No request to revolver, false.
+ * <p> 1.  Starts the flywheel ramping to rpmSP (or power).  At setpt goto state 2.  Read (1).onPressed to clear.
+ * <p> 2.  When button shoot(1).onPressed sets shtrRdy, go to state 3
+ * <p> 3.  Requests injector enable (4-whl, pickup & flipper enabled).  Wait for a period to get started then state 4
+ * <p> 4.  When button shoot(1).onPressed 2nd time goto state 5
+ * <p> 5.  Set revolver.start, index revolver 1 time.  Goto state 6
+ * <p> 6.  When revolver.finished wait some time goto state 7
+ * <p> 7.  If shoot(1).isDown, stilled pressed, goto state 6, continue shooting, else goto 4, single shot
+ */
 public class Shooter {
     private static WPI_TalonSRX shooter = IO.shooterTSRX;
     private static Encoder encSh = IO.shooter_Encoder;
@@ -73,12 +86,6 @@ public class Shooter {
      * of a JS button but can be caused by other events.
      */
     private static void determ() {
-        // if (JS_IO.btnRampShooter.onButtonPressed()) {
-        //     state = shooterToggle ? 1 : 0;
-        //     shooterToggle = !shooterToggle;
-        // }
-
-        // 2nd option
         if (JS_IO.btnRampShooter.onButtonPressed()) {
             state = state != 1 ? 1 : 0;
         }
