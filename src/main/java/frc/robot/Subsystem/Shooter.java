@@ -9,6 +9,7 @@ import frc.io.hdw_io.Encoder;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.ISolenoid;
 import frc.io.joysticks.JS_IO;
+import frc.util.Timer;
 
 /**
  * Original Author: Jim & Anthony
@@ -43,6 +44,8 @@ public class Shooter {
     private static ISolenoid ballHood = IO.shooterHoodUp;
 
     private static int state;               //Shooter state machine.  0=Off by pct, 1=On by velocity, RPM
+    private static Timer stateTmr;          //Timer for states
+
     private static Integer rpmWSP = 3000;   //Working RPM setpoint
     private static int rpmSPAdj = 3800;     //Adjustable RPM setpoint when choosen
     private static int atSpeedDeadband = 200;   // tbd, in rpm  ???
@@ -75,7 +78,7 @@ public class Shooter {
         shooter.configVoltageMeasurementFilter(32, 0);
         encSh.reset();
 
-        cmdUpdate(0.0, false);      //Turn motor off with pct
+        cmdUpdate(0.0, false, false, false);    //Turn motor off(pct), injector false, revolver false
         state = 0;                  //Start at state 0
         rpmToTpc = .07833333;       //MAke sure this hasn't chgd????
         shooterToggle = true;       //????
@@ -100,15 +103,43 @@ public class Shooter {
         determ();
 
         switch (state) {
+            //Shooter disabled, flywheel off, injector Disabled, hood down, request revolver, false.
             case 0: // off - percentoutput (so that no negative power is sent to the motor)
-                cmdUpdate(0, false);
+                cmdUpdate(0.0, false, false, false);
+                stateTmr.hasExpired(0.05, state); // Initialize timer for covTrgr.  Do nothing.
                 break;
-            case 1: // on
-                cmdUpdate(rpmWSP, true);
+            case 1: // Ramp flywheel to rpmSP (or power?).  At setpt goto state 2.  Read (1).onPressed to clear.
+                cmdUpdate(rpmWSP, true, false, false);
+                JS_IO.btnFireShooter.onButtonPressed(); //Clear button press, just incase.  Do nothing
+                if(isAtSpeed()) state++;
+                break;
+            case 2: // When button shoot(1).onPressed sets shtrRdy, go to state 3
+                cmdUpdate(rpmWSP, true, false, false);
+                if(JS_IO.btnFireShooter.onButtonPressed()) state++;
+                break;
+            case 3: // Requests injector enable (all 3 items).  Wait for a period, then state 4
+                cmdUpdate(rpmWSP, true, true, false);
+                if (stateTmr.hasExpired(0.15, state)) state++; // Wait for Injector to get up to speed
+                break;
+            case 4: // When button shoot(1).onPressed 2nd time goto state 5
+                cmdUpdate(rpmWSP, true, true, false);
+                if(JS_IO.btnFireShooter.onButtonPressed()) state++;
+                break;
+            case 5: // Set revolver.reqRevShtr, index revolver 1 time.  Goto state 6
+                cmdUpdate(rpmWSP, true, true, true);
+                Revolver.reqRevShtr = true;     //Set false, in Revolver, after 1 revolution.
+                break;
+            case 6: // When revolver.finished wait some time goto state 7
+                cmdUpdate(rpmWSP, true, true, false);
+                if( !Revolver.reqRevShtr ) state++;
+                break;
+            case 7: // If shoot(1).isDown, still pressed, goto state 5, continue shooting, else goto 4, single shot
+                cmdUpdate(rpmWSP, true, true, false);
+                state = JS_IO.btnFireShooter.isDown() ? 5 : 4;
+                break;
 
-                break;
             default: // all off
-                cmdUpdate(0, false);
+                cmdUpdate(0, false, false, false);
                 break;
 
         }
@@ -119,8 +150,12 @@ public class Shooter {
      * @param spd - cmd to issue to Flywheel Talon motor controller as rpm or percentage
      * @param isVelCmd - spd should be issued as rpm setpoint else as a percenetage output.
      */
-    public static void cmdUpdate(double spd, boolean isVelCmd) { // control through velocity or percent
-        shooter.set(ControlMode.Disabled, 0);
+    public static void cmdUpdate(double spd, boolean isVelCmd, boolean injCmd, boolean revCmd) { // control through velocity or percent
+        shooter.set(ControlMode.Disabled, 0);       //Don't think we need this
+
+        Injector.reqInjShtr = injCmd;               //Injector Start request
+        Revolver.reqRevShtr = revCmd;               //Revolver Start request
+
         if (isVelCmd) { // Math.abs(spd) * rpmToTpc
             shooter.set(ControlMode.Velocity, Math.abs(spd) * rpmToTpc);    // control as velocity (RPM)
         } else {

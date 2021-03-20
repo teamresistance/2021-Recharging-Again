@@ -30,12 +30,13 @@ public class Injector {
     private static InvertibleSolenoid injectorFlip = IO.injectorFlipper;
 
     private static int state = 0;
+    public static boolean reqInjShtr = false;       //Request from shooter to start Injector
 
-    private static double injector4WhlPct = 1.0; // Pct for 4 wheel injector
-    private static double injectorPUPct = 1.0; // Pct for the Pickup wheel
+    private static double injector4WhlPct = 1.0;    // Pct for 4 wheel injector
+    private static double injectorPUPct = 1.0;      // Pct for the Pickup wheel
 
-    private static Timer delayTimer = new Timer(0.25); // Timer used to delay status for motor ramp up/dn
-    private static boolean isRunning = false; // Signal others Injector is running.
+    private static Timer delayTimer = new Timer(0.25);  // Timer used to delay status for motor ramp up/dn
+    private static boolean isRunning = false;           // Signal others Injector is running.
 
     // initialzer
     public static void init() {

@@ -24,6 +24,8 @@ public class Revolver {
     private static InvertibleDigitalInput nextSpaceOpen = IO.revolNextSpaceOpen;//Banner snsr, chk if a ball is in rcv'iing slot
 
     public static int state = 0;
+    public static boolean reqRevShtr = false;
+    public static boolean reqRevSnflr = false;
     private static boolean locked = false;
     private static int ballCnt = 0;             // Increment when a ball is loaded. Clear on unload.
     private static boolean isFull = false;      //Ball cnt > 4
