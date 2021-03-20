@@ -2,6 +2,7 @@ package frc.robot.auto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
+import frc.io.hdw_io.vision.RPI;
 import frc.robot.Subsystem.Revolver;
 import frc.robot.Subsystem.Snorfler;
 
@@ -46,6 +47,26 @@ public class AutoSelector {
             case 20:
                 path = new Auto(Trajectories.getSquare(70.0));
                 snorflerOn = false;
+                break;
+            case 21:
+                int pathNum = galacticShooter();
+                switch (pathNum) {
+                    case 1:
+                        path = new Auto(Trajectories.getRPathA(70));
+                        break;
+                    case 2:
+                        path = new Auto(Trajectories.getBPathA(70));
+                        break;
+                    case 3:
+                        path = new Auto(Trajectories.getRPathB(70));
+                        break;
+                    case 4:
+                        path = new Auto(Trajectories.getRPathB(70));
+                        break;
+                    default:
+                        path = new Auto(Trajectories.getEmpty(0));
+                        break;
+                }
                 break;
             default:
                 path = new Auto(Trajectories.getEmpty(0));
@@ -95,4 +116,23 @@ public class AutoSelector {
         path.disable();
     }
 
+    public static int galacticShooter() {
+        // if (specific values) {
+        //     // red path a
+        //     return 1;
+        // } else if (other specific) {
+        //     // blue path a
+        //     return 2;
+        // } else if (other other) {
+        //     // red path b
+        //     return 3;
+        // } else if (otehretete) {
+        //     // blue path b
+        //     return 4;
+        // } else {
+        //     return 999;
+        // }
+
+        return 999;
+    }
 }

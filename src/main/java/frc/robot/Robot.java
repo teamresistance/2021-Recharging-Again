@@ -21,6 +21,7 @@ import frc.robot.Subsystem.Shooter;
 import frc.robot.Subsystem.Snorfler;
 import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
+import frc.robot.Subsystem.revolverupdate.*;
 //import frc.robot.auto.Drive2;
 import frc.robot.auto.AutoSelector;
 
@@ -105,8 +106,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     AutoSelector.disable();
-    Snorfler.init();
-    Revolver.init();
+    //NewSnorfler.init();
+     Snorfler.init();
+     Revolver.init();
+    //NewRevolver.init();
     Shooter.init();
     Injector.init();
     Drive.init();
@@ -119,8 +122,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     IO.update();
-    Snorfler.update();
-    Revolver.update();
+    //NewSnorfler.update();
+     Snorfler.update();
+     Revolver.update();
+    //NewRevolver.update();
     Shooter.update();
     Injector.update();
     Turret.update();

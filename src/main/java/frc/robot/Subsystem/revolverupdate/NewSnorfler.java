@@ -1,4 +1,4 @@
-package frc.robot.Subsystem;
+package frc.robot.Subsystem.revolverupdate;
 
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -7,19 +7,22 @@ import frc.io.hdw_io.*;
 import frc.io.joysticks.JS_IO;
 import frc.util.Timer;
 
-public class Snorfler {
+public class NewSnorfler {
     private static ISolenoid snorfExtendV = IO.snorflerExt; // Extend both
     private static Victor snorfFeederV = IO.snorfFeedMain;
     private static Victor snorfLoaderV = IO.snorfFeedScdy;
     private static InvertibleDigitalInput snorfHasBall = IO.snorfHasBall;
 
     private static int state;
+    public static int ballCnt;
     private static boolean lowerToggleOn;
     private static boolean feedToggleOn;
     private static Timer timer;
     private static Timer safeTimer;
     private static Timer startUpTimer;
     private static boolean startUp;
+
+    public static boolean reqRevSnflr = false;
 
     public static double feederSpeed = .7;
     public static double loaderSpeed = .7;
@@ -34,19 +37,23 @@ public class Snorfler {
         snorfExtendV.set(false);
 
         state = 0;
+        ballCnt = 0;
         lowerToggleOn = false;
         feedToggleOn = false;
     }
 
     private static void determ() {
 
+        // has a ball and not already getting one, revolver is ready to get
+        if (NewSnorfler.hasBall() && state != 1 && !isFull() && NewRevolver.rdy2Rcv()) {
+            reqRevSnflr = true;
+        }
 
         // toggle arms down and up
         if (JS_IO.btnLowerSnorfler.onButtonPressed()) {
 
-            startUp = startUpTimer.hasExpired(.2, state);
             if (!lowerToggleOn) {
-                if (Revolver.isFull()) {
+                if (isFull()) {
                     state = 6;
                 } else {
                     state = 1;
@@ -70,13 +77,14 @@ public class Snorfler {
             }
         }
 
-            if (IO.pdp.getCurrent(2) > 21) {
-                state = 8;
-            }
+        if (IO.pdp.getCurrent(2) > 21) {
+            state = 8;
+        }
 
-            // if (IO.pdp.getCurrent(2) > 10 && safeTimer.hasExpired(.18, state) && startUp) {
-            //     state = 8;
-            // }
+        // if (IO.pdp.getCurrent(2) > 10 && safeTimer.hasExpired(.18, state) && startUp)
+        // {
+        // state = 8;
+        // }
 
     }
 
@@ -96,7 +104,7 @@ public class Snorfler {
             case 2: // feeder on, loader off, all solenoids out
                 cmdUpdate(true, true, feederSpeed, loaderSpeed);
                 if (snorfHasBall.get()) { // TODO: assuming ball is never lost once held
-                    if (Revolver.isFull()) {
+                    if (isFull()) {
                         state = 5;
                     } else {
                         state = 3;
@@ -105,7 +113,7 @@ public class Snorfler {
                 break;
             case 3:// has a ball in loader, waiting for free index
                 cmdUpdate(true, true, feederSpeed, 0);
-                if (Revolver.getState() == 1 || Revolver.getState() == 0) { // checks if the revolver has an empty slot
+                if (NewRevolver.rdy2Rcv()) { // checks if the revolver has an empty slot
                     state = 4;
                 }
                 break;
@@ -119,8 +127,13 @@ public class Snorfler {
             case 7:
                 cmdUpdate(true, true, feederSpeed, 0);
 
+                if (IO.revolNextSpaceOpen.get()) {
+                    ballCnt++;
+                }
+
                 if (timer.hasExpired(.25, state)) {
                     state = 2;
+                    reqRevSnflr = false;
                 }
                 break;
             case 5: // reverse everything, go back to waiting for ball
@@ -131,7 +144,7 @@ public class Snorfler {
                 break;
             case 6:
                 cmdUpdate(true, true, 0, 0);
-                if (!Revolver.isFull()) {
+                if (!isFull()) {
                     state = 2;
                 }
                 break;
@@ -149,7 +162,7 @@ public class Snorfler {
 
     public static void sdbUpdate() {
         SmartDashboard.putNumber("Snorfler State", state);
-        SmartDashboard.putBoolean("isFull", Revolver.isFull());
+        SmartDashboard.putBoolean("isFull", isFull());
         SmartDashboard.putBoolean("ballBanner", snorfHasBall.get());
         SmartDashboard.putNumber("pdp snorf curr", IO.pdp.getCurrent(2));
         SmartDashboard.putBoolean("lowerToggle", lowerToggleOn);
@@ -171,5 +184,9 @@ public class Snorfler {
 
     public static boolean hasBall() {
         return snorfHasBall.get();
+    }
+
+    public static boolean isFull() {
+        return ballCnt >= 5;
     }
 }

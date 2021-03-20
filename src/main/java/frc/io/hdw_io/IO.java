@@ -157,10 +157,10 @@ public class IO {
     private static void alarmUpdate() {
 
         SmartDashboard.putNumber("revolver HAA", pdp.getCurrent(4));
-        if (Revolver.getState() != 0) {
-            if (revTimer.hasExpired(4, Revolver.getState()))
-                revolver_HAA = true;
-        }
+        // if (Revolver.getState() != 0) {
+        //     if (revTimer.hasExpired(4, Revolver.getState()))
+        //         revolver_HAA = true;
+        // }
     }
 
     public static void follow() {

@@ -70,7 +70,7 @@ public class Revolver {
             ballCnt = 0;
             state = 30;
         }
-
+        
         if (Snorfler.hasBall() && state != 1 && !isFull) {
             state = 1; // Load
         }
