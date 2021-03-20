@@ -32,14 +32,13 @@ public class Shooter {
 
     private static int state;
     private static int shootRPM = 0;
-    private static int setpointRPM = 5500; // (original RPM)
+    private static int oldRPM = 5500; // (original RPM)
     private static int rpmOne = 0;
     private static int rpmTwo = 0;
     private static int rpmThree = 0;
     private static int rpmFour = 0;
     private static int atSpeedDeadband = 200; // tbd, in rpm
     private static double rpmToTpc = .07833333; // TBD rpm to ticks per cycle (100ms)
-    private static boolean shooterToggle = true;
     // 47 ticks per 1 rotation
 
     private static double kF = 2.5;
@@ -52,7 +51,7 @@ public class Shooter {
     public static void init() {
         SmartDashboard.putNumber("kP", kP);
         SmartDashboard.putNumber("kF", kF);
-        SmartDashboard.putNumber("Shooter/setpoint RPM", setpointRPM);
+        SmartDashboard.putNumber("Shooter/setpoint RPM", oldRPM);
         SmartDashboard.putNumber("Shooter/RPM 1", rpmOne);
         SmartDashboard.putNumber("Shooter/RPM 2", rpmTwo);
         SmartDashboard.putNumber("Shooter/RPM 3", rpmThree);
@@ -71,11 +70,10 @@ public class Shooter {
         cmdUpdate(0.0, false);
         state = 0;
         rpmToTpc = .07833333;
-        shooterToggle = true;
 
         shootRPM = 0;
         rpmChoose = new SendableChooser<Integer>();
-        rpmChoose.setDefaultOption("Original RPM (5500)", setpointRPM);
+        rpmChoose.setDefaultOption("Original RPM (5500)", oldRPM);
         rpmChoose.addOption("RPM 1", rpmOne);
         rpmChoose.addOption("RPM 2", rpmTwo);
         rpmChoose.addOption("RPM 3", rpmThree);
@@ -88,11 +86,6 @@ public class Shooter {
      * of a JS button but can be caused by other events.
      */
     private static void determ() {
-        // if (JS_IO.btnRampShooter.onButtonPressed()) {
-        //     state = shooterToggle ? 1 : 0;
-        //     shooterToggle = !shooterToggle;
-        // }
-
         // 2nd option
         if (JS_IO.btnRampShooter.onButtonPressed()) {
             state = state != 1 ? 1 : 0;
@@ -123,8 +116,8 @@ public class Shooter {
     }
 
     public static boolean isAtSpeed() { // if it's within it's setpoint deadband
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (setpointRPM)
-                && shooter.getSelectedSensorVelocity() * 600 / 47 <= (setpointRPM + atSpeedDeadband)) {
+        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (shootRPM)
+                && shooter.getSelectedSensorVelocity() * 600 / 47 <= (shootRPM + atSpeedDeadband)) {
             return true;
         }
         return false;
@@ -155,7 +148,7 @@ public class Shooter {
         kP = SmartDashboard.getNumber("kP", kP);
         shooter.config_kF(0, kF);
         shooter.config_kP(0, kP);
-        setpointRPM = (int) SmartDashboard.getNumber("Shooter/setpoint RPM", 4000);
+        oldRPM = (int) SmartDashboard.getNumber("Shooter/setpoint RPM", 4000);
         rpmOne = (int) SmartDashboard.getNumber("Shooter/RPM 1", rpmOne);
         rpmTwo = (int) SmartDashboard.getNumber("Shooter/RPM 2", rpmTwo);
         rpmThree = (int) SmartDashboard.getNumber("Shooter/RPM 3", rpmThree);
@@ -172,7 +165,6 @@ public class Shooter {
         SmartDashboard.putBoolean("isAtSpeed", isAtSpeed());
         SmartDashboard.putNumber("flywheel current", shooter.getStatorCurrent());
         SmartDashboard.putNumber("flywheel curr pdp", IO.pdp.getCurrent(13));
-        SmartDashboard.putBoolean("shooterToggle", shooterToggle);
     }
 
     public static int getState() {
@@ -180,7 +172,7 @@ public class Shooter {
     }
 
     public static boolean closeToSpeed() {
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (setpointRPM - 400)) {
+        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (oldRPM - 400)) {
             return true;
         }
         return false;

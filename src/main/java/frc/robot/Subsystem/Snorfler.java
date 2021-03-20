@@ -72,9 +72,9 @@ public class Snorfler {
                 state = 8;
             }
 
-            if (IO.pdp.getCurrent(2) > 10 && safeTimer.hasExpired(.18, state) && startUp) {
-                state = 8;
-            }
+            // if (IO.pdp.getCurrent(2) > 10 && safeTimer.hasExpired(.18, state) && startUp) {
+            //     state = 8;
+            // }
 
     }
 

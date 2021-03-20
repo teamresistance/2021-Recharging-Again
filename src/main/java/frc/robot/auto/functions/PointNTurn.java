@@ -31,7 +31,7 @@ public class PointNTurn extends AutoFunction {
     private double distOut = 0.0; // Y (Fwd) cmd
 
     /* [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
-    private double[][] parms = { { 0.0, -80.0, 3.0, 0.6, 1.0, 0.40 },
+    private double[][] parms = { { 0.0, -110.0, 6.5, 0.6, 1.0, 0.40 },
             /*                       */ { 0.0, 4.0, 0.1, 0.10, 1.0, 0.07 } };
 
     private Steer steer; // Used to steer to a hdg with power for distance
