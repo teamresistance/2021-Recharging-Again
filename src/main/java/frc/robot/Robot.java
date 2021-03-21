@@ -15,17 +15,21 @@ import frc.io.hdw_io.vision.LimeLight;
 import frc.io.hdw_io.vision.RPI;
 import frc.io.hdw_io.test_io;
 import frc.io.joysticks.JS_IO;
-import frc.robot.Subsystem.Injector;
-import frc.robot.Subsystem.Revolver;
-import frc.robot.Subsystem.Shooter;
-import frc.robot.Subsystem.Snorfler;
-import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
-// import frc.robot.Subsystem.revolverupdate.*;
-//import frc.robot.auto.Drive2;
-import frc.robot.auto.AutoSelector;
+// import frc.robot.Subsystem.Injector;
+// import frc.robot.Subsystem.Revolver;
+// import frc.robot.Subsystem.Shooter;
+// import frc.robot.Subsystem.Snorfler;
+import frc.robot.Subsystem.Turret;
 
-import javax.naming.LimitExceededException;
+import frc.robot.Subsystem.revolverupdate.Injector;
+import frc.robot.Subsystem.revolverupdate.Revolver;
+import frc.robot.Subsystem.revolverupdate.Shooter;
+import frc.robot.Subsystem.revolverupdate.Snorfler;
+
+// import frc.robot.Subsystem.revolverupdate.*;
+// import frc.robot.auto.Drive2;
+import frc.robot.auto.AutoSelector;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -106,10 +110,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     AutoSelector.disable();
-    //NewSnorfler.init();
-     Snorfler.init();
-     Revolver.init();
-    //NewRevolver.init();
+    Snorfler.init();
+    Revolver.init();
     Shooter.init();
     Injector.init();
     Drive.init();
@@ -122,10 +124,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     IO.update();
-    //NewSnorfler.update();
-     Snorfler.update();
-     Revolver.update();
-    //NewRevolver.update();
+    Snorfler.update();
+    Revolver.update();
     Shooter.update();
     Injector.update();
     Turret.update();
