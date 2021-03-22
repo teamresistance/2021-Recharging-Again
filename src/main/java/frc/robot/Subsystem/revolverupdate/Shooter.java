@@ -44,7 +44,7 @@ public class Shooter {
     private static ISolenoid ballHood = IO.shooterHoodUp;
 
     private static int state;               //Shooter state machine.  0=Off by pct, 1=On by velocity, RPM
-    private static Timer stateTmr;          //Timer for states
+    private static Timer stateTmr;          //Timer for state machine
 
     private static Integer rpmWSP = 3000;   //Working RPM setpoint
     private static int rpmSPAdj = 3800;     //Adjustable RPM setpoint when choosen
