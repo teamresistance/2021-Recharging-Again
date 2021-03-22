@@ -23,6 +23,7 @@ public class Snorfler {
 
     public static double feederSpeed = 0.7;
     public static double loaderSpeed = 0.7;
+    public static boolean reqRevSnflr = false;  //TO DO: Need to set in cmdUpdate
 
     public static void init() {
 
