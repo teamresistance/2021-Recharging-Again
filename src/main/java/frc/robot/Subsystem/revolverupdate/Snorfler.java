@@ -13,7 +13,7 @@ public class Snorfler {
     private static Victor snorfLoaderV = IO.snorfFeedScdy;      //Feed Revolver motor???
     private static InvertibleDigitalInput snorfHasBall = IO.snorfHasBall;   //Banner snsr, ball at top of snorfler
 
-    private static int state;
+    private static int state;               //Snorfler state machine.  0=Off, 1-6 Snorfle, 10 Spit drvr, 90 Spit Ball jam
     private static boolean lowerToggleOn;
     private static boolean feedToggleOn;
     private static Timer stateTmr;          //Timer used in state machine
@@ -27,47 +27,46 @@ public class Snorfler {
 
     public static void init() {
 
-        stateTmr = new Timer(0);
-        safeTimer = new Timer(0);
-        startUpTimer = new Timer(0);
+        stateTmr = new Timer(0);                //Timer for state machine
+        safeTimer = new Timer(0);               //Timer for jammed ball safety
+        startUpTimer = new Timer(0);            //Timer to delay startup & shutdown of snorfler.  Why???
         snorfFeederV.set(0);
         snorfLoaderV.set(0);
         snorfExtendV.set(false);
 
         state = 0;
-        lowerToggleOn = false;
-        feedToggleOn = false;
+        lowerToggleOn = false;          //True = Disable snorfler.  This seems backward???
+        feedToggleOn = false;           //True = Reverse direction of feed & loader motors.  Spit balls.
     }
 
     private static void determ() {
         // toggle arms down and up
         if (JS_IO.btnLowerSnorfler.onButtonPressed()) {
 
-            startUp = startUpTimer.hasExpired(0.2, state);
+            startUp = startUpTimer.hasExpired(0.2, state);  //??? startup(AND shutdown) delay should be in SM?
 
             if(!lowerToggleOn){
-                state = Revolver.isFull() ? 6 : 1;
-                lowerToggleOn = true;
+                state = Revolver.isFull() ? 10 : 1;     //If Rev full, empty & shutdown
             }else{
                 state = 0;
-                lowerToggleOn = false;
             }
+            lowerToggleOn = !lowerToggleOn;
         }
 
-        // toggle feed motor on and off
-        if (JS_IO.btnReverseSnorfler.onButtonPressed()) {
+        
+        if (JS_IO.btnReverseSnorfler.onButtonPressed()) {   //Toggle feed motor Reverse and Forward
             feedToggleOn = !feedToggleOn;
-            state = feedToggleOn ? 8 : 1;
+            state = feedToggleOn ? 90 : 1;
         }
 
         //If ???? motor has hi hi amp draw, reverse motor for 1.5 sec to try to spit out ball.
         if (IO.pdp.getCurrent(2) > 21) {
-            state = 8;
+            state = 90;
         }
 
         //If ???? motor has hi amp draw, reverse motor for 1.5 sec to try to spit out ball.
         if (IO.pdp.getCurrent(2) > 10 && safeTimer.hasExpired(0.18, state) && startUp) {
-            state = 8;
+            state = 90;
         }
 
     }
@@ -80,6 +79,7 @@ public class Snorfler {
             case 0: // everything off including inner snorfler(?)
                 cmdUpdate(false, false, 0, 0);
                 break;
+            //------------ Snorfle, suck,  balls -----------------------------
             case 1: // Extend all solenoids out, wait for entending
                 cmdUpdate(true, true, 0, 0);
                 if (stateTmr.hasExpired(0.2, state)) state++;  // TODO: time to be changed
@@ -98,21 +98,21 @@ public class Snorfler {
                 cmdUpdate(true, true, feederSpeed, loaderSpeed);
                 if (stateTmr.hasExpired(.25, state)) state++;
                 break;
-            case 5: //Turn off collector and just feed the ball to the revolver
+            case 5: //Turn off collector and just feed the ball to the revolver (was 7)
                 cmdUpdate(true, true, feederSpeed, 0);
                 if (stateTmr.hasExpired(.25, state)) state = 2;
                 break;
-                
+            //-------------- Spit balls if rev full or driver request, return to Snorfling ------------------------
             case 10: // Spit.  Reverse everything for 1.5 sec. Then go back to waiting for ball (was 5)
                 cmdUpdate(true, true, -feederSpeed, -loaderSpeed);
                 if (stateTmr.hasExpired(1.5, state)) state++;
                 break;
-            case 11:
+            case 11: // If Rev is not full return to snorfling else continue to spit balls (was 6) 
                 cmdUpdate(true, true, 0, 0);
                 if (!Revolver.isFull()) state = 2;
                 break;
-
-            case 8: // Jammed ball, hi current.  Reverse everything for 1.5 sec return to snorfling.
+            //-------------------- Spit balls if jammed (hi amps) or toggle req. return to waiting ----------------
+            case 90: // Jammed ball, hi current or Shutdown.  Reverse everything for 1.5 sec return to snorfling.  (was 8)
                 cmdUpdate(true, true, -feederSpeed, -.3);
                 if (stateTmr.hasExpired(1.5, state)) state = 1;
                 break;
