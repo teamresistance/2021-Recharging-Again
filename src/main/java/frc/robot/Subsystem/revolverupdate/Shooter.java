@@ -206,8 +206,8 @@ public class Shooter {
         SmartDashboard.putBoolean("Shooter/shooterToggle", shooterToggle);
 
         //Put Flywheel info on sdb
-        SmartDashboard.putNumber("Shooter/FlyWheel/Encoder", encSh.ticks());
-        SmartDashboard.putNumber("Shooter/FlyWheel/Velocity", shooter.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Shooter/Flywheel/Encoder", encSh.ticks());
+        SmartDashboard.putNumber("Shooter/Flywheel/Velocity", shooter.getSelectedSensorVelocity());
         SmartDashboard.putNumber("Shooter/Flywheel/RPM", shooter.getSelectedSensorVelocity() * 600 / 47);
         SmartDashboard.putNumber("Shooter/Flywheel/SRX curr", shooter.getStatorCurrent());
         SmartDashboard.putNumber("Shooter/Flywheel/pdp curr", IO.pdp.getCurrent(13));
