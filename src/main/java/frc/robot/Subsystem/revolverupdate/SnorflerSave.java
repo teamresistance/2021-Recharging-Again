@@ -127,7 +127,7 @@ public class SnorflerSave {
             case 7:
                 cmdUpdate(true, true, feederSpeed, 0);
 
-                if (IO.revolNextSpaceOpen.get()) {
+                if (IO.revRcvSlotOpen.get()) {
                     ballCnt++;
                 }
 

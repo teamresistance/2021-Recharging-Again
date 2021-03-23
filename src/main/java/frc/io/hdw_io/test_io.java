@@ -155,7 +155,7 @@ public class test_io{
 
         SmartDashboard.putNumber("Rev %", IO.revolverRot.get());
         SmartDashboard.putBoolean("Rev Idx", IO.revolerIndexer.get());
-        SmartDashboard.putBoolean("Rev Nxt Opn", IO.revolNextSpaceOpen.get());
+        SmartDashboard.putBoolean("Rev Nxt Opn", IO.revRcvSlotOpen.get());
 
         SmartDashboard.putBoolean("Snf Ext", IO.snorflerExt.get());
         SmartDashboard.putNumber("Snf Main %", IO.snorfFeedMain.get());

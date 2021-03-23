@@ -61,7 +61,7 @@ public class IO {
     // Revolver, stores up to 5 balls
     public static Victor revolverRot = new Victor(5);
     public static InvertibleDigitalInput revolerIndexer = new InvertibleDigitalInput(0, true);
-    public static InvertibleDigitalInput revolNextSpaceOpen = new InvertibleDigitalInput(1, false);
+    public static InvertibleDigitalInput revRcvSlotOpen = new InvertibleDigitalInput(1, false);
     public static Timer revTimer;
 
     // Snorfler

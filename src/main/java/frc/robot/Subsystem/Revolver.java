@@ -29,7 +29,7 @@ public class Revolver {
     private static Victor revolver = IO.revolverRot;
     private static InvertibleDigitalInput atOneRevolution = IO.revolerIndexer; // mag
     private static InvertibleDigitalInput ballInSnorfler = IO.snorfHasBall;
-    private static InvertibleDigitalInput nextSpaceOpen = IO.revolNextSpaceOpen;
+    private static InvertibleDigitalInput nextSpaceOpen = IO.revRcvSlotOpen;
 
     public static int state = 0;
     private static boolean locked = false;
