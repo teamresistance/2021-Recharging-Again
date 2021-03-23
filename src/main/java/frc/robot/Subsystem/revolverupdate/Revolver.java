@@ -70,28 +70,10 @@ public class Revolver {
             state = 1;
         }
         
-        // if (Snorfler.reqRevSnflr && once) {
-        //     state = 1;
-        //     once = false; // set true once unload is finished
-        // }
-
         if (JS_IO.btnIndex.onButtonPressed()) {     //Check for open slot or all slots filled
             ballCnt = 0;
             state = 1;
         }
-
-        // if (JS_IO.btnFireShooter.isDown()) state = 11; // Unload
-
-        // single fire test
-        // if (JS_IO.btnSlowFire.onButtonPressed()) state = 1;
-        // slowFireCnt = 0;
-
-        // if (JS_IO.btnStop.isDown()) state = 0;
-
-        // if (JS_IO.btnIndex.isDown()) {
-        // ballCnt = 0;
-        // state = 30;
-        // }
 
         // if (Snorfler.hasBall() && state != 1 && !isFull) state = 1; // Load
 
@@ -103,8 +85,9 @@ public class Revolver {
 
     // where to increase ball count??
     public static void update() { // cases for state of revolver
-        determ();
-        sdbUpdate();
+        stfUpdate();        //Updated associated stuff
+        determ();           //Determine if we need to start or interrupt the indexing
+        sdbUpdate();        //Update Revolver Smartdashboard items
 
         switch (state) {
             case 0: // everything off, revolverSpeed. Waiting for Load or Unload.
@@ -202,8 +185,6 @@ public class Revolver {
     private static void cmdUpdate(double revolverSpeed) {
         // Jammed ball will not break anything "critical" so handle in state machine.
         revolver.set(revolverSpeed);
-        // revolver.set((!IO.revolver_HAA) ? revolverSpeed : 0); // HAA now, ballJammed
-        // in state
     }
 
     /**
@@ -219,10 +200,6 @@ public class Revolver {
         // return ballJamTmr.hasExpired(0.300, IO.revolver_HAA);
         return false;
         
-        // if (Revolver.getState() != 0) {
-        //     if (revTimer.hasExpired(4, Revolver.getState()))
-        //         revolver_HAA = true;
-        // }
     }
 
     /** @return true if revolver thinks it has 5 balls. */
@@ -234,16 +211,6 @@ public class Revolver {
     public static int getState() {
         return state;
     }
-
-    // /** @return Has unloaded all balls rotated for 3 secs? */
-    // public static boolean hasUnloaded() {
-    // return ballCnt < 1;
-    // }
-
-    // /** Has shot?, was used for single shot */
-    // public static boolean hasShot() {
-    //     return hasShot;
-    // } // No i deer.
 
     /** Initialize sdb for revolver */
     private static void sdbInit() {
