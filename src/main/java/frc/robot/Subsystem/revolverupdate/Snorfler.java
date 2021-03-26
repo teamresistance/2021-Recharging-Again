@@ -14,13 +14,15 @@ public class Snorfler {
     private static InvertibleDigitalInput snorfHasBall = IO.snorfHasBall; // Banner snsr, ball at top of snorfler
 
     private static int state; // Snorfler state machine. 0=Off, 1-6 Snorfle, 10 Spit drvr, 90 Spit Ball jam
-    private static boolean lowerToggleOn;
-    private static boolean feedToggleOn;
-    private static boolean reverseSnrfToggle;
+    private static boolean snorfArmDn;
+    private static boolean snorfFeederOn;
+    private static boolean snorfReverse;
     private static Timer stateTmr; // Timer used in state machine
     private static Timer safeTimer; // Safety timer, used for jammed ball hi amps
     private static Timer startUpTimer;
     private static boolean startUp;
+    private static boolean ballJammed = false;          //Jammed ball, attempt to clear by reversing
+    private static Timer ballJamTmr = new Timer(1.50);  //Timer if revolver current is hi flag ball jam
 
     public static double feederSpeed = 0.7;
     public static double loaderSpeed = 0.7;
@@ -36,48 +38,28 @@ public class Snorfler {
         snorfExtendV.set(false);
 
         state = 0;
-        lowerToggleOn = false; // True = Disable snorfler. This seems backward???
-        feedToggleOn = false; // True = Reverse direction of feed & loader motors. Spit balls.
-        reverseSnrfToggle = false; // True = snorfler reverse until button hit again
+        snorfArmDn = false;     //Lower arm & extend feeder
+        snorfFeederOn = false;  //Feed motors on to snorfle
+        snorfReverse = false;   //Reverse motor while button down
     }
 
     private static void determ() {
         // toggle arms down and up
-        if (JS_IO.btnLowerSnorfler.onButtonPressed()) {
-
-            // startUp = startUpTimer.hasExpired(0.2, state); //??? startup(AND shutdown)
-            // delay should be in SM?
-
-            if (!lowerToggleOn) {
+        if (JS_IO.btnTglSnorArmDn.onButtonPressed()) {
+            if (!snorfArmDn) {
                 state = Revolver.isFull() ? 90 : 1; // If Rev full, empty & shutdown
             } else {
                 state = 0;
             }
-            lowerToggleOn = !lowerToggleOn;
+            snorfArmDn = !snorfArmDn;
         }
-
-        // if (JS_IO.btnReverseSnorfler.onButtonPressed()) { // Toggle feed motor
-        // Reverse and Forward
-        // feedToggleOn = !feedToggleOn;
-        // state = feedToggleOn ? 9 : 1;
-        // }
 
         if (JS_IO.btnReverseSnorfler.onButtonPressed()) {
-            state = reverseSnrfToggle ? 1 : 10;
-            reverseSnrfToggle = !reverseSnrfToggle;
+            state = snorfReverse ? 1 : 10;
+            snorfReverse = !snorfReverse;
         }
 
-        // If ???? motor has hi hi amp draw, reverse motor for 1.5 sec to try to spit
-        // out ball.
-        if (IO.pdp.getCurrent(2) > 21) {
-            state = 90;
-        }
-
-        // If ???? motor has hi amp draw, reverse motor for 1.5 sec to try to spit out
-        // ball.
-        // if (safeTimer.hasExpired(2, IO.pdp.getCurrent(2) > 15) /* && startUp */) {
-        // state = 90;
-        // }
+        if(ballJammed && state < 90) state = 90;
 
     }
 
@@ -145,7 +127,7 @@ public class Snorfler {
             case 90:
                 //TODO: FIXXXXXX
                 cmdUpdate(true, 0, 0);
-                if (stateTmr.hasExpired(0.01, state)) {
+                if (stateTmr.hasExpired(0.03, state)) {
                     state++;
                 }
                 break;
@@ -153,6 +135,7 @@ public class Snorfler {
                     // snorfling. (was 8)
 
                 cmdUpdate(true, -feederSpeed, -.3);
+                ballJammed = false;
                 if (stateTmr.hasExpired(1.5, state))
                     state = 1;
                 break;
@@ -167,10 +150,8 @@ public class Snorfler {
     /**
      * Send cmds to various parts of snrfling system
      * 
-     * @param snorfOuterSoleOut - Activates selenoid valve to raise snorfler outter
-     *                          arm.
-     * @param snorfInnerSoleOut - Activates selenoid valve to extend snorfler inner
-     *                          arm.
+     * @param snorfOuterSoleOut - Activates selenoid valve to lower outter &
+     *                          extend inner snorfler arm.
      * @param snorfFeederSpd    - Motor speed for Feeder, collector wheels. ???
      * @param snorfLoaderSpd    - Motor speed for Loader, feed revolver. ???
      */
@@ -180,15 +161,25 @@ public class Snorfler {
         snorfLoaderV.set(snorfLoaderSpd);
     }
 
+    private static void stfUpdate(){
+        // If ???? motor has hi hi amp draw, reverse motor for 1.5 sec to try to spit
+        // out ball.
+        if (ballJamTmr.hasExpired(1.0, IO.pdp.getCurrent(2) > 23)) {
+            ballJammed = true;
+        }
+
+
+    }
+
     /** Update sdb for Snorfler */
     public static void sdbUpdate() {
-        SmartDashboard.putNumber("Snorfler/state", state);
-        SmartDashboard.putBoolean("Snorfler/Rev isFull", Revolver.isFull());
-        SmartDashboard.putBoolean("Snorfler/ballBanner", snorfHasBall.get());
-        SmartDashboard.putNumber("Snorfler/pdp snorf curr", IO.pdp.getCurrent(2));
-        SmartDashboard.putBoolean("Snorfler/lowerToggle", lowerToggleOn);
-        SmartDashboard.putBoolean("Snorfler/feedToggle", feedToggleOn);
-        SmartDashboard.putBoolean("Snorfler/Rev Rdy2Rcv", Revolver.rdy2Rcv());
+        SmartDashboard.putNumber("Snorfler/1.state", state);
+        SmartDashboard.putBoolean("Snorfler/2.Rev isFull", Revolver.isFull());
+        SmartDashboard.putBoolean("Snorfler/3.ballBanner", snorfHasBall.get());
+        SmartDashboard.putNumber("Snorfler/4.pdp snorf curr", IO.pdp.getCurrent(2));
+        SmartDashboard.putBoolean("Snorfler/5.Arm is dn", snorfArmDn);
+        SmartDashboard.putBoolean("Snorfler/6.Feed mtr on", snorfFeederOn);
+        SmartDashboard.putBoolean("Snorfler/7.Rvlvr Rdy2Rcv", Revolver.rdy2Rcv());
     }
 
     /**

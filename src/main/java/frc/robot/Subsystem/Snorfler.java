@@ -42,7 +42,7 @@ public class Snorfler {
 
 
         // toggle arms down and up
-        if (JS_IO.btnLowerSnorfler.onButtonPressed()) {
+        if (JS_IO.btnTglSnorArmDn.onButtonPressed()) {
 
             startUp = startUpTimer.hasExpired(.2, state);
             if (!lowerToggleOn) {

@@ -47,7 +47,7 @@ public class Injector {
 
     // Determinator of Injector state
     public static void determ() {
-        if (JS_IO.btnFireShooter.isDown() || JS_IO.btnSlowFire.isDown()) {
+        if (JS_IO.btnFireShooter.isDown()) {
             state = 1;
         }
         if (JS_IO.btnStop.isDown()) {

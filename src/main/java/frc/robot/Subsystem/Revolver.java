@@ -58,10 +58,10 @@ public class Revolver {
                 state = 11; // Unload
 
         //single fire test
-        if (JS_IO.btnSlowFire.onButtonPressed()) {
-            state = 25;
-            //slowFireCnt = 0;
-        }
+        // if (JS_IO.btnSlowFire.onButtonPressed()) {
+        //     state = 25;
+        //     //slowFireCnt = 0;
+        // }
 
         if (JS_IO.btnStop.isDown())
             state = 0;
@@ -76,9 +76,9 @@ public class Revolver {
         }
 
 
-        if (IO.revolver_HAA && state < 90) { // jammed Ball
-            state = 90; // Clear jammed ball
-        }
+        // if (IO.revolver_HAA && state < 90) { // jammed Ball
+        //     state = 90; // Clear jammed ball
+        // }
     }
 
     public static void update() { // cases for state of revolver
@@ -290,7 +290,7 @@ public class Revolver {
             case 90: // Safety everything off. Wait momentarily before reversing.
                 cmdUpdate(0.0);
                 if (delayTimer.hasExpired(0.2, state)) {
-                    IO.revolver_HAA = false;
+                    // IO.revolver_HAA = false;
                     state++;
                 }
                 break;
@@ -318,14 +318,14 @@ public class Revolver {
 
     // Stuff Updates
     private static void stfUpdate() {
-        if (IO.revolver_HAA)
-            jammedBall = true; // Try to clear by reversing
+        // if (IO.revolver_HAA)
+        //     jammedBall = true; // Try to clear by reversing
         // isFull = (ballCnt >= 5) || !nextSpaceOpen.get();
     }
 
     // turning off and on certain functions
     private static void cmdUpdate(double revolverSpeed) {
-        revolver.set((!IO.revolver_HAA) ? revolverSpeed : 0); // HAA now, ballJammed in state
+        // revolver.set((!IO.revolver_HAA) ? revolverSpeed : 0); // HAA now, ballJammed in state
     }
 
     public static boolean isFull() {
@@ -352,7 +352,7 @@ public class Revolver {
 
     // SmartDashboard Updates
     private static void sdbUpdate() {
-        SmartDashboard.putBoolean("Rev HAA", IO.revolver_HAA);
+        // SmartDashboard.putBoolean("Rev HAA", IO.revolver_HAA);
         SmartDashboard.putNumber("Revolver State", state);
         SmartDashboard.putBoolean("Rev BallInSnorf", nextSpaceOpen.get());
         SmartDashboard.putBoolean("atOneRev", atOneRevolution.get());

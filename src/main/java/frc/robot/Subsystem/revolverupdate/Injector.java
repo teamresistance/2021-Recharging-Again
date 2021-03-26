@@ -72,7 +72,7 @@ public class Injector {
                 // isRunning = false;
                 break;
             case 1: // All On. Set isRunning true after delay. Time to speed up.
-                if (Shooter.closeToSpeed()) {
+                if (Shooter.isNearSpeed()) {
                     cmdUpdate(true, true, true);
                 } else {
                     cmdUpdate(false, false, false);

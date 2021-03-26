@@ -50,7 +50,7 @@ public class SnorflerSave {
         }
 
         // toggle arms down and up
-        if (JS_IO.btnLowerSnorfler.onButtonPressed()) {
+        if (JS_IO.btnTglSnorArmDn.onButtonPressed()) {
 
             if (!lowerToggleOn) {
                 if (isFull()) {

@@ -20,89 +20,92 @@ import frc.robot.Subsystem.revolverupdate.*;
 public class Revolver {
     private static Victor revolver = IO.revolverRot; // PWM ESC control
     private static InvertibleDigitalInput atIndexStop = IO.revolerIndexer; // Mag switch on gear for one rotation
-    // private static InvertibleDigitalInput ballInSnorfler = IO.snorfHasBall; // Ball at top of snorfler
     private static InvertibleDigitalInput rcvSlotOpen = IO.revRcvSlotOpen;// Banner snsr, chk if a ball is in
                                                                                 // rcv'iing slot
 
     public static int state = 0;
     public static boolean reqRevShtr = false;
-    // private static boolean locked = false;
-    private static int ballCnt = 0; // Increment when a ball is loaded. Clear on unload.
-    // private static boolean isFull = false;     // Ball cnt > 4
-    private static double revAmp = 0.0;         //Revolver amps
-    private static double revAmp_HL = 15.0;     //Revolver amp High Alarm Limit
-    private static boolean revAmp_HA = false;   //Revolver amp High Alarm
-    private static boolean jammedBall = false;  // Jammed ball, attempt to clear by reversing
-    // private static boolean hasUnloaded; // Ball cnt < 1?
-    // private static boolean hasShot; // ??
-    // private static int slowFireCnt = 0; // ??
 
-    private static double revPct = 0.15; // Spd when Indexing
+    private static int ballCnt = 0;             // Increment when a ball is loaded. Clear on unload.
+    private static boolean isFull = false;      // Ball cnt > 4
+
+    private static double revAmp = 0.0;         //Revolver amps
+    private static double revAmp_HL = 17.0;     //Revolver amp High Alarm Limit
+    private static boolean ballJammed = false;  //Jammed ball, attempt to clear by reversing
+
+    private static double revPct = 0.15;        // Spd when Indexing
 
     private static Timer stateTimer = new Timer(0.50);  //Timer used in state machine
-    private static Timer ballJamTmr = new Timer(0.50);  //Timer if revolver current is hi flag ball jam
+    private static Timer ballJamTmr = new Timer(1.50);  //Timer if revolver current is hi flag ball jam
 
-    private static boolean once = true;
-    // private static boolean runFive = false;
-    // private static int unloadCnt;
+    private static boolean isIndexing = true;
 
+    /**Initilize Revolver called from teleopInit() in Robot.java */
     public static void init() { // initialze
-        // hasUnloaded = false;
-        // hasShot = false;
-        // isFull = false;
         revolver.set(0.0);
         ballCnt = 0;
         state = 1;
         update();
     }
 
-    public static void determ() { // determinator of state
+    /*
+    Revolver indexes if not isFull && not rcvSlotOpen, not (isFull or rcvSlotOpen).
+    Snorfler can push ball if rdy2Rcv, not isFull && rcvSlotOpen
+    If slot is open max ball cnt "should be" 4.
+    stfUpdate updates conditions statuses.  determ reacts to those statuses.
 
-        // if (reqRevShtr && state == 0) {      //Alternative.  Better/Worse/Nada?
-        if (reqRevShtr && once) {
+    Hand shake.  Shooter requests indexing, Revolver goes to 1 sets indexing.
+    Shooter req goes false and waits while indexing is true.
+    Revolver finishes indexing (state 7?), not isIndexing.
+    Shooter then can decide to stop or request again.
+    */
+
+    /**Determine if the Revolver indexing should start or be interupted */
+    public static void determ() {
+
+        if (reqRevShtr && !isIndexing) {    //Shooter is requesting indexing
             state = 1;
-            once = false; // set true once unload is finished
         }
 
-        //TODO: FIX!!!
-        if (Snorfler.hasBall() && /*!Snorfler.snorfNotRdy() &&*/ !isFull() && Revolver.rdy2Rcv()) {
-            ballCnt = 0;
+        //Slot has a ball but cnt is not full and it's not indexing, call for indexing
+        if (!rcvSlotOpen.get() && !isFull() && !isIndexing) {
             state = 1;
         }
         
-        if (JS_IO.btnIndex.onButtonPressed()) {     //Check for open slot or all slots filled
+        //Dvr req to reindex, chk for open slot or all slots filled
+        if (JS_IO.btnIndex.onButtonPressed()) {
             ballCnt = 0;
             state = 1;
         }
 
-        // if (Snorfler.hasBall() && state != 1 && !isFull) state = 1; // Load
-
-        // if (IO.revolver_HAA && state < 90) { // jammed Ball
-        if (isJammedBall() && state < 90) { // jammed Ball
-            state = 90; // Clear jammed ball
+        if (ballJammed && state < 90) { // jammed Ball
+            state = 90; //Attempt to clear jammed ball
         }
     }
 
-    // where to increase ball count??
+    //--------------------------  Updating  -------------------------------------------------
+    /**Update Revolver state machine.  Called from teleopPeriodic in Robot.java */
     public static void update() { // cases for state of revolver
-        stfUpdate();        //Updated associated stuff
-        determ();           //Determine if we need to start or interrupt the indexing
+        stfUpdate();        //Updated associated stuff, statuses
+        determ();           //Determine if we need to start or interupt the indexing
         sdbUpdate();        //Update Revolver Smartdashboard items
 
         switch (state) {
             case 0: // everything off, revolverSpeed. Waiting for Load or Unload.
                 cmdUpdate(0.0);
                 if (stateTimer.hasExpired(0.05, state));    // Initialize timer for covTrgr
+                isIndexing = false;
                 break;
             // ------------ Start indexing --------------------
-            case 1: // wait some time ... if needed
+            case 1: // wait some time ... if needed.  Flag isIndexing true.
                 cmdUpdate(0.0);
                 if (stateTimer.hasExpired(0.05, state))
                     state++; // Wait time (settle time?)
+                isIndexing = true;
                 break;
             case 2: // Motor On boost mode for short time to get off stall issue
                 cmdUpdate(0.25);
-                if (stateTimer.hasExpired(.1, state)) 
+                if (stateTimer.hasExpired(0.10, state)) 
                     state++;
                 break;
             case 3: // Motor on at normal spd until index sw.
@@ -111,26 +114,25 @@ public class Revolver {
                     state++; // Wait for sw goes false.
                 break;
             case 4: // Brake with small negative for short time(stop overshoot, maybe)
-                cmdUpdate(-0.2);
+                cmdUpdate(-0.20);   //0.25 moves it back to switch @ 0.07mS
                 if (stateTimer.hasExpired(0.05, state))
                     state++; // Brake time
                 break;
             case 5: // Stop the revolver but wait a short period before signaling done indexing
                 cmdUpdate(0.0);
                 if (stateTimer.hasExpired(0.15, state)){
-                    once = true;
-                    reqRevShtr = false;
+                    // reqRevShtr = false;
                     state++; // Shutdown time
                 }
                 break;
             case 6: // If full or slot is not open stop indexing else index again and incr ball cnt.
-                // state = !Snorfler.isFull() && nextSpaceOpen.get() ? 0 : 1;
-                if( isFull() || rcvSlotOpen.get()) {
-                    state = 0;
-                }else{
-                    state = 1;
-                    ballCnt++;
-                }
+
+                //Stop indexing if isFull && not rcvSlotOpen  else index again and incr ball cnt.
+                //Revolver indexes if not isFull && not rcvSlotOpen, not (isFull or rcvSlotOpen).
+                //Stop indexing if isFull && not rcvSlotOpen
+                ballCnt++;
+                if( isFull() && rcvSlotOpen.get()) ballCnt = 4;     //Slot is open, can't be full, reduce.
+                state = isFull() || rcvSlotOpen.get() ? 0 : 1;      //If full or slot open stop index else one more time
                 break;
             // case 8: // btnIndex pressed
             //     Snorfler.ballCnt = 0;
@@ -140,10 +142,11 @@ public class Revolver {
             // --------------- Jammed Ball Safety ----------------
             case 90: // Safety everything off.
                 cmdUpdate(0.0);
-                IO.revolver_HAA = false;
+                // IO.revolver_HAA = false;
                 state++;
                 break;
             case 91: // Wait momentarily before reversing.
+                cmdUpdate(0.0);
                 if (stateTimer.hasExpired(0.2, state))
                     state++;
                 break;
@@ -158,8 +161,8 @@ public class Revolver {
                     state++;
                 break;
             case 94: // before trying to index again.
-                jammedBall = false;
-                state = 1;
+                ballJammed = false;
+                state = isIndexing ? 3 : 1;     //Maybe an issue with boost since it's already indexing
                 break;
 
             default: // everything off
@@ -167,15 +170,15 @@ public class Revolver {
                 System.out.println("Invalid Revolver state - " + state);
                 break;
         }
-
     }
 
     /** Update stuff */
     private static void stfUpdate() {
-        if(isJammedBall()) jammedBall = true;
-        // if (IO.revolver_HAA)
-        //     jammedBall = true; // Try to clear by reversing
-        // isFull = (ballCnt >= 5) || !nextSpaceOpen.get();
+        revAmp = IO.pdp.getCurrent(4);  //Revolver current
+        // if(ballJamTmr.hasExpired(1.0, revAmp > 21.0) && !jammedBall) jammedBall = true;   //Reset after action, 90
+        //Alternative - Entire indexing should take les than 1 sec.
+        if (ballJamTmr.hasExpired(2.0, state) && isIndexing)   //SHOULD be a OnDelay, good for now.  Need to mod covTmr
+            ballJammed = true;
     }
 
     /**
@@ -183,33 +186,8 @@ public class Revolver {
      * motor.
      */
     private static void cmdUpdate(double revolverSpeed) {
-        // Jammed ball will not break anything "critical" so handle in state machine.
+        // Jammed ball will not break anything "critical" so handle in state machine (90).
         revolver.set(revolverSpeed);
-    }
-
-    /**
-     * @return true if revolver is at index, has an open slot and isn't indexing.
-     */
-    public static boolean rdy2Rcv() {
-        return /*atIndexStop.get()  && */ rcvSlotOpen.get() && state == 0; /* && !indexing */
-    }
-
-    /** @return true if revolver thinks it has 5 balls. */
-    public static boolean isJammedBall() {
-        // revAmp = IO.pdp.getCurrent(4);  //Revolver current
-        // return ballJamTmr.hasExpired(0.300, IO.revolver_HAA);
-        return false;
-        
-    }
-
-    /** @return true if revolver thinks it has 5 balls. */
-    public static boolean isFull() {
-        return ballCnt >= 5;
-    }
-
-    /** @return state of the Revolver. State assignments may chg, use statuses. */
-    public static int getState() {
-        return state;
     }
 
     /** Initialize sdb for revolver */
@@ -218,11 +196,41 @@ public class Revolver {
 
     /** SmartDashboard Updates */
     private static void sdbUpdate() {
-        SmartDashboard.putBoolean("Revolver/Rev HAA", IO.revolver_HAA);
-        SmartDashboard.putNumber("Revolver/Revolver State", state);
-        SmartDashboard.putBoolean("Revolver/Rev BallInSnorf", rcvSlotOpen.get());
-        SmartDashboard.putBoolean("Revolver/atIndexStop", atIndexStop.get());
-        SmartDashboard.putNumber("Revolver/Ball Count", ballCnt);
+        SmartDashboard.putNumber("Revolver/1.Revolver State", state);
+        SmartDashboard.putBoolean("Revolver/2.Rev slot open", rcvSlotOpen.get());
+        SmartDashboard.putBoolean("Revolver/3.atIndexStop", atIndexStop.get());
+        SmartDashboard.putNumber("Revolver/4.Ball Count", ballCnt);
+        SmartDashboard.putBoolean("Revolver/5.Is full", isFull());
+        SmartDashboard.putBoolean("Revolver/6.Ball Jam", ballJammed);
+        SmartDashboard.putBoolean("Revolver/7.Req from Shtr", reqRevShtr);
+    }
+
+    //-------------------  Statuses and conditioning -----------------------------------------
+    /**
+     * @return true if revolver is at index, has an open slot and isn't indexing.
+     */
+    public static boolean rdy2Rcv() {
+        return /*atIndexStop.get()  && */ rcvSlotOpen.get() && state == 0; /* && !indexing */
+    }
+
+    /** @return true if revolver had/has hi amp and is attempting to clear. */
+    public static boolean isJammedBall() {
+        return ballJammed;
+    }
+
+    /** @return true if revolver thinks it has 5 balls. */
+    public static boolean isFull() {
+        return ballCnt >= 5;
+    }
+
+    /** @return true if revolver is still indexing since last request */
+    public static boolean isIndexing() {
+        return isIndexing;
+    }
+
+    /** @return state of the Revolver. State assignments may chg, use statuses. */
+    public static int getState() {
+        return state;
     }
 
 }

@@ -14,15 +14,11 @@ import frc.util.Timer;
 /**
  * Original Author: Jim & Anthony
  * <p>
+ * <p>History:
+ * <p>1/20/20 - Original Release
+ * <p>2/2021 - KB - Added Chooser for RPM SPs & other cleanup
  * <p>
- * History:
- * <p>
- * 1/20/20 - Original Release
- * <p>
- * 2/2021 - KB - Added Chooser for RPM SPs
- * <p>
- * <p>
- * Desc: Handles the shoooter subsystem
+ * <p>Desc: Handles the shooter subsystem
  * <p>
  * Note: Works with Injector and Revolver. The Injector controls a flipper,
  * pickup wheel & 4-wheel injector. The Revolver holds the balls until ready to
@@ -31,33 +27,23 @@ import frc.util.Timer;
  * Revolver. The Revolver also works with the Snofler to gather and store the
  * balls.
  * <p>
- * <p>
- * determ: When button rampUp(3) if state == 0 goto state 1 else goto state 0,
+ * <p>determ: When button rampUp(3) if state == 0 goto state 1 else goto state 0,
  * shut it all down, initialize.
  * <p>
- * <p>
- * Seq of Operation - Shooter
- * <p>
- * Init - System is initialized off. All requests off and retracted.
- * <p>
- * 0. Initialized. Shooter disabled, flywheel off, injector Disabled (4-wheel
+ * <p>Seq of Operation - Shooter
+ * <p>Init - System is initialized off. All requests off and retracted.
+ * <p>0. Initialized. Shooter disabled, flywheel off, injector Disabled (4-wheel
  * off, pickup off, flipper down), hood down. No request to revolver, false.
- * <p>
- * 1. Starts the flywheel ramping to rpmSP (or power). At setpt goto state 2.
- * Read (1).onPressed to clear.
- * <p>
- * 2. When button shoot(1).onPressed sets shtrRdy, go to state 3
- * <p>
- * 3. Requests injector enable (4-whl, pickup & flipper enabled). Wait for a
- * period to get started then state 4
- * <p>
- * 4. When button shoot(1).onPressed 2nd time goto state 5
- * <p>
- * 5. Set revolver.start, index revolver 1 time. Goto state 6
- * <p>
- * 6. When revolver.finished wait some time goto state 7
- * <p>
- * 7. If shoot(1).isDown, stilled pressed, goto state 6, continue shooting, else
+ * <p>1. Starts the flywheel ramping to rpmSP (or power). At setpt goto state 2.
+ * Read (1).onPressed to clear since used in next state.
+ * <p>2. When button shoot(1).onPressed, go to state 3
+ * <p>3. Requests injector enable (4-whl, pickup, flipper enabled & hood up).
+ * Wait a period to get started then state 4
+ * <p>4. When button shoot(1).onPressed 2nd time goto state 5
+ * <p>5. Set revolver.start, index revolver 1 time. Goto state 6
+ * <p>6. Wait for revolver to finish indexing goto state 7
+ * <p>7. Wait some time goto state 8
+ * <p>8. If shoot(1).isDown, stilled pressed, goto state 6, continue shooting, else
  * goto 4, single shot
  */
 public class Shooter {
@@ -68,9 +54,15 @@ public class Shooter {
     private static int state; // Shooter state machine. 0=Off by pct, 1=On by velocity, RPM
     private static Timer stateTmr = new Timer(.05); // Timer for state machine
 
+    private static boolean joelMode = false;     //Control seq for Joel
+    private static double joelShtrWSP = 0.45;   //Percent to send shooter
+    private static double joelShtrBSP = 1.00;   //Percent to boost after shot
+    private static double joelShtrTm = 0.15;    //Time to hold boost then move on
+
     private static Integer rpmWSP = 3000; // Working RPM setpoint
     private static int rpmSPAdj = 3800; // Adjustable RPM setpoint when choosen
-    private static int atSpeedDeadband = 200; // tbd, in rpm ???
+    private static int atSpeedDB = 100; //(WSP - DB) < RPM < (WSP + DB)
+    private static int nearSpdDB = 400; //RPM > (WSP - DB)
     private static double rpmToTpc = .07833333; // TBD rpm to ticks per cycle (100ms) // 47 ticks per 1 rotation
     private static boolean shooterToggle = true;// ?????
 
@@ -115,8 +107,8 @@ public class Shooter {
      * of a JS button but can be caused by other events.
      */
     private static void determ() {
-        if (JS_IO.btnRampShooter.onButtonPressed()) {
-            state = state != 0 ? 0 : 1;
+        if (JS_IO.btnRampShooter.onButtonPressed()) {       //Enable/Disable shooter, start/stop flywheel
+            state = state != 0 ? 0 : joelMode ? 11 : 1;     //ADDED - Joel mode, Bang/Bang 
         }
 
         if (JS_IO.allStop.onButtonPressed())
@@ -157,22 +149,77 @@ public class Shooter {
                 if (JS_IO.btnFireShooter.onButtonPressed())
                     state++;
                 break;
-            case 5: // Set revolver.reqRevShtr, index revolver 1 time. Goto state 6
+            case 5: // Set revolver.reqRevShtr, index revolver 1 time. Goto next
                 cmdUpdate(rpmWSP, true, true, true);
-                Revolver.reqRevShtr = true; // Set false, in Revolver, after 1 revolution.
                 state++;
                 break;
-            case 6: // When revolver.finished wait some time goto state 7
+            case 6: // When revolver has indexed goto next
                 cmdUpdate(rpmWSP, true, true, false);
-                if (!Revolver.reqRevShtr)
+                if (!Revolver.isIndexing())
                     state++;
                 break;
-            case 7: // If shoot(1).isDown, still pressed, goto state 5, continue shooting, else goto
+            case 7: //Wait some time.  To release button, maybe shooter recovery on rapid fire.
+                cmdUpdate(rpmWSP, true, true, false);
+                if (stateTmr.hasExpired(0.15, state))
+                    state++;
+            case 8: // If shoot(1).isDown, still pressed, goto state 5, continue shooting, else goto
                     // 4, single shot
                 cmdUpdate(rpmWSP, true, true, false);
                 state = JS_IO.btnFireShooter.isDown() ? 5 : 4;
                 break;
-            // case 8: // TODO: add temporary injector shutdown, leave flywheel on while shutting shooter down
+            // case 9: // TODO: add temporary injector shutdown, leave flywheel on while shutting shooter down
+
+            //     break;
+
+            // Shooter disabled, flywheel off, injector Disabled, hood down, request
+            // revolver, false.
+            case 10: // off - percentoutput (so that no negative power is sent to the motor)
+                cmdUpdate(0.0, false, false, false);
+                stateTmr.hasExpired(0.05, state); // Initialize timer for covTrgr. Do nothing.
+                break;
+            case 11: // Ramp flywheel to rpmSP (or power?). At setpt goto state 2. Read (1).onPressed
+                    // to clear.
+                cmdUpdate(rpmWSP, true, false, false);
+                JS_IO.btnFireShooter.onButtonPressed(); // Clear button press, just incase. Do nothing
+                if (isAtSpeed())
+                state++;
+                break;
+            case 12: // When button shoot(1).onPressed sets shtrRdy, go to state 3
+                cmdUpdate(rpmWSP, true, false, false);
+                if (JS_IO.btnFireShooter.onButtonPressed())
+                    state++;
+                break;
+            case 13: // Requests injector enable (all 3 items). Wait for a period, then state 4
+                cmdUpdate(rpmWSP, true, true, false);
+                if (stateTmr.hasExpired(0.15, state))
+                    state++; // Wait for Injector to get up to speed
+                break;
+            case 14: // When button shoot(1).onPressed 2nd time goto state 5
+                cmdUpdate(rpmWSP, true, true, false);
+                if (JS_IO.btnFireShooter.onButtonPressed())
+                    state++;
+                break;
+            //-- Joel boost stuff --
+            case 15: // Set revolver.reqRevShtr, index revolver 1 time. Goto next
+                cmdUpdate(rpmWSP, true, true, true);
+                //When drop below rpmWSP by 200 (or 150 mS just incase.)
+                if(!isNearSpeed() || stateTmr.hasExpired(0.15, state)) state++;
+                break;
+            case 16: // When revolver has indexed goto next
+                cmdUpdate(joelShtrBSP, false, true, false);  //-- JOEL BOOST --
+                if (!Revolver.isIndexing())
+                    state++;
+                break;
+            case 17: //Wait some time.  To release button, maybe shooter recovery on rapid fire.
+                cmdUpdate(rpmWSP, true, true, true);
+                if (stateTmr.hasExpired(0.15, state))
+                    state++;
+            case 18: // If shoot(1).isDown, still pressed, goto state 5, continue shooting, else goto
+                    // 4, single shot
+                cmdUpdate(rpmWSP, true, true, false);
+                state = JS_IO.btnFireShooter.isDown() ? 15 : 14;
+                break;
+            // case 19: // TODO: add temporary injector shutdown, leave flywheel on while shutting shooter down
 
             //     break;
 
@@ -186,25 +233,26 @@ public class Shooter {
     /**
      * Issue spd setting as rpmSP if isVelCmd true else as percent cmd.
      * 
-     * @param spd      - cmd to issue to Flywheel Talon motor controller as rpm or
-     *                 percentage
-     * @param isVelCmd - spd should be issued as rpm setpoint else as a percenetage
-     *                 output.
+     * @param spd      - cmd to issue to Flywheel Talon motor controller as rpm or percentage
+     * @param isVelCmd - spd should be issued as rpm setpoint else as a percenetage output.
+     * @param injCmd - Request injector to start & stop.
+     * @param revCmd - Request revolver to index 1 time.
      */
     public static void cmdUpdate(double spd, boolean isVelCmd, boolean injCmd, boolean revCmd) { // control through
                                                                                                  // velocity or percent
-        shooter.set(ControlMode.Disabled, 0); // Don't think we need this
+        // shooter.set(ControlMode.Disabled, 0); // Don't think we need this
 
-        Injector.reqInjShtr = injCmd; // Injector Start request
-        Revolver.reqRevShtr = revCmd; // Revolver Start request
+        Injector.reqInjShtr = injCmd; // Request injector to start & stop.
+        Revolver.reqRevShtr = revCmd; // Request revolver to index 1 time.
 
         if (isVelCmd) { // Math.abs(spd) * rpmToTpc
             shooter.set(ControlMode.Velocity, Math.abs(spd) * rpmToTpc); // control as velocity (RPM)
         } else {
-            shooter.set(ControlMode.PercentOutput, Math.abs(spd)); // control as percentage output
+            shooter.set(ControlMode.PercentOutput, Math.abs(spd));      // control as percentage output
         }
 
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 > 2000) { // if not running, keep hood down
+        // if (shooter.getSelectedSensorVelocity() * 600 / 47 > 2000) { // if not running, keep hood down
+        if (isNearSpeed() || injCmd) {     //if running or injector requested raise hood.
             ballHood.set(true);
         } else {
             ballHood.set(false);
@@ -215,7 +263,7 @@ public class Shooter {
     }
 
     /*-------------------------  SDB Stuff --------------------------------------
-    /**Initialize sdb & chooser */
+    /**Initialize sdb & rpm chooser */
     public static void sdbInit() {
         SmartDashboard.putNumber("Shooter/RPM/kP", kP); // Put kP on sdb
         SmartDashboard.putNumber("Shooter/RPM/kF", kF); // Put kF on sdb
@@ -228,6 +276,8 @@ public class Shooter {
         }
         SmartDashboard.putData("Shooter/RPM/Selection", rpmChsr); // Put rpmChsr on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP", rpmSPAdj); // Put rpmSPAdj on sdb
+
+        SmartDashboard.putBoolean("Shooter/Joel Mode", joelMode); // Put Joel mode on sdb
     }
 
     public static void sdbUpdate() {
@@ -247,6 +297,7 @@ public class Shooter {
         SmartDashboard.putBoolean("Shooter/On", ((state == 1) ? true : false));
         SmartDashboard.putBoolean("Shooter/isAtSpeed", isAtSpeed());
         SmartDashboard.putBoolean("Shooter/shooterToggle", shooterToggle);
+        joelMode = SmartDashboard.getBoolean("Shooter/Joel Mode", joelMode);
 
         // Put Flywheel info on sdb
         SmartDashboard.putNumber("Shooter/Flywheel/Encoder", encSh.ticks());
@@ -271,23 +322,17 @@ public class Shooter {
      * 
      * @return - Is within 400 rpm of setpoint, rpmWSP
      */
-    public static boolean closeToSpeed() {
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP - 400)) {
-            return true;
-        }
-        return false;
+    public static boolean isNearSpeed() {
+        return (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP - nearSpdDB));
     }
 
     /**
      * 
-     * @return - RPM FB is GTE setpoint & LTE SP + deadband. ---???
+     * @return - RPM FB is GTE setpoint & LTE SP + deadband. ---??? Now is within +/- DB of setpoint
      */
     public static boolean isAtSpeed() { // if it's within it's setpoint deadband
-        if (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP)
-                && shooter.getSelectedSensorVelocity() * 600 / 47 <= (rpmWSP + atSpeedDeadband)) {
-            return true;
-        }
-        return false;
+        return (shooter.getSelectedSensorVelocity() * 600 / 47 >= (rpmWSP - atSpeedDB) &&
+                shooter.getSelectedSensorVelocity() * 600 / 47 <= (rpmWSP + atSpeedDB));
     }
 
 }

@@ -51,6 +51,7 @@ public class CurveTurn extends AutoFunction {
                 break;
             case 0:
                 diffDrv.curvatureDrive(pwr, rot, false);
+                System.out.println("pwr: " + pwr + " rot: " + rot );
                 if (curveTime.hasExpired(time, state)) {
                     state++;
                 }
@@ -64,6 +65,7 @@ public class CurveTurn extends AutoFunction {
     public void done() {
         finished = true;
         diffDrv.tankDrive(0, 0);
+        IO.follow();
         // left.set(ControlMode.Disabled, 0);
         // right.set(ControlMode.Disabled, 0);
     }
