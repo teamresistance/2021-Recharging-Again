@@ -50,13 +50,12 @@ public class JS_IO {
     // Shooter
     public static Button btnRampShooter = new Button();
     public static Button btnFireShooter = new Button();
-    public static Button btnSlowFire = new Button();
 
     // Revolver
     public static Button btnIndex = new Button();
 
     // Snorfler
-    public static Button btnLowerSnorfler = new Button();
+    public static Button btnTglSnorArmDn = new Button();
     public static Button btnReverseSnorfler = new Button();
 
     // Turret
@@ -147,7 +146,7 @@ public class JS_IO {
 
         // snorfler buttons
         btnReverseSnorfler.setButton(coJoystick, 5);
-        btnLowerSnorfler.setButton(coJoystick, 3);
+        btnTglSnorArmDn.setButton(coJoystick, 3);
 
         // turret buttons
         btnLimeSearch.setButton(coJoystick, 12);
@@ -156,7 +155,6 @@ public class JS_IO {
         // shooting buttons
         btnRampShooter.setButton(coJoystick, 4);
         btnFireShooter.setButton(coJoystick, 1);
-        btnSlowFire.setButton(coJoystick, 2);
         btnIndex.setButton(coJoystick, 6);
 
         btnStop.setButton(coJoystick, 11);
@@ -188,7 +186,7 @@ public class JS_IO {
 
         // snorfler buttons
         btnReverseSnorfler.setButton(gamePad, 9); // l-stick push
-        btnLowerSnorfler.setButton(gamePad, 1); // A
+        btnTglSnorArmDn.setButton(gamePad, 1); // A
 
         // turret buttons
         btnLimeSearch.setButton(gamePad, 4); // Y
@@ -197,7 +195,6 @@ public class JS_IO {
         // shooting buttons
         btnRampShooter.setButton(gamePad, 3); // X
         btnFireShooter.setButton(gamePad, 2); // B
-        // btnSlowFire.setButton(gamePad, ???);
         btnIndex.setButton(gamePad, 7); // Back
 
         btnStop.setButton(gamePad, 8); // start
@@ -222,12 +219,12 @@ public class JS_IO {
         // axClimb.setAxis(coJoystick, 1);
 
         // Drive buttons
-        // btnScaledDrive.setButton(rightJoystick, 3);
-        // btnInvOrientation.setButton(rightJoystick, 1);
+        btnScaledDrive.setButton(leftJoystick, 3);
+        btnInvOrientation.setButton(leftJoystick, 1);
 
         // snorfler buttons
         btnReverseSnorfler.setButton(rightJoystick, 5);
-        btnLowerSnorfler.setButton(rightJoystick, 3);
+        btnTglSnorArmDn.setButton(rightJoystick, 3);
 
         // turret buttons
         btnLimeSearch.setButton(rightJoystick, 12);
@@ -236,7 +233,6 @@ public class JS_IO {
         // shooting buttons
         btnRampShooter.setButton(rightJoystick, 4);
         btnFireShooter.setButton(rightJoystick, 1);
-        btnSlowFire.setButton(rightJoystick, 2);
         btnIndex.setButton(rightJoystick, 6);
 
         btnStop.setButton(rightJoystick, 11);
@@ -260,9 +256,8 @@ public class JS_IO {
         btnHold180.setButton(null, 0);
         btnRampShooter.setButton(null, 0);
         btnFireShooter.setButton(null, 0);
-        btnSlowFire.setButton(null, 0);
         btnIndex.setButton(null, 0);
-        btnLowerSnorfler.setButton(null, 0);
+        btnTglSnorArmDn.setButton(null, 0);
         btnReverseSnorfler.setButton(null, 0);
         btnLimeAim.setButton(null, 0);
         btnLimeSearch.setButton(null, 0);
