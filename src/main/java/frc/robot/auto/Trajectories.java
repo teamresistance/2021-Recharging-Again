@@ -223,4 +223,77 @@ public class Trajectories {
         return traj;
     }
 
+    public static AutoFunction[] getCurve1_1(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(1.0, 1.0, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurve1_7(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(1.0, 0.75, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurve1_5(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(1.0, 0.5, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurve7_1(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(0.75, 1.0, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurve7_7(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(0.75, 0.75, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurve7_5(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(0.75, 0.5, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurve5_1(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(0.5, 1.0, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurve5_7(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(0.5, 0.75, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurve5_5(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(0.5, 0.5, 3.0)
+        };
+        return traj;
+    }
+
+    public static AutoFunction[] getCurveTry(double fwd) {
+        AutoFunction traj[] = {
+            new CurveTurn(1.0, -0.9, 1.0),
+            new CurveTurn(1.0, 0.9, 1.0),
+            new PointNTurn(0.0, 1.0, 4.0),
+            new CurveTurn(1.0, 1.0, 1.0),
+        };
+        return traj;
+    }
+
 }

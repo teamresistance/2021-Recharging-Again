@@ -12,9 +12,12 @@ public class AutoSelector {
     // TODO: change name
     private static Auto path = new Auto(null);
     private static boolean snorflerOn = false;
+    public static double curveTestPwr = 1.0;
 
     // 1 - slalom
     public static void init(int sel) {
+        curveTestPwr = SmartDashboard.getNumber("Curve Pwr", curveTestPwr);
+
         switch (sel) {
             case 1:
                 path = new Auto(Trajectories.getSlalom(70));
@@ -44,6 +47,47 @@ public class AutoSelector {
                 path = new Auto(Trajectories.getBPathB(0));
                 snorflerOn = true;
                 break;
+            case 8:
+                path = new Auto(Trajectories.getCurve1_1(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 9:
+                path = new Auto(Trajectories.getCurve1_7(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 10:
+                path = new Auto(Trajectories.getCurve1_5(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 11:
+                path = new Auto(Trajectories.getCurve7_1(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 12:
+                path = new Auto(Trajectories.getCurve7_7(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 13:
+                path = new Auto(Trajectories.getCurve7_5(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 14:
+                path = new Auto(Trajectories.getCurve5_1(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 15:
+                path = new Auto(Trajectories.getCurve5_7(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 16:
+                path = new Auto(Trajectories.getCurve5_5(curveTestPwr));
+                snorflerOn = false;
+                break;
+            case 17:
+                path = new Auto(Trajectories.getCurveTry(curveTestPwr));
+                snorflerOn = false;
+                break;
+
             case 20:
                 path = new Auto(Trajectories.getSquare(70.0));
                 snorflerOn = false;
@@ -134,5 +178,13 @@ public class AutoSelector {
         // }
 
         return 999;
+    }
+
+    public static void sdbInit(){
+        SmartDashboard.putNumber("Curve Pwr", curveTestPwr);
+    }
+
+    public static void sdbUpdate(){
+        curveTestPwr = SmartDashboard.getNumber("Curve Pwr", curveTestPwr);
     }
 }

@@ -46,6 +46,18 @@ public class Robot extends TimedRobot {
   private int bPathA = 5;
   private int rPathB = 6;
   private int bPathB = 7;
+  //8 - 16 for curve testing
+  private int cur1x1 = 8;
+  private int cur1x7 = 9;
+  private int cur1x5 = 10;
+  private int cur7x1 = 11;
+  private int cur7x7 = 12;
+  private int cur7x5 = 13;
+  private int cur5x1 = 14;
+  private int cur5x7 = 15;
+  private int cur5x5 = 16;
+  private int curBar = 17;
+
   private int square = 20;
   private int choice;
   private int x;
@@ -69,8 +81,19 @@ public class Robot extends TimedRobot {
     chooser.addOption("Blue Path A", bPathA);
     chooser.addOption("Red Path B", rPathB);
     chooser.addOption("Blue Path B", bPathB);
+    chooser.addOption("Test Curve 1x1", cur1x1);
+    chooser.addOption("Test Curve 1x7", cur1x7);
+    chooser.addOption("Test Curve 1x5", cur1x5);
+    chooser.addOption("Test Curve 7x1", cur7x1);
+    chooser.addOption("Test Curve 7x7", cur7x7);
+    chooser.addOption("Test Curve 7x5", cur7x5);
+    chooser.addOption("Test Curve 5x1", cur5x1);
+    chooser.addOption("Test Curve 5x7", cur5x7);
+    chooser.addOption("Test Curve 5x5", cur5x5);
+    chooser.addOption("Test Curve Try", curBar);
     chooser.addOption("Square", square);
     SmartDashboard.putData("Auto Selection", chooser);
+    AutoSelector.sdbInit();
   }
 
   @Override
@@ -86,12 +109,14 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     Revolver.init();
     SmartDashboard.putNumber("choice in Robot", choice);
+    AutoSelector.curveTestPwr = SmartDashboard.getNumber("Curve Pwr", 0.75);
     AutoSelector.init(choice);
     x = 0;
   }
 
   @Override
   public void autonomousPeriodic() {
+    AutoSelector.sdbUpdate();
     Revolver.update();
     SmartDashboard.putNumber("state in Robot", x);
     switch (x) {
