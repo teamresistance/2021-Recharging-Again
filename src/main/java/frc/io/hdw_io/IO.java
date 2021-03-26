@@ -143,24 +143,11 @@ public class IO {
     public static boolean prvRevIndex = true;
 
     public static void update() {
-        alarmUpdate();
         // drvFollowerVSPX_L[0].set(ControlMode.Follower,
         // drvMasterTSRX_L.getDeviceID());
         // drvFollowerVSPX_R[0].set(ControlMode.Follower,
         // drvMasterTSRX_R.getDeviceID());
 
-    }
-
-    public static double revolver_HL = 15.0; // High Amp Alarm Limit
-    public static boolean revolver_HAA = false; // High Amp Alarm
-
-    private static void alarmUpdate() {
-
-        SmartDashboard.putNumber("revolver HAA", pdp.getCurrent(4));
-        // if (Revolver.getState() != 0) {
-        //     if (revTimer.hasExpired(4, Revolver.getState()))
-        //         revolver_HAA = true;
-        // }
     }
 
     public static void follow() {
