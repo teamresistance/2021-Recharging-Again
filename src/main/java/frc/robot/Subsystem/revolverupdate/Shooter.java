@@ -200,10 +200,15 @@ public class Shooter {
                     state++;
                 break;
             //-- Joel boost stuff --
+            // case 15: // Set revolver.reqRevShtr, index revolver 1 time. Goto next
+            //     cmdUpdate(rpmWSP, true, true, true);
+            //     //When drop below rpmWSP by 200 (or 150 mS just incase.)
+            //     if(!isNearSpeed() || stateTmr.hasExpired(0.15, state)) state++;
+            //     break;
             case 15: // Set revolver.reqRevShtr, index revolver 1 time. Goto next
                 cmdUpdate(rpmWSP, true, true, true);
                 //When drop below rpmWSP by 200 (or 150 mS just incase.)
-                if(!isNearSpeed() || stateTmr.hasExpired(0.15, state)) state++;
+                if(isAtSpeed() || stateTmr.hasExpired(0.15, state)) state++;
                 break;
             case 16: // When revolver has indexed goto next
                 cmdUpdate(joelShtrBSP, false, true, false);  //-- JOEL BOOST --

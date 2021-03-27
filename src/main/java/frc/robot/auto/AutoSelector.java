@@ -92,7 +92,7 @@ public class AutoSelector {
                 path = new Auto(Trajectories.getSquare(70.0));
                 snorflerOn = false;
                 break;
-            case 21:
+            case 86:
                 int pathNum = galacticShooter();
                 switch (pathNum) {
                     case 1:
@@ -161,6 +161,7 @@ public class AutoSelector {
     }
 
     public static int galacticShooter() {
+        //do a for each in the entire array of contours to find specific values
         // if (specific values) {
         //     // red path a
         //     return 1;
