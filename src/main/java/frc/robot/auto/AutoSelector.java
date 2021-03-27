@@ -29,19 +29,19 @@ public class AutoSelector {
                 snorflerOn = false;
                 break;
             case 4:
-                path = new Auto(Trajectories.getRPathA(0));
+                path = new Auto(Trajectories.getRPathA(70));
                 snorflerOn = true;
                 break;
             case 5:
-                path = new Auto(Trajectories.getBPathA(0));
+                path = new Auto(Trajectories.getBPathA(70));
                 snorflerOn = true;
                 break;
             case 6:
-                path = new Auto(Trajectories.getRPathB(0));
+                path = new Auto(Trajectories.getRPathB(70));
                 snorflerOn = true;
                 break;
             case 7:
-                path = new Auto(Trajectories.getBPathB(0));
+                path = new Auto(Trajectories.getBPathB(70));
                 snorflerOn = true;
                 break;
             case 20:

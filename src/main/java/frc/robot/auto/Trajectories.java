@@ -146,30 +146,17 @@ public class Trajectories {
 
     public static AutoFunction[] getBounce(double pwr) {
         AutoFunction[] traj = {
-            new PointNTurn(0, pwr, 1.66),
-            new PointNTurn(297, pwr, 3.91),
-            new PointNTurn(255, pwr, -8.33),
-            new PointNTurn(0, pwr, 4.17),
-            new PointNTurn(285, pwr, 8.33),
-            new PointNTurn(265, pwr, -8.33),
-            new PointNTurn(0, pwr, 5),
-            new PointNTurn(285, pwr, 8.33),
-            new PointNTurn(235, pwr, -4.17)
-         };
-        return traj;
-    }
-
-    public static AutoFunction[] getBounce2(double pwr) {
-        AutoFunction[] traj = {
-            new PointNTurn(0, pwr, 1.66),
-            new PointNTurn(-63, pwr, 3.91),
-            new PointNTurn(-105, pwr, -8.33),
-            new PointNTurn(0, pwr, 4.17),
-            new PointNTurn(-75, pwr, 8.33),
-            new PointNTurn(-95, pwr, -8.33),
-            new PointNTurn(0, pwr, 5),
-            new PointNTurn(-75, pwr, 8.33),
-            new PointNTurn(-125, pwr, -4.17)
+            new PointNTurn(0, pwr, 3), //2.8
+            new PointNTurn(270, pwr, 3.2),
+            new PointNTurn(270, pwr, -2.5),
+            new PointNTurn(230, pwr, -6.3), //225
+            new PointNTurn(315, pwr, 1.8), //2.1
+            new PointNTurn(270, pwr, 6.8), //5.4
+            new PointNTurn(270, pwr, -6.8),
+            new PointNTurn(0, pwr, 6),
+            new PointNTurn(270, pwr, 8.2),
+            new PointNTurn(270, pwr, -2.4),
+            new PointNTurn(0, pwr, 3)
          };
         return traj;
     }
