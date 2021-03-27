@@ -30,7 +30,7 @@ public class JS_IO {
     public static int norm3JS = 0;
     public static int A_GP = 1;
     public static int norm2JS = 5;
-    public static int jsChoice;
+    public static int jsChoice = 0;
 
     public static int jsConfig = 0; // 0=Joysticks, 1=gamePad only, 2=left Joystick only
                                     // 3=Mixed LJS & GP, 4=Nintendo Pad
@@ -101,62 +101,62 @@ public class JS_IO {
 
     public static void init() {
         SmartDashboard.putNumber("JS_Config", jsConfig);
+        // jsChoice = 0;
         configJS();
 
-        jsChooser.setDefaultOption("3 Joysticks (Default)", norm3JS);
-        jsChooser.addOption("XBOX Controller", A_GP);
-        jsChooser.addOption("2 Joysticks", norm2JS);
-        jsChoice = 0;
+        // jsChooser.setDefaultOption("3 Joysticks (Default)", norm3JS);
+        // jsChooser.addOption("XBOX Controller", A_GP);
+        // jsChooser.addOption("2 Joysticks", norm2JS);
     }
 
     // can put this under a button press
     public static void update() { // Chk for Joystick configuration
-        // if (jsConfig != SmartDashboard.getNumber("JS_Config", 0)) {
-        // jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
-        // CaseDefault();
+        if (jsConfig != SmartDashboard.getNumber("JS_Config", 0)) {
+        jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
+        CaseDefault();
         configJS();
-        // }
-
-    }
-
-    public static void configJS() {
-        jsChoice = jsChooser.getSelected();
-
-        switch (jsChoice) {
-            case 0:
-                Norm3JS();
-                break;
-            case 1:
-                A_GP();
-                break;
-            case 5:
-                Norm2JS();
-                break;
         }
+
     }
 
-    // public static void configJS() { // Default Joystick else as gamepad
-    // jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
+    // public static void configJS() {
+    // jsChoice = jsChooser.getSelected();
 
-    // switch (jsConfig) {
-    // case 0: // Normal 3 joystick config
+    // switch (jsChoice) {
+    // case 0:
     // Norm3JS();
     // break;
-
-    // case 1: // Gamepad only
+    // case 1:
     // A_GP();
     // break;
-
-    // case 5: // Normal 2 joystick config No CoDrvr
+    // case 5:
     // Norm2JS();
     // break;
-
-    // default: // Bad assignment
-    // // CaseDefault();
-    // break;
-
     // }
     // }
+
+    public static void configJS() { // Default Joystick else as gamepad
+        jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
+
+        switch (jsConfig) {
+            case 0: // Normal 3 joystick config
+                Norm3JS();
+                break;
+
+            case 1: // Gamepad only
+                A_GP();
+                break;
+
+            case 5: // Normal 2 joystick config No CoDrvr
+                Norm2JS();
+                break;
+
+            default: // Bad assignment
+                // CaseDefault();
+                break;
+
+        }
+    }
 
     // ================ Controller actions ================
 

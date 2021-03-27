@@ -146,68 +146,65 @@ public class Trajectories {
 
     public static AutoFunction[] getBounce(double pwr) {
         AutoFunction[] traj = {
-            new PointNTurn(0, pwr, 1.66),
-            new PointNTurn(297, pwr, 3.91),
-            new PointNTurn(255, pwr, -8.33),
-            new PointNTurn(0, pwr, 4.17),
-            new PointNTurn(285, pwr, 8.33),
-            new PointNTurn(265, pwr, -8.33),
-            new PointNTurn(0, pwr, 5),
-            new PointNTurn(285, pwr, 8.33),
-            new PointNTurn(235, pwr, -4.17)
+            new PointNTurn(0, pwr, 3), //2.8
+            new PointNTurn(270, pwr, 3.2),
+            new PointNTurn(270, pwr, -2.5),
+            new PointNTurn(230, pwr, -6.3), //225
+            new PointNTurn(315, pwr, 1.8), //2.1
+            new PointNTurn(270, pwr, 6.8), //5.4
+            new PointNTurn(270, pwr, -6.8),
+            new PointNTurn(0, pwr, 6),
+            new PointNTurn(270, pwr, 8.2),
+            new PointNTurn(270, pwr, -2.4),
+            new PointNTurn(0, pwr, 3)
          };
         return traj;
     }
 
-    public static AutoFunction[] getBounce2(double pwr) {
-        AutoFunction[] traj = {
-            new PointNTurn(0, pwr, 1.66),
-            new PointNTurn(-63, pwr, 3.91),
-            new PointNTurn(-105, pwr, -8.33),
-            new PointNTurn(0, pwr, 4.17),
-            new PointNTurn(-75, pwr, 8.33),
-            new PointNTurn(-95, pwr, -8.33),
-            new PointNTurn(0, pwr, 5),
-            new PointNTurn(-75, pwr, 8.33),
-            new PointNTurn(-125, pwr, -4.17)
-         };
-        return traj;
-    }
+
 
     public static AutoFunction[] getRPathA(double pwr) {
         AutoFunction[] traj = {
+            new PointNTurn(0, 40, 0),
             new PointNTurn(0, pwr, 5),
-            new PointNTurn(26, pwr, 5.6),
-            new PointNTurn(-71, pwr, 7.9),
-            new PointNTurn(0, pwr, 12.5)
+            new PointNTurn(26, 100, 0),
+            new PointNTurn(26, pwr, 5.3),
+            new PointNTurn(-90, pwr, 5.7),
+            new PointNTurn(0, pwr, 10.3)
          };
         return traj;
     }
 
     public static AutoFunction[] getBPathA(double pwr) {
         AutoFunction[] traj = { 
-            new PointNTurn(22, pwr, 13.5),
-            new PointNTurn(-71, pwr, 7.9),
-            new PointNTurn(27, pwr, 11.1)
+            new PointNTurn(22, pwr, 7.5),
+            new PointNTurn(22, 50, 3.5),
+            new PointNTurn(-70, pwr, 5), //71
+            new PointNTurn(-70, 50, 2.9),
+            new PointNTurn(27, pwr, 4),
+            new PointNTurn(27, 50, 7)
         };
         return traj;
     }
 
     public static AutoFunction[] getRPathB(double pwr) {
         AutoFunction[] traj = {
-            new PointNTurn(-26, pwr, 5.6),
-            new PointNTurn(45, pwr, 7.1),
-            new PointNTurn(-45, pwr, 7.1),
-            new PointNTurn(-14, pwr, 10.3)
+            new PointNTurn(-33, 65, 3.5),
+            new PointNTurn(40, pwr, 7),
+            //new PointNTurn(40, pwr, 1.6),
+            new PointNTurn(-57, pwr, 7.1),
+           // new PointNTurn(-57, pwr, 2),
+            new PointNTurn(-14, pwr, 8.5)
          };
         return traj;
     }
 
     public static AutoFunction[] getBPathB(double pwr) {
         AutoFunction[] traj = {
-            new PointNTurn(11, pwr, 12.7),
-            new PointNTurn(-45, pwr, 7.1),
-            new PointNTurn(45, pwr, 10.6)
+            new PointNTurn(11, pwr, 11),
+            new PointNTurn(-60, pwr, 5),
+            new PointNTurn(40, pwr, 4),
+            new PointNTurn(20, pwr, 4)
          };
         return traj;
     }
