@@ -4,7 +4,7 @@ until requested to deliever them to the shooter.
 3/1/2020 - Anthony - Original release
 3/11 - JCH - updated hdw_io and cleanup
 */
-package frc.robot.Subsystem.revolverupdate;
+package frc.robot.Subsystem.ballHandler;
 
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,7 +12,6 @@ import frc.io.hdw_io.IO;
 import frc.io.hdw_io.InvertibleDigitalInput;
 import frc.io.joysticks.JS_IO;
 import frc.util.Timer;
-import frc.robot.Subsystem.revolverupdate.*;
 
 // CHANGES: ONE BANNER SENSOR UNDER(?) THE BALL
 //          BANNER SENSOR ON FEED NOT ON SUCK 

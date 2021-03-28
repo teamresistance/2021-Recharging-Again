@@ -3,8 +3,8 @@ package frc.robot.auto;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.vision.RPI;
-import frc.robot.Subsystem.Revolver;
-import frc.robot.Subsystem.Snorfler;
+import frc.robot.Subsystem.ballHandler.Revolver;
+import frc.robot.Subsystem.ballHandler.Snorfler;
 
 public class AutoSelector {
 
@@ -132,7 +132,7 @@ public class AutoSelector {
         // path.execute();
 
         if (snorflerOn) {
-            Snorfler.cmdUpdate(true, true, Snorfler.feederSpeed, Snorfler.loaderSpeed);
+            Snorfler.cmdUpdate(true, Snorfler.feederSpeed, Snorfler.loaderSpeed);
             Revolver.determ();
         }
         path.execute();
@@ -146,7 +146,7 @@ public class AutoSelector {
         path.done();
 
         if (snorflerOn) {
-            Snorfler.cmdUpdate(false, false, 0, 0);
+            Snorfler.cmdUpdate(false, 0, 0);
             Revolver.determ();
         }
     }

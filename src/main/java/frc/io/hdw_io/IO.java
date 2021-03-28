@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Subsystem.Revolver;
+import frc.robot.Subsystem.ballHandler.Revolver;
 import frc.util.Timer;
 
 // import com.revrobotics.ColorSensorV3;
