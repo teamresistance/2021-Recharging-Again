@@ -1,11 +1,84 @@
 package frc.robot.auto;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auto.functions.AutoFunction;
 import frc.robot.auto.functions.CurveTurn;
 import frc.robot.auto.functions.PointNTurn;
 
 //TODO: still unsure on how to take the 2D array and use it as a trajectory object
 public class Trajectories {
+    private static SendableChooser<Integer> chsr = new SendableChooser<Integer>();
+    private static String[] chsrDesc = {
+       "Slalom", "Barrel", "Bounce",
+       "Red Path A", "Blue Path A", "Red Path B", "Blue Path B",
+       "Test Curve 1x1", "Test Curve 1x7", "Test Curve 1x5",
+       "Test Curve 7x1", "Test Curve 7x7", "Test Curve 7x5",
+       "Test Curve 5x1", "Test Curve 5x7", "Test Curve 5x5",
+       "Test Curve Try", "Square", "Galaxtic"};
+    private static int[] chsrNum = {
+        1,2,3,
+        4,5,6,7,
+        8,9,10,
+        11,12,13,
+        14,15,16,
+        17,18, 21};
+
+    private static void chsrInit(){
+        for(int i = 0; i < chsrDesc.length; i++){
+            chsr.addOption(chsrDesc[i], chsrNum[i]);
+        }
+        chsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrNum[0]);   //Default MUST have a different name
+        SmartDashboard.putData("Traj/Choice", chsr);
+    }
+
+    private static AutoFunction[] getTraj(){
+        switch(chsr.getSelected()){
+            case 1:
+            return getSlalom(70);
+            case 2:
+            return getBarrel(70);
+            case 3:
+            return getBounce(70);
+            case 4:
+            return getRPathA(70);
+            case 5:
+            return getRPathB(70);
+            case 6:
+            return getBPathA(70);
+            case 7:
+            return getBPathB(70);
+            case 8:
+            return getCurve1_1(70);
+            case 9:
+            return getCurve1_7(70);
+            case 10:
+            return getCurve1_5(70);
+            case 11:
+            return getCurve7_1(70);
+            case 12:
+            return getCurve7_7(70);
+            case 13:
+            return getCurve7_5(70);
+            case 14:
+            return getCurve5_1(70);
+            case 15:
+            return getCurve5_7(70);
+            case 16:
+            return getCurve5_5(70);
+            case 17:
+            return getCurveTry(70);
+            case 18:
+            return getSquare(70);
+            case 21:
+            return getGalaxtic(70);
+            default:
+            System.out.println("Bad Traj Number - " + chsr.getSelected());
+            return getEmpty(0);
+
+        }
+
+    }
 
     // each trajectory/path/automode is stored in each method
     // name each method by the path its doing
@@ -291,6 +364,22 @@ public class Trajectories {
             new CurveTurn(1.0, 1.0, 1.0),
         };
         return traj;
+    }
+
+    public static AutoFunction[] getGalaxtic(double fwd) {
+        switch (AutoSelector.galacticShooter()) {
+            case 1:
+                return getRPathA(70);
+            case 2:
+                return getBPathA(70);
+            case 3:
+                return getRPathB(70);
+            case 4:
+                return getRPathB(70);
+            default:
+                System.out.println("Bad Galaxtic path - " + AutoSelector.galacticShooter());
+                return getEmpty(0);
+        }
     }
 
 }
