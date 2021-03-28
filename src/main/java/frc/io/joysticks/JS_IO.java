@@ -26,11 +26,9 @@ import frc.io.joysticks.Pov;
 
 //Declares all joysticks, buttons, axis & pov's.
 public class JS_IO {
-    private static SendableChooser<Integer> jsChooser = new SendableChooser<Integer>();
-    public static int norm3JS = 0;
-    public static int A_GP = 1;
-    public static int norm2JS = 5;
-    public static int jsChoice = 0;
+    private static SendableChooser<Integer> chsr = new SendableChooser<Integer>();
+    private static String[] chsrDesc = {"3-Joysticks", "2-Joysticks", "Gamepad"};
+    private static int[] chsrNum = {0, 5, 1};
 
     public static int jsConfig = 0; // 0=Joysticks, 1=gamePad only, 2=left Joystick only
                                     // 3=Mixed LJS & GP, 4=Nintendo Pad
@@ -100,59 +98,59 @@ public class JS_IO {
     }
 
     public static void init() {
-        SmartDashboard.putNumber("JS_Config", jsConfig);
-        // jsChoice = 0;
+        SmartDashboard.putNumber("JS/JS_Config", jsConfig);
+        chsrInit();
         configJS();
-
-        // jsChooser.setDefaultOption("3 Joysticks (Default)", norm3JS);
-        // jsChooser.addOption("XBOX Controller", A_GP);
-        // jsChooser.addOption("2 Joysticks", norm2JS);
     }
+
+    public static void chsrInit(){
+        for(int i = 0; i < chsrDesc.length; i++){
+            chsr.addOption(chsrDesc[i], chsrNum[i]);
+        }
+        chsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrNum[0]);   //Default MUST have a different name
+        SmartDashboard.putData("JS/Choice", chsr);
+    }
+
+    // // can put this under a button press
+    // public static void update() { // Chk for Joystick configuration
+    //     if (jsConfig != SmartDashboard.getNumber("JS/JS_Config", 0)) {
+    //     jsConfig = (int) SmartDashboard.getNumber("JS/JS_Config", 0);
+    //     caseDefault();
+    //     configJS();
+    //     }
+    // }
 
     // can put this under a button press
     public static void update() { // Chk for Joystick configuration
-        if (jsConfig != SmartDashboard.getNumber("JS_Config", 0)) {
-        jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
-        CaseDefault();
-        configJS();
+        //chsr.setDefaultOption doesn't appear to work.  Shouldn't need to trap null.
+        //Default MUST have a different name
+        if (jsConfig != (chsr.getSelected() == null ? 0 : chsr.getSelected())) {
+            caseDefault();
+            configJS();
         }
-
     }
 
-    // public static void configJS() {
-    // jsChoice = jsChooser.getSelected();
-
-    // switch (jsChoice) {
-    // case 0:
-    // Norm3JS();
-    // break;
-    // case 1:
-    // A_GP();
-    // break;
-    // case 5:
-    // Norm2JS();
-    // break;
-    // }
-    // }
-
     public static void configJS() { // Default Joystick else as gamepad
-        jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
+        // jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
+        jsConfig = chsr.getSelected() == null ? 0 : chsr.getSelected();
+        SmartDashboard.putNumber("JS/JS_Config", jsConfig);
 
         switch (jsConfig) {
             case 0: // Normal 3 joystick config
-                Norm3JS();
+                norm3JS();
                 break;
 
             case 1: // Gamepad only
-                A_GP();
+                a_GP();
                 break;
 
             case 5: // Normal 2 joystick config No CoDrvr
-                Norm2JS();
+                norm2JS();
                 break;
 
             default: // Bad assignment
-                // CaseDefault();
+                System.out.println("Bad JS choice - " + jsConfig);
+                caseDefault();
                 break;
 
         }
@@ -161,7 +159,7 @@ public class JS_IO {
     // ================ Controller actions ================
 
     // ----------- Normal 3 Joysticks -------------
-    private static void Norm3JS() {
+    private static void norm3JS() {
 
         // All stick axisesssss
         axLeftDrive.setAxis(leftJoystick, 1);
@@ -203,7 +201,7 @@ public class JS_IO {
     }
 
     // ----- gamePad only --------
-    private static void A_GP() {
+    private static void a_GP() {
         // All stick axisesssss
         axLeftDrive.setAxis(gamePad, 1); // left stick Y
         axRightDrive.setAxis(gamePad, 5); // right stick Y
@@ -239,7 +237,7 @@ public class JS_IO {
     }
 
     // ----------- Normal 2 Joysticks -------------
-    private static void Norm2JS() {
+    private static void norm2JS() {
 
         // All stick axisesssss
         axLeftDrive.setAxis(leftJoystick, 1);
@@ -272,7 +270,7 @@ public class JS_IO {
     }
 
     // ----------- Case Default -----------------
-    private static void CaseDefault() {
+    private static void caseDefault() {
         // All stick axisesssss
         axLeftDrive.setAxis(null, 0);
         axRightDrive.setAxis(null, 0);
