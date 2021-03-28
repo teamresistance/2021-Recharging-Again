@@ -36,6 +36,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Relay;
 
 public class Robot extends TimedRobot {
+  //Used to signal Auto drv/Snorfler, need to find FMSInfo call
+  private static int mode = 0; //0=Not Init, 1=autoPeriodic, 2=teleopPeriodic
 
   private SendableChooser<Integer> chooser = new SendableChooser<Integer>();
   private int defaultAuto = 99;
@@ -98,6 +100,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("Robot/Mode", mode);
+
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     IO.update();
     JS_IO.update();
@@ -108,6 +112,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Revolver.init();
+    Snorfler.init();
     SmartDashboard.putNumber("choice in Robot", choice);
     AutoSelector.curveTestPwr = SmartDashboard.getNumber("Curve Pwr", 0.75);
     AutoSelector.init(choice);
@@ -116,8 +121,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    mode = 1;   //Used to signal Auto drv/Snorfler, need to find FMSInfo call
     AutoSelector.sdbUpdate();
     Revolver.update();
+    Snorfler.update();
     SmartDashboard.putNumber("state in Robot", x);
     switch (x) {
       case 0:
@@ -148,6 +155,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    mode = 2;   //Used to signal Auto drv/Snorfler, need to find FMSInfo call
     IO.update();
     Snorfler.update();
     Revolver.update();
@@ -165,6 +173,15 @@ public class Robot extends TimedRobot {
 
   }
 
+  @Override
+  public void disabledInit() {
+    mode = 0;
+    // SmartDashboard.putNumber("Robot/Mode", mode);
+  }
+
+  public static int getMode(){
+    return mode;
+  }
   // public void sbdPut(){
   // //Drive Puts:
   // SmartDashboard.putNumber("Drive Scale", .5);
