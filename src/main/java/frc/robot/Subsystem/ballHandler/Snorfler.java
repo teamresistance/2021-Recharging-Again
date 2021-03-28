@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.*;
 import frc.io.joysticks.JS_IO;
+import frc.robot.Robot;
 import frc.util.Timer;
 
 public class Snorfler {
@@ -17,6 +18,7 @@ public class Snorfler {
     private static boolean snorfArmDn;
     private static boolean snorfFeederOn;
     private static boolean snorfReverse;
+    private static boolean reqsnorfDrvAuto;  //Request to enable the snorfler from Drv Auto system
     private static Timer stateTmr; // Timer used in state machine
     private static Timer safeTimer; // Safety timer, used for jammed ball hi amps
     private static Timer startUpTimer;
@@ -41,6 +43,7 @@ public class Snorfler {
         snorfArmDn = false;     //Lower arm & extend feeder
         snorfFeederOn = false;  //Feed motors on to snorfle
         snorfReverse = false;   //Reverse motor while button down
+        reqsnorfDrvAuto = false;//Request to enable the snorfler from Drv Auto system
     }
 
     private static void determ() {
@@ -58,6 +61,9 @@ public class Snorfler {
             state = snorfReverse ? 1 : 10;
             snorfReverse = !snorfReverse;
         }
+
+        if(Robot.getMode() == 1)
+            state = reqsnorfDrvAuto ? 1 : 0;
 
         if(ballJammed && state < 90) state = 90;
 
@@ -180,6 +186,7 @@ public class Snorfler {
         SmartDashboard.putBoolean("Snorfler/5.Arm is dn", snorfArmDn);
         SmartDashboard.putBoolean("Snorfler/6.Feed mtr on", snorfFeederOn);
         SmartDashboard.putBoolean("Snorfler/7.Rvlvr Rdy2Rcv", Revolver.rdy2Rcv());
+        SmartDashboard.putBoolean("Snorfler/8.Req Snorf Auto", reqsnorfDrvAuto);
     }
 
     /**
