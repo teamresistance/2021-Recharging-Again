@@ -42,9 +42,9 @@ public class Revolver {
     /**Initilize Revolver called from teleopInit() in Robot.java */
     public static void init() { // initialze
         revolver.set(0.0);
-        ballCnt = 0;
-        state = 1;
-        update();
+        ballCnt = 0;            //Clear ball count then count balls in revolver
+        state = 1;              //Default to state 1 to align indexer
+        update();               //Call updateto align indexer
     }
 
     /*

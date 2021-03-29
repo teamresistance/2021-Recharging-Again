@@ -178,7 +178,7 @@ public class AutoSelector {
         //     return 999;
         // }
 
-        return 999;
+        return 1;   //was 999
     }
 
     public static void sdbInit(){
