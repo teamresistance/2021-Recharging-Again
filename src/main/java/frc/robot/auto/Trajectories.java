@@ -8,6 +8,16 @@ import frc.robot.auto.functions.PointNTurn;
 
 //TODO: still unsure on how to take the 2D array and use it as a trajectory object
 public class Trajectories {
+    private static SendableChooser<String> chsrAlt = new SendableChooser<String>();
+    private static String[] chsrDescAlt = {
+        "getSlalom", "getBarrel", "getBounce",
+        "getRPathA", "getBPathA", "getRPathB", "getBPathB",
+        "getSquare", "getGalaxtic", "getCurveTry",
+        "getCurve1_1", "getCurve1_7", "getCurve1_5", 
+        "getCurve7_1", "getCurve7_7", "getCurve7_5", 
+        "getCurve5_1", "getCurve5_7", "getCurve5_5", 
+    };
+
     private static SendableChooser<Integer> chsr = new SendableChooser<Integer>();
     private static String[] chsrDesc = {
        "Slalom", "Barrel", "Bounce",                                //1, 2, 3
@@ -33,13 +43,23 @@ public class Trajectories {
         }
         chsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrNum[0]);   //Default MUST have a different name
         SmartDashboard.putData("Traj/Choice", chsr);
+        // ---------- Alternate ----------
+        for(int i = 0; i < chsrDescAlt.length; i++){
+            chsrAlt.addOption(chsrDescAlt[i], chsrDescAlt[i]);
+        }
+        chsrAlt.setDefaultOption(chsrDescAlt[0] + " (Default)", chsrDescAlt[0]);   //Default MUST have a different name
+        SmartDashboard.putData("Traj/Choice Alt", chsrAlt);
     }
 
     /**Used for testing traj chooser  */
     private static AutoFunction testTraj[];
+    private static AutoFunction testTrajAlt[];
     public static void chsrUpdate(){
         SmartDashboard.putNumber("Traj/Number", chsr.getSelected());
-        testTraj = getTraj();   //Test view
+        testTraj = getTraj();   //Test view original
+
+        SmartDashboard.putString("Traj/String Alt", chsrAlt.getSelected());
+        testTrajAlt = getTrajAlt();   //Test view Alternate
         int a = 0;              //Used to set breakpoint
     }
 
@@ -89,6 +109,53 @@ public class Trajectories {
 
         }
 
+    }
+
+    /**This is a test for an alternate traj retrieval */
+    private static AutoFunction[] getTrajAlt(){
+        switch(chsrAlt.getSelected()){
+            case "getSlalom":
+            return getSlalom(70);
+            case "getBarrel":
+            return getBarrel(70);
+            case "getBounce":
+            return getBounce(70);
+            case "getRPathA":
+            return getRPathA(70);
+            case "getRPathB":
+            return getRPathB(70);
+            case "getBPathA":
+            return getBPathA(70);
+            case "getBPathB":
+            return getBPathB(70);
+            case "getSquare":
+            return getSquare(70);
+            case "getGalaxtic":
+            return getGalaxtic(70);
+            case "getCurveTry":
+            return getCurveTry(70);
+            case "getCurve1_1":
+            return getCurve1_1(70);
+            case "getCurve1_7":
+            return getCurve1_7(70);
+            case "getCurve1_5":
+            return getCurve1_5(70);
+            case "getCurve7_1":
+            return getCurve7_1(70);
+            case "getCurve7_7":
+            return getCurve7_7(70);
+            case "getCurve7_5":
+            return getCurve7_5(70);
+            case "getCurve5_1":
+            return getCurve5_1(70);
+            case "getCurve5_7":
+            return getCurve5_7(70);
+            case "getCurve5_5":
+            return getCurve5_5(70);
+            default:
+            System.out.println("Bad Traj Number - " + chsrAlt.getSelected());
+            return getEmpty(0);
+        }
     }
 
     // each trajectory/path/automode is stored in each method
