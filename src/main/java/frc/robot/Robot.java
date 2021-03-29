@@ -30,6 +30,7 @@ import frc.robot.Subsystem.ballHandler.Snorfler;
 // import frc.robot.Subsystem.revolverupdate.*;
 // import frc.robot.auto.Drive2;
 import frc.robot.auto.AutoSelector;
+import frc.robot.auto.Trajectories;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -72,6 +73,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     IO.init();
     JS_IO.init();
+    Trajectories.chsrInit();
 
     choice = 0;
     chooser = new SendableChooser<Integer>();
@@ -101,6 +103,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("Robot/Mode", mode);
+    Trajectories.chsrUpdate();
 
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     IO.update();
