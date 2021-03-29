@@ -93,7 +93,7 @@ public class AutoSelector {
                 snorflerOn = false;
                 break;
             case 86:
-                int pathNum = galacticShooter();
+                int pathNum = RPI.galacticShooter();
                 switch (pathNum) {
                     case 1:
                         path = new Auto(Trajectories.getRPathA(70));
@@ -158,27 +158,6 @@ public class AutoSelector {
 
     public static void disable() {
         path.disable();
-    }
-
-    public static int galacticShooter() {
-        //do a for each in the entire array of contours to find specific values
-        // if (specific values) {
-        //     // red path a
-        //     return 1;
-        // } else if (other specific) {
-        //     // blue path a
-        //     return 2;
-        // } else if (other other) {
-        //     // red path b
-        //     return 3;
-        // } else if (otehretete) {
-        //     // blue path b
-        //     return 4;
-        // } else {
-        //     return 999;
-        // }
-
-        return 1;   //was 999
     }
 
     public static void sdbInit(){

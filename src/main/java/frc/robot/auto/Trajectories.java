@@ -2,6 +2,7 @@ package frc.robot.auto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.vision.RPI;
 import frc.robot.auto.functions.AutoFunction;
 import frc.robot.auto.functions.CurveTurn;
 import frc.robot.auto.functions.PointNTurn;
@@ -372,7 +373,7 @@ public class Trajectories {
     }
 
     public static AutoFunction[] getGalaxtic(double fwd) {
-        switch (AutoSelector.galacticShooter()) {
+        switch (RPI.galacticShooter()) {
             case 1:
                 return getRPathA(70);
             case 2:
@@ -382,7 +383,7 @@ public class Trajectories {
             case 4:
                 return getRPathB(70);
             default:
-                System.out.println("Bad Galaxtic path - " + AutoSelector.galacticShooter());
+                System.out.println("Bad Galaxtic path - " + RPI.galacticShooter());
                 return getEmpty(0);
         }
     }
