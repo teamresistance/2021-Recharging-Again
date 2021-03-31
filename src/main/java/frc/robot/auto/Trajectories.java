@@ -11,31 +11,28 @@ import frc.robot.auto.functions.PointNTurn;
 public class Trajectories {
     private static SendableChooser<String> chsrAlt = new SendableChooser<String>();
     private static String[] chsrDescAlt = {
-        "getSlalom", "getBarrel", "getBounce",
-        "getRPathA", "getBPathA", "getRPathB", "getBPathB",
-        "getSquare", "getGalaxtic", "getCurveTry",
+        "getEmpty", "getSlalom", "getBarrel", "getBounce", "getSquare",
+        "getRPathA", "getBPathA", "getRPathB", "getBPathB", "getGalaxtic",
         "getCurve1_1", "getCurve1_7", "getCurve1_5", 
         "getCurve7_1", "getCurve7_7", "getCurve7_5", 
-        "getCurve5_1", "getCurve5_7", "getCurve5_5", 
+        "getCurve5_1", "getCurve5_7", "getCurve5_5", "getCurveTry",
     };
 
     private static SendableChooser<Integer> chsr = new SendableChooser<Integer>();
     private static String[] chsrDesc = {
-       "Slalom", "Barrel", "Bounce",                                //1, 2, 3
-       "Red Path A", "Blue Path A", "Red Path B", "Blue Path B",    //4, 5, 6, 7
-       "Square", "Galaxtic", "Test Curve Try",                      //8, (21), 10
-       "Test Curve 1x1", "Test Curve 1x7", "Test Curve 1x5",        //11 - 13
-       "Test Curve 7x1", "Test Curve 7x7", "Test Curve 7x5",        //14 - 16
-       "Test Curve 5x1", "Test Curve 5x7", "Test Curve 5x5"         //17 - 19
+       "Empty", "Slalom", "Barrel", "Bounce", "Square",                         //0, 1, 2, 3, 4
+       "Red Path A", "Blue Path A", "Red Path B", "Blue Path B", "Galaxtic",    //5, 6, 7, 8, 9
+       "Test Curve 1x1", "Test Curve 1x7", "Test Curve 1x5",                    //10 - 12
+       "Test Curve 7x1", "Test Curve 7x7", "Test Curve 7x5",                    //13 - 15
+       "Test Curve 5x1", "Test Curve 5x7", "Test Curve 5x5", "Test Curve Try"   //16 - 19
     };
 
     private static int[] chsrNum = {
-        1,2,3,
-        4,5,6,7,
-        8,21,10,
-        11,12,13,
-        14,15,16,
-        17,18,19};
+        0,1,2,3,4,
+        5,6,7,8,9,
+        10,11,12,
+        13,14,15,
+        16,17,18,19};
 
     /**Initialize Traj chooser */
     public static void chsrInit(){
@@ -57,53 +54,55 @@ public class Trajectories {
     private static AutoFunction testTrajAlt[];
     public static void chsrUpdate(){
         SmartDashboard.putNumber("Traj/Number", chsr.getSelected());
-        testTraj = getTraj();   //Test view original
+        testTraj = getTraj(70);   //Test view original
 
         SmartDashboard.putString("Traj/String Alt", chsrAlt.getSelected());
-        testTrajAlt = getTrajAlt();   //Test view Alternate
+        testTrajAlt = getTrajAlt(70);   //Test view Alternate
         int a = 0;              //Used to set breakpoint
     }
 
-    private static AutoFunction[] getTraj(){
+    public static AutoFunction[] getTraj(double pwr){
         switch(chsr.getSelected()){
+            case 0:
+            return getEmpty(pwr);
             case 1:
-            return getSlalom(70);
+            return getSlalom(pwr);
             case 2:
-            return getBarrel(70);
+            return getBarrel(pwr);
             case 3:
-            return getBounce(70);
+            return getBounce(pwr);
             case 4:
-            return getRPathA(70);
+            return getSquare(pwr);
             case 5:
-            return getRPathB(70);
+            return getRPathA(pwr);
             case 6:
-            return getBPathA(70);
+            return getBPathA(pwr);
             case 7:
-            return getBPathB(70);
+            return getRPathB(pwr);
             case 8:
-            return getSquare(70);
-            case 21:
-            return getGalaxtic(70);
+            return getBPathB(pwr);
+            case 9:
+            return getGalaxtic(pwr);
             case 10:
-            return getCurveTry(70);
+            return getCurve1_1(pwr);
             case 11:
-            return getCurve1_1(70);
+            return getCurve1_7(pwr);
             case 12:
-            return getCurve1_7(70);
+            return getCurve1_5(pwr);
             case 13:
-            return getCurve1_5(70);
+            return getCurve7_1(pwr);
             case 14:
-            return getCurve7_1(70);
+            return getCurve7_7(pwr);
             case 15:
-            return getCurve7_7(70);
+            return getCurve7_5(pwr);
             case 16:
-            return getCurve7_5(70);
+            return getCurve5_1(pwr);
             case 17:
-            return getCurve5_1(70);
+            return getCurve5_7(pwr);
             case 18:
-            return getCurve5_7(70);
+            return getCurve5_5(pwr);
             case 19:
-            return getCurve5_5(70);
+            return getCurveTry(pwr);
             default:
             System.out.println("Bad Traj Number - " + chsr.getSelected());
             return getEmpty(0);
@@ -113,52 +112,59 @@ public class Trajectories {
     }
 
     /**This is a test for an alternate traj retrieval */
-    private static AutoFunction[] getTrajAlt(){
+    public static AutoFunction[] getTrajAlt(double pwr){
         switch(chsrAlt.getSelected()){
+            case "getEmpty":
+            return getEmpty(pwr);
             case "getSlalom":
-            return getSlalom(70);
+            return getSlalom(pwr);
             case "getBarrel":
-            return getBarrel(70);
+            return getBarrel(pwr);
             case "getBounce":
-            return getBounce(70);
+            return getBounce(pwr);
             case "getRPathA":
-            return getRPathA(70);
+            return getRPathA(pwr);
             case "getRPathB":
-            return getRPathB(70);
+            return getRPathB(pwr);
             case "getBPathA":
-            return getBPathA(70);
+            return getBPathA(pwr);
             case "getBPathB":
-            return getBPathB(70);
+            return getBPathB(pwr);
             case "getSquare":
-            return getSquare(70);
+            return getSquare(pwr);
             case "getGalaxtic":
-            return getGalaxtic(70);
+            return getGalaxtic(pwr);
             case "getCurveTry":
-            return getCurveTry(70);
+            return getCurveTry(pwr);
             case "getCurve1_1":
-            return getCurve1_1(70);
+            return getCurve1_1(pwr);
             case "getCurve1_7":
-            return getCurve1_7(70);
+            return getCurve1_7(pwr);
             case "getCurve1_5":
-            return getCurve1_5(70);
+            return getCurve1_5(pwr);
             case "getCurve7_1":
-            return getCurve7_1(70);
+            return getCurve7_1(pwr);
             case "getCurve7_7":
-            return getCurve7_7(70);
+            return getCurve7_7(pwr);
             case "getCurve7_5":
-            return getCurve7_5(70);
+            return getCurve7_5(pwr);
             case "getCurve5_1":
-            return getCurve5_1(70);
+            return getCurve5_1(pwr);
             case "getCurve5_7":
-            return getCurve5_7(70);
+            return getCurve5_7(pwr);
             case "getCurve5_5":
-            return getCurve5_5(70);
+            return getCurve5_5(pwr);
             default:
-            System.out.println("Bad Traj Number - " + chsrAlt.getSelected());
+            System.out.println("Bad TrajAlt Name - " + chsrAlt.getSelected());
             return getEmpty(0);
         }
     }
 
+    public static int getChsrNum(){
+        return chsr.getSelected();
+    }
+
+    //------------------ Trajectories -------------------------------
     // each trajectory/path/automode is stored in each method
     // name each method by the path its doing
 
@@ -313,15 +319,26 @@ public class Trajectories {
         return traj;
     }
 
+    public static AutoFunction[] getSquare(double pwr) {
+        AutoFunction traj[] = {
+        new PointNTurn(0, pwr, 7),
+        new PointNTurn(90, pwr, 7),
+        new PointNTurn(180, pwr, 7),
+        new PointNTurn(270, pwr, 7),
+        new PointNTurn(350, pwr, 0)
+        };
+        return traj;
+    }
+
 
 
     public static AutoFunction[] getRPathA(double pwr) {
         AutoFunction[] traj = {
-            new PointNTurn(0, 40, 0),
-            new PointNTurn(0, pwr, 5),
-            new PointNTurn(26, 100, 0),
+            new PointNTurn(0, 0, 0),       //Short delay to get snorfler out
+            new PointNTurn(0, pwr, 3),
+            // new PointNTurn(26, 100, 0),
             new PointNTurn(26, pwr, 5.3),
-            new PointNTurn(-90, pwr, 5.7),
+            new PointNTurn(-85, pwr, 5.7),
             new PointNTurn(0, pwr, 10.3)
          };
         return traj;
@@ -329,12 +346,12 @@ public class Trajectories {
 
     public static AutoFunction[] getBPathA(double pwr) {
         AutoFunction[] traj = { 
-            new PointNTurn(22, pwr, 7.5),
-            new PointNTurn(22, 50, 3.5),
-            new PointNTurn(-70, pwr, 5), //71
-            new PointNTurn(-70, 50, 2.9),
+            new PointNTurn(22, pwr, 9.3),
+            // new PointNTurn(22, 50, 3.5),
+            new PointNTurn(-70, pwr, 6.5), //71
+            // new PointNTurn(-70, 50, 2.9),
             new PointNTurn(27, pwr, 4),
-            new PointNTurn(27, 50, 7)
+            new PointNTurn(10, pwr, 4)
         };
         return traj;
     }
@@ -361,27 +378,17 @@ public class Trajectories {
         return traj;
     }
 
-    public static AutoFunction[] getSquare(double pwr) {
-        AutoFunction traj[] = {
-        new PointNTurn(0, pwr, 7),
-        new PointNTurn(90, pwr, 7),
-        new PointNTurn(180, pwr, 7),
-        new PointNTurn(270, pwr, 7),
-        new PointNTurn(350, pwr, 0)
-        };
-        return traj;
-    }
-
     public static AutoFunction[] getGalaxtic(double fwd) {
+        SmartDashboard.putNumber("Traj/Gxtc Num", RPI.galacticShooter());
         switch (RPI.galacticShooter()) {
             case 1:
                 return getRPathA(70);
             case 2:
-                return getBPathA(70);
+                return getBPathB(70);   //inside Blue
             case 3:
                 return getRPathB(70);
             case 4:
-                return getRPathB(70);
+                return getBPathA(70);   //outside Blue
             default:
                 System.out.println("Bad Galaxtic path - " + RPI.galacticShooter());
                 return getEmpty(0);

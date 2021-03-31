@@ -44,17 +44,18 @@ public class RPI {
 
         
         for (double cX : getRPIcenterX()) {
-            if (cX > 100110 && cX < 428131) {
+            System.out.println("cX: " + cX);
+            if (cX > 130 && cX < 170) {
                 // red path a
                 return 1;
-            } else if ((cX > 100110 && cX < 428131)) {
-                // blue path a
+            } else if ((cX > 100 && cX < 130)) {
+                // blue path b  - inside blue path
                 return 2;
-            } else if ((cX > 100110 && cX < 428131)) {
+            } else if ((cX > 5 && cX < 20)) {
                 // red path b
                 return 3;
             } else {
-                // blue path b
+                // blue path a   - outside blue path
                 return 4;
             }
         }

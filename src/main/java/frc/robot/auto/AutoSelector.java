@@ -17,108 +17,111 @@ public class AutoSelector {
     // 1 - slalom
     public static void init(int sel) {
         curveTestPwr = SmartDashboard.getNumber("Curve Pwr", curveTestPwr);
+        // snorflerOn = Trajectories.getChsrName().indexOf("Path") > -1;
+        int tmpNum = Trajectories.getChsrNum();
+        snorflerOn = tmpNum >= 5 && tmpNum <= 9;
+        path = new Auto(Trajectories.getTraj(70.0));
+        // switch (sel) {
+        //     case 1:
+        //         path = new Auto(Trajectories.getSlalom(70));
+        //         snorflerOn = false;
+        //         break;
+        //     case 2:
+        //         path = new Auto(Trajectories.getBarrel(70));
+        //         snorflerOn = false;
+        //         break;
+        //     case 3:
+        //         path = new Auto(Trajectories.getBounce(70));
+        //         snorflerOn = false;
+        //         break;
+        //     case 4:
+        //         path = new Auto(Trajectories.getRPathA(70));
+        //         snorflerOn = true;
+        //         break;
+        //     case 5:
+        //         path = new Auto(Trajectories.getBPathA(70));
+        //         snorflerOn = true;
+        //         break;
+        //     case 6:
+        //         path = new Auto(Trajectories.getRPathB(70));
+        //         snorflerOn = true;
+        //         break;
+        //     case 7:
+        //         path = new Auto(Trajectories.getBPathB(70));
+        //         snorflerOn = true;
+        //         break;
+        //     case 8:
+        //         path = new Auto(Trajectories.getCurve1_1(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 9:
+        //         path = new Auto(Trajectories.getCurve1_7(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 10:
+        //         path = new Auto(Trajectories.getCurve1_5(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 11:
+        //         path = new Auto(Trajectories.getCurve7_1(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 12:
+        //         path = new Auto(Trajectories.getCurve7_7(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 13:
+        //         path = new Auto(Trajectories.getCurve7_5(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 14:
+        //         path = new Auto(Trajectories.getCurve5_1(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 15:
+        //         path = new Auto(Trajectories.getCurve5_7(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 16:
+        //         path = new Auto(Trajectories.getCurve5_5(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
+        //     case 17:
+        //         path = new Auto(Trajectories.getCurveTry(curveTestPwr));
+        //         snorflerOn = false;
+        //         break;
 
-        switch (sel) {
-            case 1:
-                path = new Auto(Trajectories.getSlalom(70));
-                snorflerOn = false;
-                break;
-            case 2:
-                path = new Auto(Trajectories.getBarrel(70));
-                snorflerOn = false;
-                break;
-            case 3:
-                path = new Auto(Trajectories.getBounce(70));
-                snorflerOn = false;
-                break;
-            case 4:
-                path = new Auto(Trajectories.getRPathA(70));
-                snorflerOn = true;
-                break;
-            case 5:
-                path = new Auto(Trajectories.getBPathA(70));
-                snorflerOn = true;
-                break;
-            case 6:
-                path = new Auto(Trajectories.getRPathB(70));
-                snorflerOn = true;
-                break;
-            case 7:
-                path = new Auto(Trajectories.getBPathB(70));
-                snorflerOn = true;
-                break;
-            case 8:
-                path = new Auto(Trajectories.getCurve1_1(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 9:
-                path = new Auto(Trajectories.getCurve1_7(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 10:
-                path = new Auto(Trajectories.getCurve1_5(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 11:
-                path = new Auto(Trajectories.getCurve7_1(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 12:
-                path = new Auto(Trajectories.getCurve7_7(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 13:
-                path = new Auto(Trajectories.getCurve7_5(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 14:
-                path = new Auto(Trajectories.getCurve5_1(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 15:
-                path = new Auto(Trajectories.getCurve5_7(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 16:
-                path = new Auto(Trajectories.getCurve5_5(curveTestPwr));
-                snorflerOn = false;
-                break;
-            case 17:
-                path = new Auto(Trajectories.getCurveTry(curveTestPwr));
-                snorflerOn = false;
-                break;
+        //     case 20:
+        //         path = new Auto(Trajectories.getSquare(70.0));
+        //         snorflerOn = false;
+        //         break;
+        //     case 86:
+        //         // int pathNum = RPI.galacticShooter();
+        //         int pathNum = 1;
+        //         switch (pathNum) {
+        //             case 1:
+        //                 path = new Auto(Trajectories.getRPathA(70));
+        //                 break;
+        //             case 2:
+        //                 path = new Auto(Trajectories.getBPathA(70));
+        //                 break;
+        //             case 3:
+        //                 path = new Auto(Trajectories.getRPathB(70));
+        //                 break;
+        //             case 4:
+        //                 path = new Auto(Trajectories.getRPathB(70));
+        //                 break;
+        //             default:
+        //                 path = new Auto(Trajectories.getEmpty(0));
+        //                 break;
+        //         }
+        //         break;
+        //     default:
+        //         path = new Auto(Trajectories.getEmpty(0));
+        //         break;
+        // }
 
-            case 20:
-                path = new Auto(Trajectories.getSquare(70.0));
-                snorflerOn = false;
-                break;
-            case 86:
-                int pathNum = RPI.galacticShooter();
-                switch (pathNum) {
-                    case 1:
-                        path = new Auto(Trajectories.getRPathA(70));
-                        break;
-                    case 2:
-                        path = new Auto(Trajectories.getBPathA(70));
-                        break;
-                    case 3:
-                        path = new Auto(Trajectories.getRPathB(70));
-                        break;
-                    case 4:
-                        path = new Auto(Trajectories.getRPathB(70));
-                        break;
-                    default:
-                        path = new Auto(Trajectories.getEmpty(0));
-                        break;
-                }
-                break;
-            default:
-                path = new Auto(Trajectories.getEmpty(0));
-                break;
-        }
-
-        SmartDashboard.putNumber("autoselector selection", sel);
-        // path.init();
+        // SmartDashboard.putNumber("autoselector selection", sel);
         path.init();
         SmartDashboard.putBoolean("path initialized", true);
         SmartDashboard.putBoolean("path executing", false);
@@ -132,8 +135,9 @@ public class AutoSelector {
         // path.execute();
 
         if (snorflerOn) {
-            Snorfler.cmdUpdate(true, Snorfler.feederSpeed, Snorfler.loaderSpeed);
-            Revolver.determ();
+            Snorfler.reqsnorfDrvAuto = true;
+            // Snorfler.cmdUpdate(true, Snorfler.feederSpeed, Snorfler.loaderSpeed);
+            // Revolver.determ();
         }
         path.execute();
     }

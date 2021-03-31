@@ -18,7 +18,7 @@ public class Snorfler {
     private static boolean snorfArmDn;
     private static boolean snorfFeederOn;
     private static boolean snorfReverse;
-    private static boolean reqsnorfDrvAuto;  //Request to enable the snorfler from Drv Auto system
+    public static boolean reqsnorfDrvAuto;  //Request to enable the snorfler from Drv Auto system
     private static Timer stateTmr; // Timer used in state machine
     private static Timer safeTimer; // Safety timer, used for jammed ball hi amps
     private static Timer startUpTimer;
@@ -63,7 +63,7 @@ public class Snorfler {
         }
 
         if(Robot.getMode() == 1)
-            state = reqsnorfDrvAuto ? 1 : 0;
+            state = reqsnorfDrvAuto ? 2 : 0;
 
         if(ballJammed && state < 90) state = 90;
 
