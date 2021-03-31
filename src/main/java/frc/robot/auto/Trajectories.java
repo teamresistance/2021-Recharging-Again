@@ -28,14 +28,14 @@ public class Trajectories {
     }
 
     /**Used for testing traj chooser  */
-    private static AutoFunction testTrajAlt[];
+    private static AutoFunction testTraj[];
     public static void chsrUpdate(){
-        SmartDashboard.putString("Traj/String Alt", chsr.getSelected());
-        testTrajAlt = getTrajAlt(70);   //Test view Alternate
+        SmartDashboard.putString("Traj/String", chsr.getSelected());
+        testTraj = getTraj(70);   //Test view Alternate
     }
 
     /**This is a test for an alternate traj retrieval */
-    public static AutoFunction[] getTrajAlt(double pwr){
+    public static AutoFunction[] getTraj(double pwr){
         switch(chsr.getSelected()){
             case "getEmpty":
             return getEmpty(pwr);
