@@ -1,7 +1,5 @@
 package frc.robot.auto;
 
-import javax.xml.namespace.QName;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

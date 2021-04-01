@@ -24,14 +24,15 @@ public class Trajectories {
             chsr.addOption(chsrDesc[i], chsrDesc[i]);
         }
         chsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrDesc[0]);   //Default MUST have a different name
-        SmartDashboard.putData("Traj/Choice Alt", chsr);
+        SmartDashboard.putData("Traj/Choice", chsr);
     }
 
     /**Used for testing traj chooser  */
     private static AutoFunction testTraj[];
     public static void chsrUpdate(){
         SmartDashboard.putString("Traj/String", chsr.getSelected());
-        testTraj = getTraj(70);   //Test view Alternate
+        SmartDashboard.putNumber("Traj/Gxtc Num", RPI.galacticShooter());
+        // testTraj = getTraj(70);   //Test view Alternate
     }
 
     /**This is a test for an alternate traj retrieval */
@@ -80,12 +81,12 @@ public class Trajectories {
             case "getCurveTry":
             return getCurveTry(pwr);
             default:
-            System.out.println("Bad TrajAlt Name - " + chsr.getSelected());
+            System.out.println("Traj/Bad Traj Desc - " + chsr.getSelected());
             return getEmpty(0);
         }
     }
 
-    public static String getChsrAltDesc(){
+    public static String getChsrDesc(){
         return chsr.getSelected();
     }
 
@@ -206,8 +207,8 @@ public class Trajectories {
 
     public static AutoFunction[] getPathBlue(double pwr) {
         AutoFunction[] traj = {
-            new PointNTurn(22, pwr, 9.5),  //Move to BlueA ball1
-            new PointNTurn(-71, pwr, 8.4),  //Move to B6 thru BlueB ball1
+            new PointNTurn(21, pwr, 9.5),  //Move to BlueA ball1
+            new PointNTurn(-71, pwr, 8.6),  //Move to B6 thru BlueB ball1
             new PointNTurn(43, pwr, 8.0),   //Move to BlueAB ball3
          };
         return traj;
@@ -215,11 +216,10 @@ public class Trajectories {
 
     /**
      * Establishes the Trajectory array from the Raspberry Pi
-     * @param pwr - applied defualt power to turns and runs
+     * @param pwr - applied default power to turns and runs
      * @return the Trajectoy array for the path assigned by the Raspberry Pi
      */
     public static AutoFunction[] getPathGalaxtic(double pwr) {
-        SmartDashboard.putNumber("Traj/Gxtc Num", RPI.galacticShooter());
         switch (RPI.galacticShooter()) {
             case 1:
                 return getPathRedA(pwr);

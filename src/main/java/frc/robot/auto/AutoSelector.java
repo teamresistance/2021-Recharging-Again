@@ -18,19 +18,19 @@ public class AutoSelector {
     // 1 - slalom
     public static void init() {
     // public static void init(int sel) {
-        curveTestPwr = SmartDashboard.getNumber("Curve Pwr", curveTestPwr);
-        snorflerOn = Trajectories.getChsrAltDesc().indexOf("Path") > -1;
-        path = new Auto(Trajectories.getTrajAlt(70.0));
+        curveTestPwr = SmartDashboard.getNumber("AS/Curve Pwr", curveTestPwr);
+        snorflerOn = Trajectories.getChsrDesc().indexOf("Path") > -1;
+        path = new Auto(Trajectories.getTraj(70.0));
 
         // SmartDashboard.putNumber("autoselector selection", sel);
         path.init();
-        SmartDashboard.putBoolean("path initialized", true);
-        SmartDashboard.putBoolean("path executing", false);
-        SmartDashboard.putBoolean("path done", false);
+        SmartDashboard.putBoolean("AS/path initialized", true);
+        SmartDashboard.putBoolean("AS/path executing", false);
+        SmartDashboard.putBoolean("AS/path done", false);
     }
 
     public static void update(){
-        SmartDashboard.putNumber("Auto/state in Robot", trajIdx);
+        SmartDashboard.putNumber("AS/Auto state", trajIdx);
         switch (trajIdx) {
           case 0:
             execute();
@@ -45,12 +45,12 @@ public class AutoSelector {
     }
 
     public static void execute() {
-        SmartDashboard.putNumber("navX", IO.navX.getAngle());
-        SmartDashboard.putBoolean("path executing", true);
-        SmartDashboard.putBoolean("path done", false);
+        SmartDashboard.putNumber("AS/navX", IO.navX.getAngle());
+        SmartDashboard.putBoolean("AS/path executing", true);
+        SmartDashboard.putBoolean("AS/path done", false);
         // path.execute();
 
-        if (snorflerOn) {
+        if (snorflerOn) {               //Needs fixin
             Snorfler.reqsnorfDrvAuto = true;
             // Snorfler.cmdUpdate(true, Snorfler.feederSpeed, Snorfler.loaderSpeed);
             // Revolver.determ();
@@ -59,14 +59,15 @@ public class AutoSelector {
     }
 
     public static void done() {
-        SmartDashboard.putNumber("navX", IO.navX.getAngle());
-        SmartDashboard.putBoolean("path executing", false);
-        SmartDashboard.putBoolean("path done", true);
+        SmartDashboard.putNumber("AS/navX", IO.navX.getAngle());
+        SmartDashboard.putBoolean("AS/path executing", false);
+        SmartDashboard.putBoolean("AS/path done", true);
         // path.done();
         path.done();
 
-        if (snorflerOn) {
+        if (snorflerOn) {               //Needs fixin
             snorflerOn = false;
+            Snorfler.reqsnorfDrvAuto = true;
             // Snorfler.cmdUpdate(false, 0, 0);
             // Revolver.determ();
         }
@@ -82,10 +83,10 @@ public class AutoSelector {
     }
 
     public static void sdbInit(){
-        SmartDashboard.putNumber("Curve Pwr", curveTestPwr);
+        SmartDashboard.putNumber("AS/Curve Pwr", curveTestPwr);
     }
 
     public static void sdbUpdate(){
-        curveTestPwr = SmartDashboard.getNumber("Curve Pwr", curveTestPwr);
+        curveTestPwr = SmartDashboard.getNumber("AS/Curve Pwr", curveTestPwr);
     }
 }

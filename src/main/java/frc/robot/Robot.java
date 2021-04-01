@@ -16,10 +16,6 @@ import frc.io.hdw_io.vision.RPI;
 import frc.io.hdw_io.test_io;
 import frc.io.joysticks.JS_IO;
 import frc.robot.Subsystem.drive.Drive;
-// import frc.robot.Subsystem.Injector;
-// import frc.robot.Subsystem.Revolver;
-// import frc.robot.Subsystem.Shooter;
-// import frc.robot.Subsystem.Snorfler;
 import frc.robot.Subsystem.Turret;
 
 import frc.robot.Subsystem.ballHandler.Injector;
@@ -27,8 +23,6 @@ import frc.robot.Subsystem.ballHandler.Revolver;
 import frc.robot.Subsystem.ballHandler.Shooter;
 import frc.robot.Subsystem.ballHandler.Snorfler;
 
-// import frc.robot.Subsystem.revolverupdate.*;
-// import frc.robot.auto.Drive2;
 import frc.robot.auto.AutoSelector;
 import frc.robot.auto.Trajectories;
 
@@ -39,7 +33,6 @@ import edu.wpi.first.wpilibj.Relay;
 public class Robot extends TimedRobot {
   //Used to signal Auto drv/Snorfler, need to find FMSInfo call
   private static int mode = 0; //0=Not Init, 1=autoPeriodic, 2=teleopPeriodic
-  private int x;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -68,7 +61,6 @@ public class Robot extends TimedRobot {
     Revolver.init();
     Snorfler.init();
     AutoSelector.init();
-    x = 0;
   }
 
   @Override
@@ -78,18 +70,6 @@ public class Robot extends TimedRobot {
     Revolver.update();
     Snorfler.update();
     AutoSelector.update();
-    // SmartDashboard.putNumber("Auto/state in Robot", x);
-    // switch (x) {
-    //   case 0:
-    //     AutoSelector.execute();
-    //     if (AutoSelector.finished()) {
-    //       x++;
-    //     }
-    //     break;
-    //   case 1:
-    //     AutoSelector.done();
-    //     break;
-    // }
   }
 
   @Override
