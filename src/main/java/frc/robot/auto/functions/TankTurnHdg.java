@@ -85,7 +85,7 @@ public class TankTurnHdg extends AutoFunction {
 
                     // Chk if trajectory is done
                     System.out.println("HdgOut0B: " + hdgOut + "  hdg: " + hdgFB() + "  hdgSP: " + hdg);
-                    if(Math.abs(hdgFB() - hdg) < 10.0 ) {       //This is a kludge to get things working
+                    if(Math.abs(hdgFB() - hdg) < 5.0 ) {       //This is a kludge to get things working
                     // if (steer.isHdgDone()) {
                         state = 1; // Chk hdg only
                         resetDist();

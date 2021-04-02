@@ -102,45 +102,80 @@ public class Trajectories {
         return traj;
     }
 
+    // public static AutoFunction[] getSlalom(double pwr) {
+    //     AutoFunction traj[] = {
+    //         new PointNTurn(0, pwr, 2.5), 
+    //         new PointNTurn(-55, pwr, 5.17), 
+    //         new PointNTurn(0, pwr, 9.2),
+    //         new PointNTurn(55, pwr, 4.57),
+    //         new PointNTurn(0, pwr, 2),
+    //         new PointNTurn(90, pwr, -4.3),
+    //         new PointNTurn(180, pwr, 1.5),
+    //         new PointNTurn(150, pwr, 6.14),
+    //         new PointNTurn(180, pwr, 9.2), 
+    //         new PointNTurn(-125, pwr, 5.57),
+    //         new PointNTurn(180, pwr, 2.5)
+    //     };
+    //     return traj;
+    // }
+
+    
     public static AutoFunction[] getSlalom(double pwr) {
         AutoFunction traj[] = {
             new PointNTurn(0, pwr, 2.5), 
             new PointNTurn(-55, pwr, 5.17), 
-            new PointNTurn(0, pwr, 9.2),
-            new PointNTurn(55, pwr, 4.57),
-            new PointNTurn(0, pwr, 2),
-            new PointNTurn(90, pwr, -4.3),
-            new PointNTurn(180, pwr, 1.5),
-            new PointNTurn(150, pwr, 6.14),
-            new PointNTurn(180, pwr, 9.2), 
-            new PointNTurn(-125, pwr, 5.57),
-            new PointNTurn(180, pwr, 2.5)
+            new PointNTurn(0, pwr, 8.5),
+            new PointNTurn(55, pwr, 3),
+            new TankTurnHdg(135, 0, .82),
+            // new PointNTurn(0, pwr, 2), // out
+            // new PointNTurn(90, pwr, -4.3), // out
+            // new PointNTurn(180, pwr, 1.5),
+            new PointNTurn(135, pwr, 5),
+            new PointNTurn(180, pwr, 8.5), 
+            new PointNTurn(-125, pwr, 4.57),
+            new PointNTurn(180, pwr, 2)
         };
         return traj;
     }
 
-    public static AutoFunction[] getBarrel(double pwr){
+    // public static AutoFunction[] getBarrel(double pwr){
+    //     AutoFunction[] traj = {
+    //         new PointNTurn(0,100,5.9),
+    //         new TankTurnHdg(-10, 0.68, 0.0),    //Turn to the right
+    //         // new PointNTurn(45,100,2.5),
+    //         // new PointNTurn(135,100, 2.5),
+    //         // new PointNTurn(-180, 100, 2.0), //
+    //         // new PointNTurn(-135, 100, 2.5), //
+    //         // new PointNTurn(-90, 100, 2.0), //
+    //         // new PointNTurn(-45,100, 2.5), //fix these two angles bc its going out of bounds
+    //         new PointNTurn(-10,100, 5.8),
+    //         new TankTurnHdg(80, 0.0, 0.78),  //Turn to the left
+    //         // new PointNTurn(-45, 100, 2.5),
+    //         // new PointNTurn(-135, 100, 2.5),
+    //         // new PointNTurn(135, 100, 4.1),
+    //         // new PointNTurn(45, pwr, 9.7),
+    //         // new PointNTurn(45,100, 6.1),  //new
+    //         new TankTurnHdg(10, 0.4, 1.0),
+    //         new TankTurnHdg(180, 0.0, 0.8),  //Turn to the left
+    //         // new PointNTurn(-45, pwr, 3.7),
+    //         // new PointNTurn(-135, pwr, 3.54),
+    //         // new PointNTurn(177, pwr, 20)
+    //     };
+    //     return traj;
+    // }
+
+    public static AutoFunction[] getBarrel(double pwr) {
         AutoFunction[] traj = {
-            new PointNTurn(0,100,5.9),
-            new TankTurnHdg(-16, 0.63, 0.0),    //Turn to the right
-            // new PointNTurn(45,100,2.5),
-            // new PointNTurn(135,100, 2.5),
-            // new PointNTurn(-180, 100, 2.0), //
-            // new PointNTurn(-135, 100, 2.5), //
-            // new PointNTurn(-90, 100, 2.0), //
-            // new PointNTurn(-45,100, 2.5), //fix these two angles bc its going out of bounds
-            new PointNTurn(-10,100, 5.8),
-            new TankTurnHdg(80, 0.0, 0.78),  //Turn to the left
-            // new PointNTurn(-45, 100, 2.5),
-            // new PointNTurn(-135, 100, 2.5),
-            // new PointNTurn(135, 100, 4.1),
-            // new PointNTurn(45, pwr, 9.7),
-            // new PointNTurn(45,100, 6.1),  //new
-            new TankTurnHdg(10, 0.4, 1.0),
-            new TankTurnHdg(180, 0.0, 0.8),  //Turn to the left
-            // new PointNTurn(-45, pwr, 3.7),
-            // new PointNTurn(-135, pwr, 3.54),
-            // new PointNTurn(177, pwr, 20)
+            new PointNTurn(0,100,5.7),
+            new TankTurnHdg(-10, .75, 0.1),    //Turn to the right
+            new PointNTurn(0,100, 5),
+            new TankTurnHdg(40, .1, .85),
+            new PointNTurn(44, 100, 4.4),
+            new TankTurnHdg(-165, .1, .9),
+            new PointNTurn(180, 100, 18)
+            // new TankTurnHdg(90, 0.1, 0.85),  //Turn to the left
+            // new TankTurnHdg(25, 0.5, 1.0),
+            // new TankTurnHdg(180, 0.1, 0.85),  //Turn to the left
         };
         return traj;
     }
