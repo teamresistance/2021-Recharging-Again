@@ -17,12 +17,9 @@ public class AutoSelector {
 
     // 1 - slalom
     public static void init() {
-    // public static void init(int sel) {
-        curveTestPwr = SmartDashboard.getNumber("AS/Curve Pwr", curveTestPwr);
-        snorflerOn = Trajectories.getChsrDesc().indexOf("Path") > -1;
         path = new Auto(Trajectories.getTraj(70.0));
+        trajIdx = 0;        //Opps
 
-        // SmartDashboard.putNumber("autoselector selection", sel);
         path.init();
         SmartDashboard.putBoolean("AS/path initialized", true);
         SmartDashboard.putBoolean("AS/path executing", false);
@@ -30,7 +27,7 @@ public class AutoSelector {
     }
 
     public static void update(){
-        SmartDashboard.putNumber("AS/Auto state", trajIdx);
+        SmartDashboard.putNumber("AS/Auto idx", trajIdx);
         switch (trajIdx) {
           case 0:
             execute();
@@ -42,19 +39,16 @@ public class AutoSelector {
             done();
             break;
         }
+        SmartDashboard.putBoolean("AS/snorf On", snorflerOn);
+        snorflerOn = (trajIdx == 0 && (Trajectories.getChsrDesc().indexOf("Path") > -1));
+        Snorfler.reqsnorfDrvAuto = snorflerOn;
     }
 
     public static void execute() {
         SmartDashboard.putNumber("AS/navX", IO.navX.getAngle());
         SmartDashboard.putBoolean("AS/path executing", true);
         SmartDashboard.putBoolean("AS/path done", false);
-        // path.execute();
 
-        if (snorflerOn) {               //Needs fixin
-            Snorfler.reqsnorfDrvAuto = true;
-            // Snorfler.cmdUpdate(true, Snorfler.feederSpeed, Snorfler.loaderSpeed);
-            // Revolver.determ();
-        }
         path.execute();
     }
 
@@ -62,15 +56,8 @@ public class AutoSelector {
         SmartDashboard.putNumber("AS/navX", IO.navX.getAngle());
         SmartDashboard.putBoolean("AS/path executing", false);
         SmartDashboard.putBoolean("AS/path done", true);
-        // path.done();
-        path.done();
 
-        if (snorflerOn) {               //Needs fixin
-            snorflerOn = false;
-            Snorfler.reqsnorfDrvAuto = true;
-            // Snorfler.cmdUpdate(false, 0, 0);
-            // Revolver.determ();
-        }
+        path.done();
     }
 
     public static boolean finished() {

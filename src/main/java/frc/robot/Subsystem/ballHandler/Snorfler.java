@@ -62,7 +62,7 @@ public class Snorfler {
             snorfReverse = !snorfReverse;
         }
 
-        if(Robot.getMode() == 1)
+        if(Robot.getMode() == 1)    //In robotPeriodic
             state = reqsnorfDrvAuto ? 2 : 0;
 
         if(ballJammed && state < 90) state = 90;

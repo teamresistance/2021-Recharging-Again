@@ -6,6 +6,7 @@ import frc.io.hdw_io.vision.RPI;
 import frc.robot.auto.functions.AutoFunction;
 import frc.robot.auto.functions.CurveTurn;
 import frc.robot.auto.functions.PointNTurn;
+import frc.robot.auto.functions.TankTurnHdg;
 
 //TODO: still unsure on how to take the 2D array and use it as a trajectory object
 public class Trajectories {
@@ -27,15 +28,17 @@ public class Trajectories {
         SmartDashboard.putData("Traj/Choice", chsr);
     }
 
-    /**Used for testing traj chooser  */
-    private static AutoFunction testTraj[];
+    /**Show on sdb traj chooser info.  Called from robotPeriodic  */
     public static void chsrUpdate(){
         SmartDashboard.putString("Traj/String", chsr.getSelected());
         SmartDashboard.putNumber("Traj/Gxtc Num", RPI.galacticShooter());
-        // testTraj = getTraj(70);   //Test view Alternate
     }
 
-    /**This is a test for an alternate traj retrieval */
+    /**
+     * 
+     * @param pwr - default pwr to be usedin trajectories
+     * @return The active, selected, Chooser Trajectory for use by AutoSelector
+     */
     public static AutoFunction[] getTraj(double pwr){
         switch(chsr.getSelected()){
             case "getEmpty":
@@ -118,19 +121,26 @@ public class Trajectories {
 
     public static AutoFunction[] getBarrel(double pwr){
         AutoFunction[] traj = {
-            new PointNTurn(0,pwr,8.4),
-            new PointNTurn(45,pwr,3.2),
-            new PointNTurn(135,pwr, 3.6),
-            new PointNTurn(-135, pwr, 3.54), //
-            new PointNTurn(-45,pwr, 3.54), //fix these two angles bc its going out of bounds
-            new PointNTurn(0,pwr, 5.8),
-            new PointNTurn(-45, pwr, 3.54),
-            new PointNTurn(-135, pwr, 3.54),
-            new PointNTurn(135, pwr, 4.1),
-            new PointNTurn(45, pwr, 9.7),
-            new PointNTurn(-45, pwr, 3.7),
-            new PointNTurn(-135, pwr, 3.54),
-            new PointNTurn(177, pwr, 20)
+            new PointNTurn(0,100,5.9),
+            new TankTurnHdg(-16, 0.63, 0.0),    //Turn to the right
+            // new PointNTurn(45,100,2.5),
+            // new PointNTurn(135,100, 2.5),
+            // new PointNTurn(-180, 100, 2.0), //
+            // new PointNTurn(-135, 100, 2.5), //
+            // new PointNTurn(-90, 100, 2.0), //
+            // new PointNTurn(-45,100, 2.5), //fix these two angles bc its going out of bounds
+            new PointNTurn(-10,100, 5.8),
+            new TankTurnHdg(80, 0.0, 0.78),  //Turn to the left
+            // new PointNTurn(-45, 100, 2.5),
+            // new PointNTurn(-135, 100, 2.5),
+            // new PointNTurn(135, 100, 4.1),
+            // new PointNTurn(45, pwr, 9.7),
+            // new PointNTurn(45,100, 6.1),  //new
+            new TankTurnHdg(10, 0.4, 1.0),
+            new TankTurnHdg(180, 0.0, 0.8),  //Turn to the left
+            // new PointNTurn(-45, pwr, 3.7),
+            // new PointNTurn(-135, pwr, 3.54),
+            // new PointNTurn(177, pwr, 20)
         };
         return traj;
     }
@@ -189,7 +199,7 @@ public class Trajectories {
         AutoFunction[] traj = {
             new PointNTurn(-33, 65, 3.5),
             new PointNTurn(40, pwr, 7),
-            new PointNTurn(-57, pwr, 7.1),
+            new PointNTurn(-60, pwr, 7.1),
             new PointNTurn(-10, pwr, 4.5)
          };
         return traj;
@@ -208,7 +218,7 @@ public class Trajectories {
     public static AutoFunction[] getPathBlue(double pwr) {
         AutoFunction[] traj = {
             new PointNTurn(21, pwr, 9.5),  //Move to BlueA ball1
-            new PointNTurn(-71, pwr, 8.6),  //Move to B6 thru BlueB ball1
+            new PointNTurn(-72, pwr, 8.7),  //Move to B6 thru BlueB ball1
             new PointNTurn(43, pwr, 8.0),   //Move to BlueAB ball3
          };
         return traj;
