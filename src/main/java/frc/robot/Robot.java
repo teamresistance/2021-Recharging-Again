@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     IO.init();
     JS_IO.init();
+    Shooter.sdbInit();
     Trajectories.chsrInit();
     AutoSelector.sdbInit();
   }

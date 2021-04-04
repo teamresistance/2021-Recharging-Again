@@ -125,12 +125,22 @@ public class Trajectories {
             new PointNTurn(0, pwr, 2.5), 
             new PointNTurn(-55, pwr, 5.17), 
             new PointNTurn(0, pwr, 8.5),
-            new PointNTurn(55, pwr, 3),
-            new TankTurnHdg(135, 0, .82),
+            new PointNTurn(57, pwr, 3.2),
+            new TankTurnHdg(135, 0, .80),
             // new PointNTurn(0, pwr, 2), // out
             // new PointNTurn(90, pwr, -4.3), // out
             // new PointNTurn(180, pwr, 1.5),
-            new PointNTurn(135, pwr, 5),
+            new PointNTurn(132
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            , pwr, 5),
             new PointNTurn(180, pwr, 8.5), 
             new PointNTurn(-125, pwr, 4.57),
             new PointNTurn(180, pwr, 2)
@@ -183,16 +193,16 @@ public class Trajectories {
     public static AutoFunction[] getBounce(double pwr) {
         AutoFunction[] traj = {
             new PointNTurn(0, pwr, 3), //2.8
-            new PointNTurn(270, pwr, 3.2),
+            new PointNTurn(270, pwr, 3.4), //3.2
             new PointNTurn(270, pwr, -2.5),
-            new PointNTurn(230, pwr, -6.3), //225
-            new PointNTurn(315, pwr, 1.8), //2.1
-            new PointNTurn(270, pwr, 6.8), //5.4
-            new PointNTurn(270, pwr, -6.8),
-            new PointNTurn(0, pwr, 6),
+            new PointNTurn(230, pwr, -5.5), //6.3
+            new PointNTurn(315, pwr, 1.8), 
+            new PointNTurn(270, pwr, 7.3), //6.8
+            new PointNTurn(270, pwr, -6.2), //6.8
+            new PointNTurn(0, pwr, 5.7), //6
             new PointNTurn(270, pwr, 8.2),
-            new PointNTurn(270, pwr, -2.4),
-            new PointNTurn(0, pwr, 3)
+            new PointNTurn(270, pwr, -1.8), //2.4
+            new PointNTurn(-10, pwr, 4)
          };
         return traj;
     }
@@ -235,7 +245,7 @@ public class Trajectories {
             new PointNTurn(-33, 65, 3.5),
             new PointNTurn(40, pwr, 7),
             new PointNTurn(-60, pwr, 7.1),
-            new PointNTurn(-10, pwr, 4.5)
+            new PointNTurn(-10, pwr, 6.5)
          };
         return traj;
     }
@@ -254,7 +264,7 @@ public class Trajectories {
         AutoFunction[] traj = {
             new PointNTurn(21, pwr, 9.5),  //Move to BlueA ball1
             new PointNTurn(-72, pwr, 8.7),  //Move to B6 thru BlueB ball1
-            new PointNTurn(43, pwr, 8.0),   //Move to BlueAB ball3
+            new PointNTurn(48, pwr, 10.0),   //Move to BlueAB ball3
          };
         return traj;
     }
