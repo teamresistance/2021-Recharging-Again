@@ -322,17 +322,13 @@ public class Shooter {
         shooter.config_kF(0, kF); // Send kP new value to Talon
         shooter.config_kP(0, kP); // Send kF new value to Talon
 
-        rpmSPAdj1 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP1", rpmSPAdj1); // Get the adjustable RPM SP from
-                                                                                      // sdb
-        rpmSPAdj2 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP2", rpmSPAdj2); // Get the adjustable RPM SP from
-                                                                                      // sdb
-        rpmSPAdj3 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP3", rpmSPAdj3); // Get the adjustable RPM SP from
-                                                                                      // sdb
+        rpmSPAdj1 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP1", rpmSPAdj1); // Get adjustable RPM SP from sdb
+        rpmSPAdj2 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP2", rpmSPAdj2); // Get adjustable RPM SP from sdb
+        rpmSPAdj3 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP3", rpmSPAdj3); // Get adjustable RPM SP from sdb
 
         SmartDashboard.putNumber("Shooter/RPM/Wkg SP", rpmWSP); // Put the working RPM SP,rpmWSP
         rpmWSP = rpmChsr.getSelected() == null ? 1000 : (int) rpmChsr.getSelected();
-
-        rpmWSP = rpmChsr.getSelected(); // Get selected RPM SP value from rpmChsr
+        // rpmWSP = rpmChsr.getSelected(); // Get selected RPM SP value from rpmChsr
         if (rpmWSP == null || rpmWSP < 0) {
             switch (rpmWSP) {
                 case -1:
@@ -344,7 +340,9 @@ public class Shooter {
                 case -3:
                     rpmWSP = rpmSPAdj3; // If value is -3 (last choice) use adjustable SP
                     break;
-                
+                default:
+                    rpmWSP = 4500;
+                    System.out.println("Bad rpm choice: " + rpmWSP);
             }
         }
 
