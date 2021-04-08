@@ -76,8 +76,8 @@ public class Shooter {
     private static double joelShtrTm = 0.15; // Time to hold boost then move on
 
     private static Integer rpmWSP = 3000; // Working RPM setpoint
-    private static int rpmSPAdj1 = 4500; // Adjustable RPM setpoint when chosen
-    private static int rpmSPAdj2 = 4750; // Adjustable RPM setpoint when chosen
+    private static int rpmSPAdj1 = 4250; // Adjustable RPM setpoint when chosen
+    private static int rpmSPAdj2 = 4650; // Adjustable RPM setpoint when chosen
     private static int rpmSPAdj3 = 5000; // Adjustable RPM setpoint when chosen
 
     private static int atSpeedDB = 100; // (WSP - DB) < RPM < (WSP + DB)
@@ -93,7 +93,7 @@ public class Shooter {
     // RPM Chooser. Allows driver to select pre-select RPMs. [0]is default [last] is
     // adjustable
     private static SendableChooser<Integer> rpmChsr = new SendableChooser<Integer>();
-    private static String[] rpmName = { "Zone 1", "RPM2", "RPM3", "RPM4", "RPM_Adj1", "RPM_Adj2", "RPM_Adj3" }; // Names
+    private static String[] rpmName = { "Zone1", "RPM2", "RPM3", "RPM4", "RPM_Adj1", "RPM_Adj2", "RPM_Adj3" }; // Names
                                                                                                                 // assigned
                                                                                                                 // (+
                                                                                                                 // "-value")
@@ -303,7 +303,7 @@ public class Shooter {
 
         // This initiates the RPm Chooser
         rpmChsr = new SendableChooser<Integer>();
-        rpmChsr.setDefaultOption(rpmSP[0] + "d" + rpmName[0], rpmSP[0]);
+        rpmChsr.setDefaultOption(rpmSP[0] + " " + rpmName[0], rpmSP[0]);
         for (int i = 1; i < rpmSP.length; i++) {
             rpmChsr.addOption(rpmSP[i] + " " + rpmName[i], rpmSP[i]);
         }
