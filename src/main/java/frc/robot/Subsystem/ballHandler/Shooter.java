@@ -99,6 +99,18 @@ public class Shooter {
                                                                                                                 // "-value")
     private static Integer[] rpmSP = { 1000, 4500, 4750, 4000, -1, -2, -3 }; // Values to use (return)
 
+    /**Initializes the Chooser (drop down) for RPM selection.  
+     * First 4 are fixed and the last 3 (negative) use another adjustable variable.
+     * <p>Can only be called once.  Called from robotInit() in Robot.
+     */
+    public static void chsrInit(){
+        // This initiates the RPm Chooser
+        rpmChsr = new SendableChooser<Integer>();
+        rpmChsr.setDefaultOption(rpmSP[0] + " " + rpmName[0], rpmSP[0]);
+        for (int i = 1; i < rpmSP.length; i++) {
+            rpmChsr.addOption(rpmSP[i] + " " + rpmName[i], rpmSP[i]);
+        }
+    }
     /**
      * Initialize Shooter stuff. Called from telopInit (maybe robotInit(?)) in
      * Robot.java
@@ -296,17 +308,11 @@ public class Shooter {
     }
 
     /*-------------------------  SDB Stuff --------------------------------------
-    /**Initialize sdb & rpm chooser */
+    /**Initialize sdb */
     public static void sdbInit() {
         SmartDashboard.putNumber("Shooter/RPM/kP", kP); // Put kP on sdb
         SmartDashboard.putNumber("Shooter/RPM/kF", kF); // Put kF on sdb
 
-        // This initiates the RPm Chooser
-        rpmChsr = new SendableChooser<Integer>();
-        rpmChsr.setDefaultOption(rpmSP[0] + " " + rpmName[0], rpmSP[0]);
-        for (int i = 1; i < rpmSP.length; i++) {
-            rpmChsr.addOption(rpmSP[i] + " " + rpmName[i], rpmSP[i]);
-        }
         SmartDashboard.putData("Shooter/RPM/Selection", rpmChsr); // Put rpmChsr on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP1", rpmSPAdj1); // Put rpmSPAdj on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP2", rpmSPAdj2); // Put rpmSPAdj on sdb
