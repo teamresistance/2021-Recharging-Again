@@ -15,6 +15,7 @@ Desc: Reads joystick (gamePad) values.  Can be used for different stick configur
 */
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.io.joysticks.Axis;
@@ -25,6 +26,10 @@ import frc.io.joysticks.Pov;
 
 //Declares all joysticks, buttons, axis & pov's.
 public class JS_IO {
+    private static SendableChooser<Integer> chsr = new SendableChooser<Integer>();
+    private static String[] chsrDesc = {"3-Joysticks", "2-Joysticks", "Gamepad"};
+    private static int[] chsrNum = {0, 5, 1};
+
     public static int jsConfig = 0; // 0=Joysticks, 1=gamePad only, 2=left Joystick only
                                     // 3=Mixed LJS & GP, 4=Nintendo Pad
     // Declare all possible Joysticks
@@ -50,13 +55,12 @@ public class JS_IO {
     // Shooter
     public static Button btnRampShooter = new Button();
     public static Button btnFireShooter = new Button();
-    public static Button btnSlowFire = new Button();
 
     // Revolver
     public static Button btnIndex = new Button();
 
     // Snorfler
-    public static Button btnLowerSnorfler = new Button();
+    public static Button btnTglSnorArmDn = new Button();
     public static Button btnReverseSnorfler = new Button();
 
     // Turret
@@ -94,37 +98,59 @@ public class JS_IO {
     }
 
     public static void init() {
-        SmartDashboard.putNumber("JS_Config", jsConfig);
+        SmartDashboard.putNumber("JS/JS_Config", jsConfig);
+        chsrInit();
         configJS();
     }
 
+    public static void chsrInit(){
+        for(int i = 0; i < chsrDesc.length; i++){
+            chsr.addOption(chsrDesc[i], chsrNum[i]);
+        }
+        chsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrNum[0]);   //Default MUST have a different name
+        SmartDashboard.putData("JS/Choice", chsr);
+    }
+
+    // // can put this under a button press
+    // public static void update() { // Chk for Joystick configuration
+    //     if (jsConfig != SmartDashboard.getNumber("JS/JS_Config", 0)) {
+    //     jsConfig = (int) SmartDashboard.getNumber("JS/JS_Config", 0);
+    //     caseDefault();
+    //     configJS();
+    //     }
+    // }
+
     // can put this under a button press
     public static void update() { // Chk for Joystick configuration
-        if (jsConfig != SmartDashboard.getNumber("JS_Config", 0)) {
-            jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
-            CaseDefault();
+        //chsr.setDefaultOption doesn't appear to work.  Shouldn't need to trap null.
+        //Default MUST have a different name
+        if (jsConfig != (chsr.getSelected() == null ? 0 : chsr.getSelected())) {
+            caseDefault();
             configJS();
         }
     }
 
     public static void configJS() { // Default Joystick else as gamepad
-        jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
+        // jsConfig = (int) SmartDashboard.getNumber("JS_Config", 0);
+        jsConfig = chsr.getSelected() == null ? 0 : chsr.getSelected();
+        SmartDashboard.putNumber("JS/JS_Config", jsConfig);
 
         switch (jsConfig) {
             case 0: // Normal 3 joystick config
-                Norm3JS();
+                norm3JS();
                 break;
 
             case 1: // Gamepad only
-                A_GP();
+                a_GP();
                 break;
 
             case 5: // Normal 2 joystick config No CoDrvr
-                Norm2JS();
+                norm2JS();
                 break;
 
             default: // Bad assignment
-                // CaseDefault();
+                System.out.println("Bad JS choice - " + jsConfig);
+                caseDefault();
                 break;
 
         }
@@ -133,7 +159,7 @@ public class JS_IO {
     // ================ Controller actions ================
 
     // ----------- Normal 3 Joysticks -------------
-    private static void Norm3JS() {
+    private static void norm3JS() {
 
         // All stick axisesssss
         axLeftDrive.setAxis(leftJoystick, 1);
@@ -147,7 +173,7 @@ public class JS_IO {
 
         // snorfler buttons
         btnReverseSnorfler.setButton(coJoystick, 5);
-        btnLowerSnorfler.setButton(coJoystick, 3);
+        btnTglSnorArmDn.setButton(coJoystick, 3);
 
         // turret buttons
         btnLimeSearch.setButton(coJoystick, 12);
@@ -156,7 +182,6 @@ public class JS_IO {
         // shooting buttons
         btnRampShooter.setButton(coJoystick, 4);
         btnFireShooter.setButton(coJoystick, 1);
-        btnSlowFire.setButton(coJoystick, 2);
         btnIndex.setButton(coJoystick, 6);
 
         btnStop.setButton(coJoystick, 11);
@@ -176,7 +201,7 @@ public class JS_IO {
     }
 
     // ----- gamePad only --------
-    private static void A_GP() {
+    private static void a_GP() {
         // All stick axisesssss
         axLeftDrive.setAxis(gamePad, 1); // left stick Y
         axRightDrive.setAxis(gamePad, 5); // right stick Y
@@ -188,7 +213,7 @@ public class JS_IO {
 
         // snorfler buttons
         btnReverseSnorfler.setButton(gamePad, 9); // l-stick push
-        btnLowerSnorfler.setButton(gamePad, 1); // A
+        btnTglSnorArmDn.setButton(gamePad, 1); // A
 
         // turret buttons
         btnLimeSearch.setButton(gamePad, 4); // Y
@@ -197,7 +222,6 @@ public class JS_IO {
         // shooting buttons
         btnRampShooter.setButton(gamePad, 3); // X
         btnFireShooter.setButton(gamePad, 2); // B
-        // btnSlowFire.setButton(gamePad, ???);
         btnIndex.setButton(gamePad, 7); // Back
 
         btnStop.setButton(gamePad, 8); // start
@@ -213,7 +237,7 @@ public class JS_IO {
     }
 
     // ----------- Normal 2 Joysticks -------------
-    private static void Norm2JS() {
+    private static void norm2JS() {
 
         // All stick axisesssss
         axLeftDrive.setAxis(leftJoystick, 1);
@@ -222,12 +246,12 @@ public class JS_IO {
         // axClimb.setAxis(coJoystick, 1);
 
         // Drive buttons
-        // btnScaledDrive.setButton(rightJoystick, 3);
-        // btnInvOrientation.setButton(rightJoystick, 1);
+        btnScaledDrive.setButton(leftJoystick, 3);
+        btnInvOrientation.setButton(leftJoystick, 1);
 
         // snorfler buttons
         btnReverseSnorfler.setButton(rightJoystick, 5);
-        btnLowerSnorfler.setButton(rightJoystick, 3);
+        btnTglSnorArmDn.setButton(rightJoystick, 3);
 
         // turret buttons
         btnLimeSearch.setButton(rightJoystick, 12);
@@ -236,7 +260,6 @@ public class JS_IO {
         // shooting buttons
         btnRampShooter.setButton(rightJoystick, 4);
         btnFireShooter.setButton(rightJoystick, 1);
-        btnSlowFire.setButton(rightJoystick, 2);
         btnIndex.setButton(rightJoystick, 6);
 
         btnStop.setButton(rightJoystick, 11);
@@ -247,7 +270,7 @@ public class JS_IO {
     }
 
     // ----------- Case Default -----------------
-    private static void CaseDefault() {
+    private static void caseDefault() {
         // All stick axisesssss
         axLeftDrive.setAxis(null, 0);
         axRightDrive.setAxis(null, 0);
@@ -260,9 +283,8 @@ public class JS_IO {
         btnHold180.setButton(null, 0);
         btnRampShooter.setButton(null, 0);
         btnFireShooter.setButton(null, 0);
-        btnSlowFire.setButton(null, 0);
         btnIndex.setButton(null, 0);
-        btnLowerSnorfler.setButton(null, 0);
+        btnTglSnorArmDn.setButton(null, 0);
         btnReverseSnorfler.setButton(null, 0);
         btnLimeAim.setButton(null, 0);
         btnLimeSearch.setButton(null, 0);

@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Subsystem.Revolver;
+import frc.robot.Subsystem.ballHandler.Revolver;
 import frc.util.Timer;
 
 // import com.revrobotics.ColorSensorV3;
@@ -61,7 +61,7 @@ public class IO {
     // Revolver, stores up to 5 balls
     public static Victor revolverRot = new Victor(5);
     public static InvertibleDigitalInput revolerIndexer = new InvertibleDigitalInput(0, true);
-    public static InvertibleDigitalInput revolNextSpaceOpen = new InvertibleDigitalInput(1, false);
+    public static InvertibleDigitalInput revRcvSlotOpen = new InvertibleDigitalInput(1, false);
     public static Timer revTimer;
 
     // Snorfler
@@ -143,24 +143,11 @@ public class IO {
     public static boolean prvRevIndex = true;
 
     public static void update() {
-        alarmUpdate();
         // drvFollowerVSPX_L[0].set(ControlMode.Follower,
         // drvMasterTSRX_L.getDeviceID());
         // drvFollowerVSPX_R[0].set(ControlMode.Follower,
         // drvMasterTSRX_R.getDeviceID());
 
-    }
-
-    public static double revolver_HL = 15.0; // High Amp Alarm Limit
-    public static boolean revolver_HAA = false; // High Amp Alarm
-
-    private static void alarmUpdate() {
-
-        SmartDashboard.putNumber("revolver HAA", pdp.getCurrent(4));
-        // if (Revolver.getState() != 0) {
-        //     if (revTimer.hasExpired(4, Revolver.getState()))
-        //         revolver_HAA = true;
-        // }
     }
 
     public static void follow() {

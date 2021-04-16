@@ -3,17 +3,20 @@ package frc.robot.auto;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.vision.RPI;
-import frc.robot.Subsystem.Revolver;
-import frc.robot.Subsystem.Snorfler;
+import frc.robot.Subsystem.ballHandler.Revolver;
+import frc.robot.Subsystem.ballHandler.Snorfler;
 
 public class AutoSelector {
 
     private static int selection;
+    private static int trajIdx = 0;
     // TODO: change name
     private static Auto path = new Auto(null);
     private static boolean snorflerOn = false;
+    public static double curveTestPwr = 1.0;
 
     // 1 - slalom
+<<<<<<< HEAD
     public static void init(int sel) {
         switch (sel) {
             case 1:
@@ -72,39 +75,50 @@ public class AutoSelector {
                 path = new Auto(Trajectories.getEmpty(0));
                 break;
         }
+=======
+    public static void init() {
+        path = new Auto(Trajectories.getTraj(70.0));
+        trajIdx = 0;        //Opps
+>>>>>>> origin/revolverupdate
 
-        SmartDashboard.putNumber("autoselector selection", sel);
-        // path.init();
         path.init();
-        SmartDashboard.putBoolean("path initialized", true);
-        SmartDashboard.putBoolean("path executing", false);
-        SmartDashboard.putBoolean("path done", false);
+        SmartDashboard.putBoolean("AS/path initialized", true);
+        SmartDashboard.putBoolean("AS/path executing", false);
+        SmartDashboard.putBoolean("AS/path done", false);
+    }
+
+    public static void update(){
+        SmartDashboard.putNumber("AS/Auto idx", trajIdx);
+        switch (trajIdx) {
+          case 0:
+            execute();
+            if (finished()) {
+              trajIdx++;
+            }
+            break;
+          case 1:
+            done();
+            break;
+        }
+        SmartDashboard.putBoolean("AS/snorf On", snorflerOn);
+        snorflerOn = (trajIdx == 0 && (Trajectories.getChsrDesc().indexOf("Path") > -1));
+        Snorfler.reqsnorfDrvAuto = snorflerOn;
     }
 
     public static void execute() {
-        SmartDashboard.putNumber("navX", IO.navX.getAngle());
-        SmartDashboard.putBoolean("path executing", true);
-        SmartDashboard.putBoolean("path done", false);
-        // path.execute();
+        SmartDashboard.putNumber("AS/navX", IO.navX.getAngle());
+        SmartDashboard.putBoolean("AS/path executing", true);
+        SmartDashboard.putBoolean("AS/path done", false);
 
-        if (snorflerOn) {
-            Snorfler.cmdUpdate(true, true, Snorfler.feederSpeed, Snorfler.loaderSpeed);
-            Revolver.determ();
-        }
         path.execute();
     }
 
     public static void done() {
-        SmartDashboard.putNumber("navX", IO.navX.getAngle());
-        SmartDashboard.putBoolean("path executing", false);
-        SmartDashboard.putBoolean("path done", true);
-        // path.done();
-        path.done();
+        SmartDashboard.putNumber("AS/navX", IO.navX.getAngle());
+        SmartDashboard.putBoolean("AS/path executing", false);
+        SmartDashboard.putBoolean("AS/path done", true);
 
-        if (snorflerOn) {
-            Snorfler.cmdUpdate(false, false, 0, 0);
-            Revolver.determ();
-        }
+        path.done();
     }
 
     public static boolean finished() {
@@ -116,23 +130,11 @@ public class AutoSelector {
         path.disable();
     }
 
-    public static int galacticShooter() {
-        // if (specific values) {
-        //     // red path a
-        //     return 1;
-        // } else if (other specific) {
-        //     // blue path a
-        //     return 2;
-        // } else if (other other) {
-        //     // red path b
-        //     return 3;
-        // } else if (otehretete) {
-        //     // blue path b
-        //     return 4;
-        // } else {
-        //     return 999;
-        // }
+    public static void sdbInit(){
+        SmartDashboard.putNumber("AS/Curve Pwr", curveTestPwr);
+    }
 
-        return 999;
+    public static void sdbUpdate(){
+        curveTestPwr = SmartDashboard.getNumber("AS/Curve Pwr", curveTestPwr);
     }
 }

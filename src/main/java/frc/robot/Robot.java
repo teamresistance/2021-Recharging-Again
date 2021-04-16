@@ -15,36 +15,24 @@ import frc.io.hdw_io.vision.LimeLight;
 import frc.io.hdw_io.vision.RPI;
 import frc.io.hdw_io.test_io;
 import frc.io.joysticks.JS_IO;
-import frc.robot.Subsystem.Injector;
-import frc.robot.Subsystem.Revolver;
-import frc.robot.Subsystem.Shooter;
-import frc.robot.Subsystem.Snorfler;
-import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.drive.Drive;
-import frc.robot.Subsystem.revolverupdate.*;
-//import frc.robot.auto.Drive2;
-import frc.robot.auto.AutoSelector;
+import frc.robot.Subsystem.Turret;
 
-import javax.naming.LimitExceededException;
+import frc.robot.Subsystem.ballHandler.Injector;
+import frc.robot.Subsystem.ballHandler.Revolver;
+import frc.robot.Subsystem.ballHandler.Shooter;
+import frc.robot.Subsystem.ballHandler.Snorfler;
+
+import frc.robot.auto.AutoSelector;
+import frc.robot.auto.Trajectories;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Relay;
 
 public class Robot extends TimedRobot {
-
-  private SendableChooser<Integer> chooser = new SendableChooser<Integer>();
-  private int defaultAuto = 99;
-  private int slalom = 1;
-  private int barrel = 2;
-  private int bounce = 3;
-  private int rPathA = 4;
-  private int bPathA = 5;
-  private int rPathB = 6;
-  private int bPathB = 7;
-  private int square = 20;
-  private int choice;
-  private int x;
+  //Used to signal Auto drv/Snorfler, need to find FMSInfo call
+  private static int mode = 0; //0=Not Init, 1=autoPeriodic, 2=teleopPeriodic
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -54,62 +42,42 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     IO.init();
     JS_IO.init();
-
-    choice = 0;
-    chooser = new SendableChooser<Integer>();
-    chooser.setDefaultOption("Off (default)", defaultAuto);
-    chooser.addOption("Slalom", slalom);
-    chooser.addOption("Barrel", barrel);
-    chooser.addOption("Bounce", bounce);
-    chooser.addOption("Red Path A", rPathA);
-    chooser.addOption("Blue Path A", bPathA);
-    chooser.addOption("Red Path B", rPathB);
-    chooser.addOption("Blue Path B", bPathB);
-    chooser.addOption("Square", square);
-    SmartDashboard.putData("Auto Selection", chooser);
+    Shooter.chsrInit();
+    Trajectories.chsrInit();
+    AutoSelector.sdbInit();
   }
 
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("Robot/Mode", mode);
+    Trajectories.chsrUpdate();
+
     IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
     IO.update();
     JS_IO.update();
-    choice = chooser.getSelected();
-
   }
 
   @Override
   public void autonomousInit() {
     Revolver.init();
-    SmartDashboard.putNumber("choice in Robot", choice);
-    AutoSelector.init(choice);
-    x = 0;
+    Snorfler.init();
+    AutoSelector.init();
   }
 
   @Override
   public void autonomousPeriodic() {
+    mode = 1;   //Used to signal Auto drv/Snorfler, need to find FMSInfo call
+    AutoSelector.sdbUpdate();
     Revolver.update();
-    SmartDashboard.putNumber("state in Robot", x);
-    switch (x) {
-      case 0:
-        AutoSelector.execute();
-        if (AutoSelector.finished()) {
-          x++;
-        }
-        break;
-      case 1:
-        AutoSelector.done();
-        break;
-    }
+    Snorfler.update();
+    AutoSelector.update();
   }
 
   @Override
   public void teleopInit() {
     AutoSelector.disable();
-    //NewSnorfler.init();
-     Snorfler.init();
-     Revolver.init();
-    //NewRevolver.init();
+    Snorfler.init();
+    Revolver.init();
     Shooter.init();
     Injector.init();
     Drive.init();
@@ -121,11 +89,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    mode = 2;   //Used to signal Auto drv/Snorfler, need to find FMSInfo call
     IO.update();
-    //NewSnorfler.update();
-     Snorfler.update();
-     Revolver.update();
-    //NewRevolver.update();
+    Snorfler.update();
+    Revolver.update();
     Shooter.update();
     Injector.update();
     Turret.update();
@@ -140,6 +107,15 @@ public class Robot extends TimedRobot {
 
   }
 
+  @Override
+  public void disabledInit() {
+    mode = 0;
+    // SmartDashboard.putNumber("Robot/Mode", mode);
+  }
+
+  public static int getMode(){
+    return mode;
+  }
   // public void sbdPut(){
   // //Drive Puts:
   // SmartDashboard.putNumber("Drive Scale", .5);

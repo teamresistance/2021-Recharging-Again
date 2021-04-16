@@ -14,7 +14,7 @@ import frc.io.hdw_io.IO;
 import frc.robot.Subsystem.drive.Steer;
 import frc.util.PropMath;
 
-public class PointNTurn extends AutoFunction {
+public class TankTurnHdg extends AutoFunction {
 
     // Hardware
     private static DifferentialDrive diffDrv = IO.diffDrv_M;
@@ -38,15 +38,15 @@ public class PointNTurn extends AutoFunction {
 
     private boolean finished = false;
     private double hdg = 0.0;
-    private double pwr = 0.0;
-    private double dist = 0.0;
+    private double lPwr = 0.0;
+    private double rPwr = 0.0;
     private double traj[] = {};
 
     // dont use negative power
-    public PointNTurn(double eHdg, double ePwr, double eDist) {
-        hdg = eHdg;
-        pwr = ePwr;
-        dist = eDist;
+    public TankTurnHdg(double _hdg, double _lPwr, double _rPwr) {
+        hdg = _hdg;
+        lPwr = _lPwr;
+        rPwr = _rPwr;
     }
 
     public void init() {
@@ -72,7 +72,7 @@ public class PointNTurn extends AutoFunction {
                 break;
             case 0: // Init Trajectory, turn to hdg then (1) ...
                 if (prvState != state) {
-                    steer.steerTo(hdg, pwr, dist);
+                    // steer.steerTo(hdg, pwr, dist);
                     resetDist();
                 } else {
                     // Calc heading & dist output. rotation X, speed Y
@@ -81,10 +81,12 @@ public class PointNTurn extends AutoFunction {
                     distOut = 0.0; // Get distance output, X
                     // Apply as a arcade joystick input
                     // hdgOut = BotMath.SegLine(hdgOut, xOutAr); //Compensate for poor turning.
-                    diffDrv.arcadeDrive(-distOut, hdgOut, false);
+                    diffDrv.tankDrive(lPwr, rPwr, false);
 
                     // Chk if trajectory is done
-                    if (steer.isHdgDone()) {
+                    System.out.println("HdgOut0B: " + hdgOut + "  hdg: " + hdgFB() + "  hdgSP: " + hdg);
+                    if(Math.abs(hdgFB() - hdg) < 5.0 ) {       //This is a kludge to get things working
+                    // if (steer.isHdgDone()) {
                         state = 1; // Chk hdg only
                         resetDist();
                     }
@@ -92,29 +94,32 @@ public class PointNTurn extends AutoFunction {
                 prvState = state;
                 break;
             case 1: // steer Auto Heading and Dist
-                // Calc heading & dist output. rotation X, speed Y
-                strCmd = steer.update(hdgFB(), distFB());
-                hdgOut = strCmd[0];
-                distOut = strCmd[1];
-                // Apply as a arcade joystick input
-                // hdgOut = BotMath.SegLine(hdgOut, xOutAr); //Compensate for poor turning.
-                diffDrv.arcadeDrive(-distOut, hdgOut, false);
+                // // Calc heading & dist output. rotation X, speed Y
+                // strCmd = steer.update(hdgFB(), distFB());
+                // hdgOut = strCmd[0];
+                // distOut = strCmd[1];
+                // // Apply as a arcade joystick input
+                // // hdgOut = BotMath.SegLine(hdgOut, xOutAr); //Compensate for poor turning.
+                // diffDrv.arcadeDrive(-distOut, hdgOut, false);
 
-                // Chk if trajectory is done
-                if (steer.isDistDone()) {
-                    state = 2; // Chk distance only
-                }
+                // // Chk if trajectory is done
+                // if (steer.isDistDone()) {
+                //     state = 2; // Chk distance only
+                // }
+                state = 2;
                 prvState = state;
                 break;
             case 2: // Increment Auto Index & chk for done all traj.
-                diffDrv.arcadeDrive(0.0, 0.0);
+                diffDrv.tankDrive(0.0, 0.0);
                 if (prvState != state) {
                     prvState = state; // Let other states see change of state, COS
                 }
                 state++;
+                System.out.println("HdgOut2A: " + hdgOut);
                 break;
             case 3:
                 done();
+                System.out.println("HdgOut3A: " + hdgOut);
                 break;
         }
     }
