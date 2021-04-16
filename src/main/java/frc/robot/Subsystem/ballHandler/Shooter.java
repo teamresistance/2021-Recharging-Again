@@ -91,12 +91,9 @@ public class Shooter {
     private static double kD = 0; // TalonSRX Differential term
 
     // RPM Chooser. Allows driver to select pre-select RPMs. [0]is default [last] is
-    // adjustable
+    // adjustable.  Names assigned (+ "- value").
     private static SendableChooser<Integer> rpmChsr = new SendableChooser<Integer>();
-    private static String[] rpmName = { "Zone1", "RPM2", "RPM3", "RPM4", "RPM_Adj1", "RPM_Adj2", "RPM_Adj3" }; // Names
-                                                                                                                // assigned
-                                                                                                                // (+
-                                                                                                                // "-value")
+    private static String[] rpmName = { "Zone1", "RPM2", "RPM3", "RPM4", "RPM_Adj1", "RPM_Adj2", "RPM_Adj3" };
     private static Integer[] rpmSP = { 1000, 4500, 4750, 4000, -1, -2, -3 }; // Values to use (return)
 
     /**Initializes the Chooser (drop down) for RPM selection.  
