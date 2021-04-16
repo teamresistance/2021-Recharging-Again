@@ -16,70 +16,9 @@ public class AutoSelector {
     public static double curveTestPwr = 1.0;
 
     // 1 - slalom
-<<<<<<< HEAD
-    public static void init(int sel) {
-        switch (sel) {
-            case 1:
-                path = new Auto(Trajectories.getSlalom(70));
-                snorflerOn = false;
-                break;
-            case 2:
-                path = new Auto(Trajectories.getBarrel(70));
-                snorflerOn = false;
-                break;
-            case 3:
-                path = new Auto(Trajectories.getBounce(70));
-                snorflerOn = false;
-                break;
-            case 4:
-                path = new Auto(Trajectories.getRPathA(70));
-                snorflerOn = true;
-                break;
-            case 5:
-                path = new Auto(Trajectories.getBPathA(70));
-                snorflerOn = true;
-                break;
-            case 6:
-                path = new Auto(Trajectories.getRPathB(70));
-                snorflerOn = true;
-                break;
-            case 7:
-                path = new Auto(Trajectories.getBPathB(70));
-                snorflerOn = true;
-                break;
-            case 20:
-                path = new Auto(Trajectories.getSquare(70.0));
-                snorflerOn = false;
-                break;
-            case 21:
-                int pathNum = galacticShooter();
-                switch (pathNum) {
-                    case 1:
-                        path = new Auto(Trajectories.getRPathA(70));
-                        break;
-                    case 2:
-                        path = new Auto(Trajectories.getBPathA(70));
-                        break;
-                    case 3:
-                        path = new Auto(Trajectories.getRPathB(70));
-                        break;
-                    case 4:
-                        path = new Auto(Trajectories.getRPathB(70));
-                        break;
-                    default:
-                        path = new Auto(Trajectories.getEmpty(0));
-                        break;
-                }
-                break;
-            default:
-                path = new Auto(Trajectories.getEmpty(0));
-                break;
-        }
-=======
     public static void init() {
         path = new Auto(Trajectories.getTraj(70.0));
         trajIdx = 0;        //Opps
->>>>>>> origin/revolverupdate
 
         path.init();
         SmartDashboard.putBoolean("AS/path initialized", true);

@@ -130,17 +130,7 @@ public class Trajectories {
             // new PointNTurn(0, pwr, 2), // out
             // new PointNTurn(90, pwr, -4.3), // out
             // new PointNTurn(180, pwr, 1.5),
-            new PointNTurn(132
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            , pwr, 5),
+            new PointNTurn(132, pwr, 5),
             new PointNTurn(180, pwr, 8.5), 
             new PointNTurn(-125, pwr, 4.57),
             new PointNTurn(180, pwr, 2)
@@ -193,19 +183,6 @@ public class Trajectories {
     public static AutoFunction[] getBounce(double pwr) {
         AutoFunction[] traj = {
             new PointNTurn(0, pwr, 3), //2.8
-<<<<<<< HEAD
-            new PointNTurn(270, pwr, 3.2),
-            new PointNTurn(270, pwr, -2.5),
-            new PointNTurn(230, pwr, -6.3), //225
-            new PointNTurn(315, pwr, 1.8), //2.1
-            new PointNTurn(270, pwr, 6.8), //5.4
-            new PointNTurn(270, pwr, -6.8),
-            new PointNTurn(0, pwr, 6),
-            new PointNTurn(270, pwr, 8.2),
-            new PointNTurn(270, pwr, -2.4),
-            new PointNTurn(0, pwr, 3)
-         };
-=======
             new PointNTurn(270, pwr, 3.4), //3.2
             new PointNTurn(270, pwr, -2.5),
             new PointNTurn(230, pwr, -5.5), //6.3
@@ -228,7 +205,6 @@ public class Trajectories {
         new PointNTurn(270, pwr, 7),
         new PointNTurn(350, pwr, 0)
         };
->>>>>>> origin/revolverupdate
         return traj;
     }
 
