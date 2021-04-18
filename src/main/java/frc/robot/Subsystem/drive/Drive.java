@@ -127,6 +127,10 @@ public class Drive {
 
     // Update Drive mode. Called from Robot.
     public static void update() {
+        if(JS_IO.btnRstGyro.onButtonPressed()){     //Testing location
+            IO.navX.reset();
+            IO.resetLoc();
+        } 
         determ();
         sdbUpdate();
         switch (state) {
@@ -183,6 +187,12 @@ public class Drive {
         SmartDashboard.putNumber("dist R", encR.feet());
         SmartDashboard.putBoolean("scaled", scaled);
         SmartDashboard.putBoolean("inverted", inverted);
+
+        // Location test
+        SmartDashboard.putNumber("ALoc/Angle", IO.navX.getAngle());
+        SmartDashboard.putNumber("ALoc/Distance", IO.getDeltaD());    
+        SmartDashboard.putNumber("ALoc/X", IO.getXLoc());
+        SmartDashboard.putNumber("ALoc/Y", IO.getYLoc());
     }
 
     public static int getState() {

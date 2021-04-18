@@ -34,8 +34,8 @@ public class IO {
     // Drive
     public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1); // Cmds left wheels. Includes encoders
     public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
-    public static final double drvMasterTPF_L = 385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
-    public static final double drvMasterTPF_R = -385.40; // 1024 t/r (0.5' * 3.14)/r 9:60 gr
+    public static final double drvMasterTPF_L = 364.63; // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
+    public static final double drvMasterTPF_R = -364.63; // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
     public static Encoder drvEnc_L = new Encoder(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
     public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
     public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
@@ -91,6 +91,7 @@ public class IO {
         revTimer = new Timer(0);
         drvsInit();
         motorsInit();
+        resetLoc();
     }
 
     public static void drvsInit() {
@@ -147,11 +148,81 @@ public class IO {
         // drvMasterTSRX_L.getDeviceID());
         // drvFollowerVSPX_R[0].set(ControlMode.Follower,
         // drvMasterTSRX_R.getDeviceID());
-
+        locUpdate();    //Update the XY location
     }
 
     public static void follow() {
         drvFollowerVSPX_L.follow(drvMasterTSRX_L);
         drvFollowerVSPX_R.follow(drvMasterTSRX_R);
+    }
+
+    //--------------------  XY Location -----------------------------------
+    private static double prstDist;     //Present distance traveled since last reset.
+    private static double prvDist;      //previous distance traveled since last reset.
+    private static double deltaD;       //Disdtance traveled during this period.
+    private static double xLoc = 0;     //Calculated X (Left/Right) location on field
+    private static double yLoc = 0;     //Calculated Y (Fwd/Bkwd) location on field.
+    
+    /**Calculates the XY coordinates by taken the delta distance and applying the sinh/cosh 
+     * of the gyro heading.
+     * <p>Initialize by calling resetLoc.
+     * <p>Needs to be called periodically from IO.update called in robotPeriodic in Robot.
+     */
+    public static void locUpdate(){
+        prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;   //Distance since last reset.
+        deltaD = prstDist - prvDist;                        //Distancce this pass
+        prvDist = prstDist;                                 //Save for next pass
+
+        //If encoders are reset by another method, may cause large deltaD.
+        //During testing deltaD never exceeded 0.15 on a 20mS update.
+        if (Math.abs(deltaD) > 0.2) deltaD = 0.0;       //Skip this update if too large.
+
+        if (Math.abs(deltaD) > 0.0){    //Deadband for encoders if needed (vibration?).  Presently set to 0.0
+            yLoc += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle()));
+            xLoc += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle()));
+        }
+    }
+
+    /**Reset the location on the field to 0.0, 0.0.
+     * If needed navX.Reset must be called separtely.
+     */
+    public static void resetLoc(){
+        // IO.navX.reset();
+        // encL.reset();
+        // encR.reset();
+        xLoc = 0;
+        yLoc = 0;
+        prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;
+        prvDist = prstDist;
+        deltaD = 0;
+    }
+
+    /**
+     * @return an array of the calculated X and Y location on the field since the last reset.
+     */
+    public static double[] getLoc(){
+        double[] xyLoc = {xLoc, yLoc};
+        return xyLoc;
+    }
+
+    /**
+     * @return the calculated X (left/right) location on the field since the last reset.
+     */
+    public static double getXLoc(){
+        return xLoc;
+    }
+
+    /**
+     * @return the calculated Y (fwd/bkwd) location on the field since the last reset.
+     */
+    public static double getYLoc(){
+        return yLoc;
+    }
+
+    /**
+     * @return the calculated Y (fwd/bkwd) location on the field since the last reset.
+     */
+    public static double getDeltaD(){
+        return deltaD;
     }
 }

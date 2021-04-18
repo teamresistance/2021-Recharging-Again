@@ -80,6 +80,7 @@ public class JS_IO {
     public static Button allStop = new Button(); // stops all parts of the shooter sequence
     public static Button btnStop = new Button();
     // Misc
+    public static Button btnRstGyro = new Button();
     public static Button record = new Button();
 
     // // Auto
@@ -188,6 +189,7 @@ public class JS_IO {
 
         // Limelight Buttons - AS
         limeLightOnOff.setButton(rightJoystick, 2);
+        btnRstGyro.setButton(leftJoystick, 3);
 
         // drive2Off.setButton(leftJoystick, 10);
         // drive2Tank.setButton(leftJoystick, 9);
@@ -225,6 +227,8 @@ public class JS_IO {
         btnIndex.setButton(gamePad, 7); // Back
 
         btnStop.setButton(gamePad, 8); // start
+
+        // btnRstGyro.setButton(leftJoystick, 3);
 
         // drive2Off.setButton(gamePad, 1);
         // drive2Tank.setButton(gamePad, 2);
@@ -266,6 +270,7 @@ public class JS_IO {
 
         // Limelight Buttons - AS
         limeLightOnOff.setButton(leftJoystick, 2);
+        btnRstGyro.setButton(rightJoystick, 7);
 
     }
 
@@ -291,5 +296,6 @@ public class JS_IO {
         btnClimb.setButton(null, 0);
         btnClimbOFF.setButton(null, 0);
         limeLightOnOff.setButton(null, 0);
+        btnRstGyro.setButton(null, 0);
     }
 }
