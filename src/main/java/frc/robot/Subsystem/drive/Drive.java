@@ -190,9 +190,9 @@ public class Drive {
 
         // Location test
         SmartDashboard.putNumber("ALoc/Angle", IO.navX.getAngle());
-        SmartDashboard.putNumber("ALoc/Distance", IO.getDeltaD());    
-        SmartDashboard.putNumber("ALoc/X", IO.getXLoc());
-        SmartDashboard.putNumber("ALoc/Y", IO.getYLoc());
+        SmartDashboard.putNumber("ALoc/Distance", IO.getDeltaD());
+        SmartDashboard.putNumber("ALoc/X", IO.getCoorX());
+        SmartDashboard.putNumber("ALoc/Y", IO.getCoorY());
     }
 
     public static int getState() {

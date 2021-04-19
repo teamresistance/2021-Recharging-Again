@@ -148,7 +148,7 @@ public class IO {
         // drvMasterTSRX_L.getDeviceID());
         // drvFollowerVSPX_R[0].set(ControlMode.Follower,
         // drvMasterTSRX_R.getDeviceID());
-        locUpdate();    //Update the XY location
+        coorUpdate();    //Update the XY location
     }
 
     public static void follow() {
@@ -156,19 +156,19 @@ public class IO {
         drvFollowerVSPX_R.follow(drvMasterTSRX_R);
     }
 
-    //--------------------  XY Location -----------------------------------
+    //--------------------  XY Coordinates -----------------------------------
     private static double prstDist;     //Present distance traveled since last reset.
     private static double prvDist;      //previous distance traveled since last reset.
     private static double deltaD;       //Disdtance traveled during this period.
-    private static double xLoc = 0;     //Calculated X (Left/Right) location on field
-    private static double yLoc = 0;     //Calculated Y (Fwd/Bkwd) location on field.
+    private static double coorX = 0;    //Calculated X (Left/Right) coordinate on field
+    private static double coorY = 0;    //Calculated Y (Fwd/Bkwd) coordinate on field.
     
     /**Calculates the XY coordinates by taken the delta distance and applying the sinh/cosh 
      * of the gyro heading.
      * <p>Initialize by calling resetLoc.
      * <p>Needs to be called periodically from IO.update called in robotPeriodic in Robot.
      */
-    public static void locUpdate(){
+    public static void coorUpdate(){
         prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;   //Distance since last reset.
         deltaD = prstDist - prvDist;                        //Distancce this pass
         prvDist = prstDist;                                 //Save for next pass
@@ -178,8 +178,8 @@ public class IO {
         if (Math.abs(deltaD) > 0.2) deltaD = 0.0;       //Skip this update if too large.
 
         if (Math.abs(deltaD) > 0.0){    //Deadband for encoders if needed (vibration?).  Presently set to 0.0
-            yLoc += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle()));
-            xLoc += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle()));
+            coorY += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle()));
+            coorX += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle()));
         }
     }
 
@@ -190,37 +190,37 @@ public class IO {
         // IO.navX.reset();
         // encL.reset();
         // encR.reset();
-        xLoc = 0;
-        yLoc = 0;
+        coorX = 0;
+        coorY = 0;
         prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;
         prvDist = prstDist;
         deltaD = 0;
     }
 
     /**
-     * @return an array of the calculated X and Y location on the field since the last reset.
+     * @return an array of the calculated X and Y coordinate on the field since the last reset.
      */
-    public static double[] getLoc(){
-        double[] xyLoc = {xLoc, yLoc};
-        return xyLoc;
+    public static double[] getCoor(){
+        double[] coorXY = {coorX, coorY};
+        return coorXY;
     }
 
     /**
-     * @return the calculated X (left/right) location on the field since the last reset.
+     * @return the calculated X (left/right) coordinate on the field since the last reset.
      */
-    public static double getXLoc(){
-        return xLoc;
+    public static double getCoorX(){
+        return coorX;
     }
 
     /**
-     * @return the calculated Y (fwd/bkwd) location on the field since the last reset.
+     * @return the calculated Y (fwd/bkwd) coordinate on the field since the last reset.
      */
-    public static double getYLoc(){
-        return yLoc;
+    public static double getCoorY(){
+        return coorY;
     }
 
     /**
-     * @return the calculated Y (fwd/bkwd) location on the field since the last reset.
+     * @return the calculated Y (fwd/bkwd) coordinate on the field since the last reset.
      */
     public static double getDeltaD(){
         return deltaD;
