@@ -193,6 +193,9 @@ public class Drive {
         SmartDashboard.putNumber("ALoc/Distance", IO.getDeltaD());
         SmartDashboard.putNumber("ALoc/X", IO.getCoorX());
         SmartDashboard.putNumber("ALoc/Y", IO.getCoorY());
+        SmartDashboard.putNumberArray("ALoc/arXY", IO.getCoor());
+        SmartDashboard.putNumber("ALoc/arX", IO.getCoor()[0]);
+        SmartDashboard.putNumber("ALoc/arY", IO.getCoor()[1]);
     }
 
     public static int getState() {
