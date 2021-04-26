@@ -43,14 +43,21 @@ public class JS_IO {
     // Declare all stick control
 
     // Drive
-    public static Button btnScaledDrive = new Button(); // scale the drive
-    public static Button btnInvOrientation = new Button(); // invert the orientation of the robot (joystick: forwards
-                                                           // becomes backwards for robot and same for backwards)
+    public static Axis axLeftDrive = new Axis();    // Left Drive
+    public static Axis axRightDrive = new Axis();   // Right Drive
+    
+    public static Axis axLeftY = new Axis();        // Left JS Y - Added for testing in Drive3
+    public static Axis axLeftX = new Axis();        // Left JS X
+    public static Axis axRightY = new Axis();       // Right JS Y
+    public static Axis axRightX = new Axis();       // Right JS X
+
+    public static Button btnScaledDrive = new Button();     // scale the drive
+    public static Button btnInvOrientation = new Button();  // invert the orientation of the robot (joystick: forwards
+                                                            // becomes backwards for robot and same for backwards)
+
+    public static Button btnSelDrv = new Button();          //Added for testing in Drive3
     public static Button btnHoldZero = new Button();
     public static Button btnHold180 = new Button();
-
-    public static Axis axLeftDrive = new Axis(); // Left Drive
-    public static Axis axRightDrive = new Axis(); // Right Drive
 
     // Shooter
     public static Button btnRampShooter = new Button();
@@ -168,7 +175,16 @@ public class JS_IO {
         axTurretRot.setAxis(coJoystick, 0);
         // axClimb.setAxis(coJoystick, 1);
 
+        axLeftX.setAxis(leftJoystick, 0);       //Added to test drive3
+        axLeftY.setAxis(leftJoystick, 1);
+        axRightX.setAxis(rightJoystick, 0);
+        axRightY.setAxis(rightJoystick, 1);
+
         // Drive buttons
+        btnSelDrv.setButton(rightJoystick, 4);     //Added to test drive3
+        btnHoldZero.setButton(rightJoystick, 5);
+        btnHold180.setButton(rightJoystick, 6);
+
         btnScaledDrive.setButton(rightJoystick, 3);
         btnInvOrientation.setButton(rightJoystick, 1);
 

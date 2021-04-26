@@ -157,16 +157,16 @@ public class PointNTurn extends AutoFunction {
         SmartDashboard.putNumber("Dist Out", distOut);
     }
 
-    private static double distFB() {
-        return (encL.feet() + encR.feet()) / 2.0;
-    }
+    // private static double distFB() {
+    //     return (encL.feet() + encR.feet()) / 2.0;
+    // }
 
-    private static double hdgFB() {
-        return PropMath.normalizeTo180(IO.navX.getAngle());
-    }
+    // private static double hdgFB() {
+    //     return PropMath.normalizeTo180(IO.navX.getAngle());
+    // }
 
-    private static void resetDist() {
-        encL.reset();
-        encR.reset();
-    }
+    // private static void resetDist() {
+    //     encL.reset();
+    //     encR.reset();
+    // }
 }

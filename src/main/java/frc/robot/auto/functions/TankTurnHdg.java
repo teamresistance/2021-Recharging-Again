@@ -16,10 +16,10 @@ import frc.util.PropMath;
 
 public class TankTurnHdg extends AutoFunction {
 
-    // Hardware
-    private static DifferentialDrive diffDrv = IO.diffDrv_M;
-    private static Encoder encL = IO.drvEnc_L;
-    private static Encoder encR = IO.drvEnc_R;
+    // // Hardware
+    // private static DifferentialDrive diffDrv = IO.diffDrv_M;
+    // private static Encoder encL = IO.drvEnc_L;
+    // private static Encoder encR = IO.drvEnc_R;
 
     // General
     private int state;
@@ -30,11 +30,11 @@ public class TankTurnHdg extends AutoFunction {
     // Distance Control
     private double distOut = 0.0; // Y (Fwd) cmd
 
-    /*.........[0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
-    private double[][] parms = { { 0.0, -110.0, 6.5, 0.7, 1.0, 0.40 },
-            /*                       */ { 0.0, 4.0, 0.3, 0.25, 1.0, 0.07 } };
+    // /*.........[0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
+    // private double[][] parms = { { 0.0, -110.0, 6.5, 0.7, 1.0, 0.40 },
+    //         /*                       */ { 0.0, 4.0, 0.3, 0.25, 1.0, 0.07 } };
 
-    private Steer steer; // Used to steer to a hdg with power for distance
+    // private Steer steer; // Used to steer to a hdg with power for distance
 
     private boolean finished = false;
     private double hdg = 0.0;
@@ -50,15 +50,15 @@ public class TankTurnHdg extends AutoFunction {
     }
 
     public void init() {
-        IO.drvMasterTSRX_L.set(ControlMode.Disabled, 0);
-        IO.drvMasterTSRX_R.set(ControlMode.Disabled, 0);
+        // IO.drvMasterTSRX_L.set(ControlMode.Disabled, 0);
+        // IO.drvMasterTSRX_R.set(ControlMode.Disabled, 0);
         finished = false;
         resetDist();
         diffDrv.tankDrive(0, 0);
         state = -1;
         prvState = 0;
         finished = false;
-        steer = new Steer(parms);
+        // steer = new Steer(parms);
         hdgOut = 0.0;
         distOut = 0.0;
     }
@@ -139,39 +139,30 @@ public class TankTurnHdg extends AutoFunction {
     }
 
     private void sdbInit() {
-        SmartDashboard.putNumber("PnT Step", state);
+        SmartDashboard.putNumber("AF/TTH/Step", state);
 
-        SmartDashboard.putNumber("Hdg Out", hdgOut);
-        SmartDashboard.putNumber("Dist Out", distOut);
-        SmartDashboard.putNumber("DistM L", encL.tpf());
-        SmartDashboard.putNumber("DistM R", encR.tpf());
+        SmartDashboard.putNumber("AF/Hdg Out", hdgOut);
+        SmartDashboard.putNumber("AF/Dist Out", distOut);
     }
 
     private void sdbUpdate() {
-        SmartDashboard.putNumber("Auto Step", state); // Set by JS btns
-
-        SmartDashboard.putNumber("Hdg FB", hdgFB());
-        SmartDashboard.putNumber("Hdg Out", hdgOut);
-
-        SmartDashboard.putNumber("Enc L", encL.ticks());
-        SmartDashboard.putNumber("Enc R", encR.ticks());
-        SmartDashboard.putNumber("Dist L", encL.feet());
-        SmartDashboard.putNumber("Dist R", encR.feet());
-        SmartDashboard.putNumber("Dist A", distFB());
-        SmartDashboard.putNumber("Dist FB", distFB());
-        SmartDashboard.putNumber("Dist Out", distOut);
+        SmartDashboard.putNumber("AF/Dist FB", distFB());
+        SmartDashboard.putNumber("AF/Dist Out", distOut);
+        SmartDashboard.putNumber("AF/Hdg FB", hdgFB());
+        SmartDashboard.putNumber("AF/Hdg Out", hdgOut);
+        SmartDashboard.putNumber("AF/TTH/Step", state); // Set by JS btns
     }
 
-    private static double distFB() {
-        return (encL.feet() + encR.feet()) / 2.0;
-    }
+    // private static double distFB() {
+    //     return (encL.feet() + encR.feet()) / 2.0;
+    // }
 
-    private static double hdgFB() {
-        return PropMath.normalizeTo180(IO.navX.getAngle());
-    }
+    // private static double hdgFB() {
+    //     return PropMath.normalizeTo180(IO.navX.getAngle());
+    // }
 
-    private static void resetDist() {
-        encL.reset();
-        encR.reset();
-    }
+    // private static void resetDist() {
+    //     encL.reset();
+    //     encR.reset();
+    // }
 }
