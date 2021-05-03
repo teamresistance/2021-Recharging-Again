@@ -71,17 +71,18 @@ public class PropMath{
     public double calcProp(double inFB, boolean prnt){
         double err = inFB - kSP;            //error
         if(k180) err = normalizeTo180(err); //normalize if continuous around -180 to 180
-        if(prnt) System.out.println("Mn- " + outMn + "  Mx- " + outMx);
+        if(prnt) System.out.println("FB: " + inFB + "  SP: " + kSP + "  err: " + err);
+        if(prnt) System.out.println("Mn: " + outMn + "  Mx: " + outMx);
 
         if(Math.abs(err) < kDB || kPB == 0.0) return  0.0; //In deadband or PB is 0
 
         err /= kPB;  //else calc proportional, neg. else pos.
-        if(prnt) System.out.print("err1- " + err);
+        if(prnt) System.out.print("Prop err: " + err);
         
         err = err < 0 ?
         Span(err, -1.0, 0.0, -outMx, -outMn, true, 0) : //Neg.
         Span(err, 0.0, 1.0, outMn, outMx, true, 0);     //else Pos.
-        if(prnt) System.out.println("  err2- " + err);
+        if(prnt) System.out.println("  Span err: " + err);
         return err;
     }
 

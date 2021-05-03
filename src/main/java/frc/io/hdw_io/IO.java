@@ -34,10 +34,11 @@ public class IO {
     // Drive
     public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1); // Cmds left wheels. Includes encoders
     public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
-    public static final double drvMasterTPF_L = 364.63; // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
-    public static final double drvMasterTPF_R = -364.63; // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
+    public static final double drvMasterTPF_L = 368.4;  // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
+    public static final double drvMasterTPF_R = -368.4; // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
     public static Encoder drvEnc_L = new Encoder(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
     public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
+    public static double drvFeet;
     public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
     public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
     public static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
@@ -138,16 +139,26 @@ public class IO {
         snorfFeedMain.setInverted(true);
         snorfFeedScdy.setInverted(true);
         climberHoist.setInverted(false);
+
+        SmartDashboard.putNumber("Robot/Feet Pwr2", drvAutoPwr);
     }
 
     public static int revolverCntr = 0; // Count revolver rotations
     public static boolean prvRevIndex = true;
 
+    public static double drvFeetChk = 0.0;  //Testing Drv_Auto rdg.
+    public static double drvAutoPwr = 0.9;  //Testing
     public static void update() {
         // drvFollowerVSPX_L[0].set(ControlMode.Follower,
         // drvMasterTSRX_L.getDeviceID());
         // drvFollowerVSPX_R[0].set(ControlMode.Follower,
         // drvMasterTSRX_R.getDeviceID());
+        drvFeet = (drvEnc_L.feet() + drvEnc_R.feet() ) / 2.0;
+        SmartDashboard.putNumber("Robot/Feet", drvFeet);
+        SmartDashboard.putNumber("Robot/Feet Chk", drvFeetChk);  //Testing
+        SmartDashboard.putNumber("Robot/EncTicks L", drvEnc_L.ticks());
+        SmartDashboard.putNumber("Robot/EncTicks R", drvEnc_R.ticks());
+        drvAutoPwr = SmartDashboard.getNumber("Robot/Feet Pwr2", drvAutoPwr);  //Testing
         coorUpdate();    //Update the XY location
     }
 

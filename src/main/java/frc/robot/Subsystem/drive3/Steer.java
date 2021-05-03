@@ -14,6 +14,7 @@ Returns 0.0 for respective item when within DB.
 Also limits acceleration, increase in out, to respective Xcl value.
 */
 
+import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.util.PropMath;
 
 public class Steer {
@@ -30,6 +31,9 @@ public class Steer {
     private double distOut = 0.0;       //Calc Y(dist) output
     private double prvDistOut = 0.0;    //Previous distOut
     private double distXclLmt = 0.07;   //Limit change of distOut to this
+
+    private PIDController hdgPID;
+    private PIDController distPID;
 
 
     /**
@@ -51,9 +55,13 @@ public class Steer {
      * <p>dist => SP=0.0, PB=5.0, DB=0.5, Mn=0.1, Mx=1.0, Xcl=1.0, k180=false
      */
     public Steer() {
-        hdgProp = new PropMath(0.0, -70.0, 3.0, 0.1, 1.0, true);   //Initalize with defaults
+        hdgProp = new PropMath(0.0, -70.0, 5.0, 0.3, 1.0, true);    //Initalize with defaults
+        hdgPID = new PIDController(-70.0, 0.0, 0.0);                //Testing WPI PID
+        hdgPID.enableContinuousInput(-180.0, 180.0);                //Testing continuous -180 to 180 degrees
         hdgXclLmt = 1.0;                                            //and Xcl
-        distProp = new PropMath(0.0, 5.0, 0.5, 0.1, 1.0, false);    //Initialize with defaults
+
+        distProp = new PropMath(0.0, 5.0, 0.5, 0.5, 1.0, false);    //Initialize with defaults
+        distPID = new PIDController(5.0, 0.0, 0.0);                 //Testing WPI PID
         distXclLmt = 0.07;                                          //and Xcl
     }
 
@@ -62,7 +70,7 @@ public class Steer {
      * <p>Call update after setting setpoints.
      * 
      * @param _hdgSP - heading setpoint
-     * @param _pwrSc - power pct to use in rotation and distance
+     * @param _pwrSc - power pct to use in rotation and distance as double
      * @param _distSP - distance setpoint in feet
      */
     public void steerTo(double _hdgSP, double _pwrSc, double _distSP) {
@@ -73,6 +81,18 @@ public class Steer {
     }
 
     /**
+     * Start steering, set hdg, pwr & dist.
+     * <p>Call update after setting setpoints.
+     * 
+     * @param _hdgSP - heading setpoint
+     * @param _pwrSc - power pct to use in rotation and distance as interger
+     * @param _distSP - distance setpoint in feet
+     */
+    public void steerTo(double _hdgSP, int _pwrSc, double _distSP) {
+        steerTo(_hdgSP, _pwrSc / 100.0, _distSP);
+    }
+
+    /**
      * Start steering, set hdg, pwr & dist using double[3] array.
      * <p>Call update after setting setpoints.
      * 
@@ -80,6 +100,7 @@ public class Steer {
      */
     public void steerTo(double[] traj) {
         steerTo(traj[0], traj[1], traj[2]);
+        System.out.println("----------SPs: " + traj[0] + "  " + traj[1] + "  " + traj[2]);
     }
 
     /**
@@ -136,15 +157,13 @@ public class Steer {
      * @return  calc'ed arcade JS X(rot) value.
      */
     private double calcX(double hdgFB) {
-        // Need to normalize err, so SP is 0.0 and pass norm'd error
-        // double err = PropMath.normalizeTo180(hdgFB - hdgSP);
+        setHdgMx(Math.max(getHdgMn(), Math.min(1.0, pwrScalar)));   //Limit Mx btwn Mn & 1.0
         hdgOut = hdgProp.calcProp(hdgFB, false);
 
         if (hdgOut == 0.0) {
             status |= 1; // If in DB, set bit,
         } else {
             status &= ~1; // else clear
-            hdgOut = Math.max(getHdgMn(), hdgOut * pwrScalar / 100.0);          //Apply pwr scaling
             hdgOut = accelLimiter(hdgOut, prvHdgOut, hdgXclLmt, getHdgMn());    //Accel limiter
         }
         return hdgOut;
@@ -160,12 +179,12 @@ public class Steer {
      * @return  Calc'ed arcade JS Y(dist) value
      */
     private double calcY(double distFB) {
-        distOut = distProp.calcProp(distFB, false);
+        setDistMx(Math.max(getDistMn(), Math.min(1.0, pwrScalar)));   //Limit Mx btwn Mn & 1.0
+        distOut = distProp.calcProp(distFB, true);
         if (distOut == 0.0) {
             status |= 2; // If in DB, set bit else clr
         } else {
             status &= ~2;
-            distOut = Math.max(getDistMn(), distOut * pwrScalar / 100.0);           //Apply pwr scaling
             distOut = accelLimiter(distOut, prvDistOut, distXclLmt, getDistMn());   //Accel limiter
         }
         return distOut;
@@ -201,6 +220,7 @@ public class Steer {
     public double getHdgMn(){ return hdgProp.getOutMn(); }
     public double getHdgMx(){ return hdgProp.getOutMx(); }
     public double getHdgXcl(){ return hdgXclLmt; }
+    public boolean getHdgk180(){ return hdgProp.get180(); }
 
     public void setDistSP(double distSP){ distProp.setSP(distSP); }
     public void setDistPB(double distPB){ distProp.setPB(distPB); }

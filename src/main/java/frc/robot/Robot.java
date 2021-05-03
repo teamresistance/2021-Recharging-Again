@@ -15,17 +15,19 @@ import frc.io.hdw_io.vision.LimeLight;
 import frc.io.hdw_io.vision.RPI;
 import frc.io.hdw_io.test_io;
 import frc.io.joysticks.JS_IO;
+import frc.robot.Subsystem.drive3.Drv_Auto;
 // import frc.robot.Subsystem.drive.Drive;
 import frc.robot.Subsystem.drive3.Drv_Teleop;
+import frc.robot.Subsystem.drive3.Traj;
+
+import frc.robot.auto.AutoSelector;
+import frc.robot.auto.Trajectories;
 import frc.robot.Subsystem.Turret;
 
 import frc.robot.Subsystem.ballHandler.Injector;
 import frc.robot.Subsystem.ballHandler.Revolver;
 import frc.robot.Subsystem.ballHandler.Shooter;
 import frc.robot.Subsystem.ballHandler.Snorfler;
-
-import frc.robot.auto.AutoSelector;
-import frc.robot.auto.Trajectories;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -43,6 +45,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         IO.init();
         JS_IO.init();
+        Traj.chsrInit(); // Added for Drive3 testing.
         Drv_Teleop.chsrInit(); // Added for Drive3 testing.
         Shooter.chsrInit();
         Trajectories.chsrInit();
@@ -64,15 +67,18 @@ public class Robot extends TimedRobot {
         Revolver.init();
         Snorfler.init();
         AutoSelector.init();
+
+        Drv_Auto.init();    //Test Drive3
     }
 
     @Override
     public void autonomousPeriodic() {
         mode = 1; // Used to signal Auto drv/Snorfler, need to find FMSInfo call
-        AutoSelector.sdbUpdate();
+        // AutoSelector.sdbUpdate();
         Revolver.update();
         Snorfler.update();
-        AutoSelector.update();
+        // AutoSelector.update();
+        Drv_Auto.update();
     }
 
     @Override

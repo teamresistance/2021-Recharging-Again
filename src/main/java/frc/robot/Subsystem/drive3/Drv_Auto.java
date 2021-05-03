@@ -1,5 +1,7 @@
 package frc.robot.Subsystem.drive3;
 
+import frc.util.Timer;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 
@@ -8,29 +10,31 @@ public class Drv_Auto extends Drive {
     private static int state;
     private static int prvState;
 
-    /*                [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
-    private static double[][] parms = { { 0.0, -130.0, 3.0, 0.4, 1.0, 0.20 },
-    /*                               */ { 0.0, 5.5, 0.5, 0.10, 1.0, 0.07 } };
-    private static Steer steer = new Steer(parms);
-    private static double[] strCmd;
-    private static double hdgFB() { return IO.navX.getAngle(); }
-    private static void hdgRst() { IO.navX.reset(); }
-    private static double hdgOut;
+    // /*                [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
+    // private static double[][] parms = { { 0.0, -130.0, 3.0, 0.4, 1.0, 0.20 },
+    // /*                               */ { 0.0, 5.5, 0.5, 0.10, 1.0, 0.07 } };
+    // private static Steer steer = new Steer(parms);
+    // private static double[] strCmd;
+    // private static double hdgFB() { return IO.navX.getAngle(); }
+    // private static void hdgRst() { IO.navX.reset(); }
+    // private static double hdgOut;
 
-    private static double distFB() { return (IO.drvEnc_L.feet() + IO.drvEnc_R.feet()) / 2; }
-    private static void distRst() { IO.drvEnc_L.reset(); IO.drvEnc_R.reset(); }
-    private static double distOut;
+    // private static double distFB() { return (IO.drvEnc_L.feet() + IO.drvEnc_R.feet()) / 2; }
+    // private static void distRst() { IO.drvEnc_L.reset(); IO.drvEnc_R.reset(); }
+    // private static double distOut;
 
     private static double path[][];
     private static int trajIdx;
     private static boolean finished;
+    private static Timer brakeTmr = new Timer(0.5);
+    private static boolean brake = false;
 
     public static void init() {
         sdbInit();          //Initialize sdb
         hdgRst();           //Reset gyro
         distRst();          //Reset encoders, distance to 0.0
         state = 0;          //Initialize state, Off
-        prvState = 0;       //Used to reset dist or set timer when entering a new state
+        prvState = -1;       //Used to reset dist or set timer when entering a new state
         trajIdx = 0;        //Initialize trajectory to first index
     }
 
@@ -39,7 +43,7 @@ public class Drv_Auto extends Drive {
      * can be caused by other events.
      */
     public static void determ() {
-        path = Traj.getActChsr();
+        path = Traj.getActChsr(IO.drvAutoPwr);
     }
 
     /**
@@ -63,12 +67,11 @@ public class Drv_Auto extends Drive {
                     distRst();
                 } else {
                     // Calc heading & dist output. rotation X, speed Y
+                    // strCmd = steer.update(hdgFB(), IO.drvFeet);
                     strCmd = steer.update(hdgFB(), distFB());
                     hdgOut = strCmd[0]; // Get hdg output, Y
                     distOut = 0.0; // Get distance output, X
-                    // Apply as a arcade joystick input
-                    // hdgOut = BotMath.SegLine(hdgOut, xOutAr); //Compensate for poor turning.
-                    cmdUpdate(distOut, hdgOut, false, 2);  // Apply as a arcade joystick input
+                    cmdUpdate(distOut, hdgOut, true, 2);  // Apply as a arcade joystick input
 
                     // Chk if trajectory is done
                     if (steer.isHdgDone()) {
@@ -79,15 +82,18 @@ public class Drv_Auto extends Drive {
                 prvState = state;
                 break;
             case 1: // steer Auto Heading and Dist
+                // if(state != prvState) distRst();
                 // Calc heading & dist output. rotation X, speed Y
-                strCmd = steer.update(hdgFB(), distFB());
+                strCmd = steer.update(hdgFB(), IO.drvFeet);
+                IO.drvFeetChk = IO.drvFeet;
+                // strCmd = steer.update(hdgFB(), distFB());
                 hdgOut = strCmd[0];
                 distOut = strCmd[1];
-                cmdUpdate(distOut, hdgOut, false, 2);  // Apply as a arcade joystick input
+                cmdUpdate(distOut, hdgOut, true, 2);  // Apply as a arcade joystick input
 
                 // Chk if trajectory is done
                 if (steer.isDistDone()) {
-                    state = 2; // Chk distance only
+                    state = brake ? 10 : 2; // Chk distance only.  Brake then go to Increment index
                 }
                 prvState = state;
                 break;
@@ -102,6 +108,14 @@ public class Drv_Auto extends Drive {
                 break;
             case 3:
                 done();
+                break;
+            case 10:        //Brake state
+                if(brakeTmr.hasExpired(0.15, state)) state = 11;
+                cmdUpdate( path[trajIdx][1] > 0.0 ? 0.5 : -0.5, 0.0, false, 2 );
+                break;
+                case 11:        //Brake state
+                brakeTmr.hasExpired(0.5, state);    //Set trgr for nex brake
+                state = 2;
                 break;
         }
     }
@@ -120,9 +134,11 @@ public class Drv_Auto extends Drive {
         SmartDashboard.putNumber("Drv/Auto/Hdg FB", hdgFB());
         SmartDashboard.putNumber("Drv/Auto/Hdg Out", hdgOut);
 
+        SmartDashboard.putNumber("Drv/Auto/Dist FB2", IO.drvFeet);
         SmartDashboard.putNumber("Drv/Auto/Dist FB", distFB());
         SmartDashboard.putNumber("Drv/Auto/Dist Out", distOut);
         SmartDashboard.putNumber("Drv/Auto/Traj Idx", trajIdx);
+        SmartDashboard.putString("Drv/Auto/Traj Name", Traj.getTrajChsrName());
     }
 
     public static boolean finished() { return finished; }
@@ -131,6 +147,7 @@ public class Drv_Auto extends Drive {
 
     private static void optUpdate(){
         boolean tstCmd = ((int)path[trajIdx][3] & 1) > 0;
+        brake = ((int)path[trajIdx][3] & 8) > 0;
     }
 
 }

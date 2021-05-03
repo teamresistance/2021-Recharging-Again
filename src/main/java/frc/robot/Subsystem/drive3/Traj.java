@@ -1,7 +1,5 @@
 package frc.robot.Subsystem.drive3;
 
-import java.lang.reflect.Method;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -16,9 +14,9 @@ public class Traj {
 
     private static SendableChooser<String> trajChsr = new SendableChooser<>();
 
-    public static String[] trajList = {"empty", "twoLaps", "cross", "otherCross"};
+    public static String[] trajList = {"empty", "square", "twoLaps", "cross", "otherCross"};
 
-    public static int init(){
+    public static int chsrInit(){
         int i = 0;
         trajChsr.setDefaultOption(trajList[i], trajList[i]);
         for( ; i < trajList.length; i++){
@@ -28,10 +26,12 @@ public class Traj {
         return trajList.length;
     }
 
+    public static String getTrajChsrName(){return trajChsr.getSelected();}
+
     // private static Method rtnTraj();
 
     /**Power to apply to all legs in a trajectory array */
-    public static double pwr = 70.0;
+    public static double pwr = 0.4;
 
     /** @return the active chooser trajectory using the default power, pwr. */
     public static double[][] getActChsr() { return getActChsr(pwr); }
@@ -44,6 +44,8 @@ public class Traj {
         switch( trajChsr.getSelected() ){
             case "empty":
             return empty(pwr);
+            case "square":
+            return square(pwr);
             case "twoLaps":
             return twoLaps(pwr);
             case "cross":
@@ -71,15 +73,11 @@ public class Traj {
     /** @return trajectory forms a square with passed power, pwr. */
     public static double[][] square(double pwr) {
         double[][] traj = {//{hdg, %pwr, dist, flags}
-                            { 0.0, pwr, 7.0, 0 },
-                            { 0.0, pwr, -0.4, 0 },
-                            { 90.0, pwr, 7.0, 0 },
-                            { 90.0, pwr, -0.4, 0 },
-                            { 180.0, pwr, 7.0, 0 },
-                            { 180.0, pwr, -0.4, 0 },
-                            { 270.0, pwr, 7.0, 0 },
-                            { 270.0, pwr, -0.4, 0 },
-                            { 350.0, pwr, 0.0, 0 }
+                            { 0.0, pwr, 7.0, 8 },
+                            { 90.0, pwr, 7.0, 8 },
+                            { 180.0, pwr, 7.0, 8 },
+                            { 270.0, pwr, 7.0, 8 },
+                            { 360.0, pwr, 0.0, 0 }
                           };
         return traj;
     }

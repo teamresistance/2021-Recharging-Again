@@ -3,6 +3,7 @@ package frc.robot.Subsystem.drive3;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
+import frc.io.hdw_io.NavX;
 import frc.io.joysticks.JS_IO;
 
 /**
@@ -22,14 +23,15 @@ public class Drv_Teleop extends Drive {
     private static boolean holdZeroBtn() {return JS_IO.btnHoldZero.isDown();}               //Hold zero hdg when help down
     private static boolean hold180Btn() {return JS_IO.btnHold180.isDown();}                 //Hold 180 hdg when held down
 
-    private static boolean frontSwapped;    // front of robot is swapped
-    private static boolean scaledOutput;    // scale the output signal
-    private static double scale = 0.5;      //Scale to apply to output is active
-    private static double scale() { return !scaledOutput ?  1.0 : scale; }
+    //Defined (moved) to Drive.  Maybe common to telop & auto.
+    // private static boolean frontSwapped;    // front of robot is swapped
+    // private static boolean scaledOutput;    // scale the output signal
+    // private static double scale = 0.5;      //Scale to apply to output is active
+    // private static double scale() { return !scaledOutput ?  1.0 : scale; }
 
-    private static Steer steer = new Steer();       //Create steer instance for hdg & dist, use default parms
-    private static double strCmd[] = new double[2]; //Storage for steer return
-    private static double hdgFB() {return IO.navX.getAngle();}  //Only need hdg to Hold Angle 0 or 180
+    // private static Steer steer = new Steer();       //Create steer instance for hdg & dist, use default parms
+    // private static double strCmd[] = new double[2]; //Storage for steer return
+    // private static double hdgFB() {return IO.navX.getAngle();}  //Only need hdg to Hold Angle 0 or 180
 
     private static int state = 1;   //Can be set by btn or sdb chooser
     private static String[] teleDrvType = {"Off", "Tank", "Arcade", "Curvature"};       //All drive type choices
@@ -55,6 +57,7 @@ public class Drv_Teleop extends Drive {
         sdbInit();
         teleDrvChoice = teleDrvChsr.getSelected();
         cmdUpdate(0, 0);
+        IO.navX.reset();
 
         frontSwapped = false;
         scaledOutput = false;
@@ -118,6 +121,14 @@ public class Drv_Teleop extends Drive {
         scale = SmartDashboard.getNumber("Drv/Tele/Drive Scale", scale);
         SmartDashboard.putBoolean("Drv/Tele/scaled", scaledOutput);
         SmartDashboard.putBoolean("Drv/Tele/Front Swap", frontSwapped);
+        SmartDashboard.putBoolean("Drv/Tele/Hold 0", holdZeroBtn());
+        SmartDashboard.putBoolean("Drv/Tele/Hold 180", hold180Btn());
+        SmartDashboard.putNumber("Drv/Tele/HdgFB", hdgFB());
+        SmartDashboard.putBoolean("Drv/Tele/Hdgk180", steer.getHdgk180());
+        SmartDashboard.putNumber("Drv/Tele/HdgSP", steer.getHdgSP());
+        SmartDashboard.putNumber("Drv/Tele/HdgOut", strCmd[0]);
+        SmartDashboard.putNumber("Drv/Tele/HdgFB", hdgFB());
+        SmartDashboard.putNumber("Drv/Tele/DistFB", distFB());
         SmartDashboard.putNumber("Drv/Tele/tankL", tnkLeft());
         SmartDashboard.putNumber("Drv/Tele/tankR", tnkRight());
     }
@@ -141,7 +152,8 @@ public class Drv_Teleop extends Drive {
         if(holdZeroBtn() || hold180Btn()){                  //If call for hold angle
             steer.setHdgSP(holdZeroBtn() ? 0.0 : 180.0);    //Set hdgSP
             strCmd = steer.update(hdgFB(), 0.0);            //Calc rotation
-            rSpdOrRot = strCmd[0];                          //store in rotation
+            rSpdOrRot = frontSwapped ? -strCmd[0] : strCmd[0];                          //store in rotation
+            System.out.println("StrCmd[0]: " + strCmd[0]);
             if(diffType == 1) diffType = 2;                 //If type tank Chg to arcade
         }
 
