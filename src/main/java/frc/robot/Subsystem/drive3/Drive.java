@@ -52,6 +52,7 @@ public class Drive {
      * can be caused by other events.
      */
     private static void determ() {
+        diffDrv.setMaxOutput(scale());   //Testing
     }
 
     /**
@@ -87,6 +88,46 @@ public class Drive {
             default:
             diffDrv.tankDrive(0.0, 0.0, false);
             System.out.println("Bad Diff Drive type - " + diffType);
+        }
+    }
+
+    /**Use hdgFB() & distFB() to calc steer commands.
+     * Return hdg & dist output in strCmd[], hdgOut & distOut.
+     * 
+     * @param x 
+     * <p>If 0 then hdgOut = strCmd[0] & distOut = strCmd[1].
+     * <p>If 1 then hdgOut = 0 & distOut = strCmd[1].
+     * <p>If 2 then hdgOut = strCmd[0] & distOut = 0.
+     */
+    public static void setSteer(int x){
+        // Calc heading & dist output. rotation X, speed Y
+        strCmd = steer.update(hdgFB(), distFB());
+        hdgOut = strCmd[0]; // Get hdg output, Y
+        distOut = strCmd[1]; // Get hdg output, Y
+        switch(x) {
+            case 1:
+            hdgOut = 0; // Get hdg output, Y
+            break;
+            case 2:
+            distOut = 0; // Get hdg output, Y
+            break;
+        }
+    }
+
+    public static void cmdUpdate(int type){
+        strCmd = steer.update();
+        hdgOut = strCmd[0];     // Get hdg output, Y
+        distOut = strCmd[1];    // Get dist output, X
+        switch(type) {
+            case 0:
+                cmdUpdate(distOut, hdgOut, true, 2);
+                break;
+            case 1:
+                cmdUpdate(distOut, 0.0, true, 2);
+                break;
+            case 2:
+                cmdUpdate(0.0, hdgOut, true, 2);
+                break;
         }
     }
 

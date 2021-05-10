@@ -26,10 +26,6 @@ import frc.io.joysticks.Pov;
 
 //Declares all joysticks, buttons, axis & pov's.
 public class JS_IO {
-    private static SendableChooser<Integer> chsr = new SendableChooser<Integer>();
-    private static String[] chsrDesc = {"3-Joysticks", "2-Joysticks", "Gamepad"};
-    private static int[] chsrNum = {0, 5, 1};
-
     public static int jsConfig = 0; // 0=Joysticks, 1=gamePad only, 2=left Joystick only
                                     // 3=Mixed LJS & GP, 4=Nintendo Pad
     // Declare all possible Joysticks
@@ -111,12 +107,21 @@ public class JS_IO {
         configJS();
     }
 
+    private static SendableChooser<Integer> chsr = new SendableChooser<Integer>();
+    private static String[] chsrDesc = {"3-Joysticks", "2-Joysticks", "Gamepad"};
+    private static int[] chsrNum = {0, 1, 2};
+
     public static void chsrInit(){
         for(int i = 0; i < chsrDesc.length; i++){
             chsr.addOption(chsrDesc[i], chsrNum[i]);
         }
         chsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrNum[0]);   //Default MUST have a different name
         SmartDashboard.putData("JS/Choice", chsr);
+        sdbUpdChsr();
+    }
+
+    public static void sdbUpdChsr(){
+        SmartDashboard.putString("JS/Choosen", chsrDesc[chsr.getSelected()]);   //Put selected on sdb
     }
 
     // // can put this under a button press
@@ -148,12 +153,12 @@ public class JS_IO {
                 norm3JS();
                 break;
 
-            case 1: // Gamepad only
-                a_GP();
+                case 1: // Normal 2 joystick config No CoDrvr
+                norm2JS();
                 break;
 
-            case 5: // Normal 2 joystick config No CoDrvr
-                norm2JS();
+            case 2: // Gamepad only
+                a_GP();
                 break;
 
             default: // Bad assignment

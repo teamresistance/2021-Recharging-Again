@@ -120,6 +120,18 @@ public class Steer {
     }
 
     /**
+     * Calculate arcade joystick cmds, X (rotation) & Y (fwd/bkwd move)
+     * <p>Called after steerTo sets setpoints, hdgSP & distSP
+     * 
+     * @param _hdgFB heading feedback, gyro
+     * @param _distFB distance traveled, encoders
+     * @return double[] drvCmds = { X(rot), Y(fwd/bkwd) }
+     */
+    public double[] update() {
+        return update(Drive.hdgFB(), Drive.distFB());
+    }
+
+    /**
      * @return  0=Not complete, 1=hdg in DB, 2=dist in DB, 3= Both in DB
      */
     public int getStatus() {

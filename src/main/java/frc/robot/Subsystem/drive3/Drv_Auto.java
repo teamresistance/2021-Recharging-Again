@@ -10,19 +10,6 @@ public class Drv_Auto extends Drive {
     private static int state;
     private static int prvState;
 
-    // /*                [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
-    // private static double[][] parms = { { 0.0, -130.0, 3.0, 0.4, 1.0, 0.20 },
-    // /*                               */ { 0.0, 5.5, 0.5, 0.10, 1.0, 0.07 } };
-    // private static Steer steer = new Steer(parms);
-    // private static double[] strCmd;
-    // private static double hdgFB() { return IO.navX.getAngle(); }
-    // private static void hdgRst() { IO.navX.reset(); }
-    // private static double hdgOut;
-
-    // private static double distFB() { return (IO.drvEnc_L.feet() + IO.drvEnc_R.feet()) / 2; }
-    // private static void distRst() { IO.drvEnc_L.reset(); IO.drvEnc_R.reset(); }
-    // private static double distOut;
-
     private static double path[][];
     private static int trajIdx;
     private static boolean finished;

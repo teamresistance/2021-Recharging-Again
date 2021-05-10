@@ -94,6 +94,7 @@ public class Drv_Teleop extends Drive {
                 break;
             case 1: // Tank mode.
                 cmdUpdate(tnkLeft(), tnkRight(), 1);   //Apply Hold, swap & scaling then send
+                // Drive.update();
                 break;
             case 2: // Arcade mode.
             cmdUpdate(arcMove(), arcRot(), 2);     //Apply Hold, swap & scaling then send
@@ -166,7 +167,7 @@ public class Drv_Teleop extends Drive {
             }
         }
 
-        lspdOrMov *= scale();  rSpdOrRot *= scale();        //scale it all
+        // lspdOrMov *= scale();  rSpdOrRot *= scale();        //scale it all (moved to diffDrv)
         cmdUpdate(lspdOrMov, rSpdOrRot, false, diffType);   //and send
     }
 

@@ -8,28 +8,28 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.vision.LimeLight;
 import frc.io.hdw_io.vision.RPI;
-import frc.io.hdw_io.test_io;
 import frc.io.joysticks.JS_IO;
-import frc.robot.Subsystem.drive3.Drv_Auto;
+
+// import frc.robot.auto.AutoSelector;
+// import frc.robot.auto.Trajectories;
+
 // import frc.robot.Subsystem.drive.Drive;
+// import frc.robot.Subsystem.drive3.Drv_Auto;
 import frc.robot.Subsystem.drive3.Drv_Teleop;
-import frc.robot.Subsystem.drive3.Traj;
+// import frc.robot.Subsystem.drive3.Drv_Auto;
+// import frc.robot.Subsystem.drive3.Traj;
+import frc.robot.Subsystem.drive3.Drv_Auto2;
+import frc.robot.Subsystem.drive3.Trajectories;
 
-import frc.robot.auto.AutoSelector;
-import frc.robot.auto.Trajectories;
 import frc.robot.Subsystem.Turret;
-
 import frc.robot.Subsystem.ballHandler.Injector;
 import frc.robot.Subsystem.ballHandler.Revolver;
 import frc.robot.Subsystem.ballHandler.Shooter;
 import frc.robot.Subsystem.ballHandler.Snorfler;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Relay;
 
@@ -45,30 +45,32 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         IO.init();
         JS_IO.init();
-        Traj.chsrInit(); // Added for Drive3 testing.
-        Drv_Teleop.chsrInit(); // Added for Drive3 testing.
         Shooter.chsrInit();
-        Trajectories.chsrInit();
-        AutoSelector.sdbInit();
+
+        Drv_Teleop.chsrInit(); // Added for Drive3 testing.
+        // AutoSelector.sdbInit();
+        // Traj.chsrInit(); // Added for Drive3 testing.
+        Trajectories.chsrInit(); // Added for Drive3 testing.
     }
 
     @Override
     public void robotPeriodic() {
-        SmartDashboard.putNumber("Robot/Mode", mode);
-        Trajectories.chsrUpdate();
-
         IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
         IO.update();
         JS_IO.update();
+
+        SmartDashboard.putNumber("Robot/Mode", mode);
+        Trajectories.chsrUpdate();
     }
 
     @Override
     public void autonomousInit() {
         Revolver.init();
         Snorfler.init();
-        AutoSelector.init();
 
-        Drv_Auto.init();    //Test Drive3
+        // AutoSelector.init();
+        // Drv_Auto.init();    //Test Drive3
+        Drv_Auto2.init();    //Test Drive3 Get Choosen trajectory
     }
 
     @Override
@@ -78,36 +80,42 @@ public class Robot extends TimedRobot {
         Revolver.update();
         Snorfler.update();
         // AutoSelector.update();
-        Drv_Auto.update();
+        // Drv_Auto.update();
+        Drv_Auto2.update();     //Execute choosen trajectory
     }
 
     @Override
     public void teleopInit() {
-        AutoSelector.disable();
+        // AutoSelector.disable();
+        Drv_Auto2.disable();  // Added for Drive3 testing.  Disable Auto if still executing.
+
         Snorfler.init();
         Revolver.init();
         Shooter.init();
         Injector.init();
-        // Drive.init();
-        Drv_Teleop.init();  // Added for Drive3 testing.
         Turret.init();
         LimeLight.init();
         RPI.init();
+
+        // Drive.init();
+        Drv_Teleop.init();  // Added for Drive3 testing.
     }
 
     @Override
     public void teleopPeriodic() {
         mode = 2; // Used to signal Auto drv/Snorfler, need to find FMSInfo call
+
         IO.update();
         Snorfler.update();
         Revolver.update();
         Shooter.update();
         Injector.update();
         Turret.update();
-        // Drive.update();
-        Drv_Teleop.update();    // Added for Drive3 testing.
         LimeLight.update();     // Changed from sbdUpdate - AS
         RPI.sdbUpdate();
+
+        // Drive.update();
+        Drv_Teleop.update();    // Added for Drive3 testing.
     }
 
     @Override
@@ -124,9 +132,4 @@ public class Robot extends TimedRobot {
     public static int getMode() {
         return mode;
     }
-    // public void sbdPut(){
-    // //Drive Puts:
-    // SmartDashboard.putNumber("Drive Scale", .5);
-    // }
-
 }

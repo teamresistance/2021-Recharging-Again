@@ -45,7 +45,7 @@ public class Traj {
             case "empty":
             return empty(pwr);
             case "square":
-            return square(pwr);
+            return square(0.9);
             case "twoLaps":
             return twoLaps(pwr);
             case "cross":
