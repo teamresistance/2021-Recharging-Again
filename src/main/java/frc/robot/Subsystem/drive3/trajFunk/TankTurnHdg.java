@@ -22,7 +22,6 @@ public class TankTurnHdg extends ATrajFunction {
     }
 
     public void init() {
-        finished = false;
         state = 0;
         finished = false;
     }
@@ -34,11 +33,14 @@ public class TankTurnHdg extends ATrajFunction {
                 steer.steerTo(hdg, 1.0, 0.0);
                 state++;
             case 1: // Turn to heading using l & r Pwr's passed as tank drive.
-                Drive.cmdUpdate(lPwr, rPwr, true, 1);
+                Drive.cmdUpdate(-lPwr, -rPwr, true, 1);
                 // Chk if trajectory is done
+                steer.update();
+                // if(Math.abs(Drive.hdgFB() - hdg) < 5.0 ) state++;  //This is a kludge to get things working
+                System.out.println("-------- hdg -------:  " + Drive.hdgFB());
                 if (steer.isHdgDone()) state++;    // Chk hdg only
                 break;
-            case 3:
+            case 2:
                 done();
                 break;
         }

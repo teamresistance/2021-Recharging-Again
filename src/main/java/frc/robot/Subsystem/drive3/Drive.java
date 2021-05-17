@@ -2,28 +2,16 @@ package frc.robot.Subsystem.drive3;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.io.hdw_io.IO;
-import frc.io.joysticks.JS_IO;
 
 /**
- * Add your docs here.
+ * This is the super class for Drv_Auto & Drv_Teleop.
+ * <p>Handles common variables & methods.
+ * <p>All commands to drive motors should be issue thru here.
  */
 public class Drive {
 
     // Assignments used by DiffDrv. Slaves sent same command.  Slaves set to follow Masters in IO.
     private static DifferentialDrive diffDrv = IO.diffDrv_M;
-
-
-    // public static double tnkLeft() {return JS_IO.axLeftY.get();}       //Tank Left
-    // public static double tnkRight() {return JS_IO.axRightY.get();}     //Tank Right
-    // public static double arcMove() {return JS_IO.axLeftY.get();}       //Arcade move, fwd/bkwd
-    // public static double arcRot() {return JS_IO.axLeftX.get();}        //Arcade Rotation
-    // public static double curMove() {return JS_IO.axLeftY.get();}       //Curvature move, pwr applied
-    // public static double curRot() {return JS_IO.axRightX.get();}       //Curvature direction, left.right
-
-    // public static boolean tglFrontBtn() {return JS_IO.btnInvOrientation.onButtonPressed();}//Toggle orientation
-    // public static boolean tglScaleBtn() {return JS_IO.btnScaledDrive.onButtonPressed();}   //Toggle appling scaling
-    // public static boolean holdZeroBtn() {return JS_IO.btnHoldZero.isDown();}               //Hold zero hdg when help down
-    // public static boolean hold180Btn() {return JS_IO.btnHold180.isDown();}                 //Hold 180 hdg when held down
 
     public static boolean frontSwapped;    // front of robot is swapped
     public static boolean scaledOutput;    // scale the output signal
@@ -31,7 +19,7 @@ public class Drive {
     public static double scale() { return !scaledOutput ?  1.0 : scale; }
 
     /*                [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
-    private static double[][] parms = { { 0.0, -110.0, 1.0, 0.5, 1.0, 0.20 },
+    private static double[][] parms = { { 0.0, -110.0, 1.0, 0.55, 1.0, 0.20 },
     /*                               */ { 0.0, 10.0, 0.7, 0.45, 1.0, 0.07 } };
     public static Steer steer = new Steer(parms);  //Create steer instance for hdg & dist, use default parms
     public static double strCmd[] = new double[2]; //Storage for steer return
@@ -59,6 +47,8 @@ public class Drive {
      * Called from Robot telopPerodic every 20mS to Update the drive sub system.
      */
     public static void update() {
+        determ();
+        sdbUpdate();
     }
 
     private static void sdbUpdate() {
@@ -91,13 +81,14 @@ public class Drive {
         }
     }
 
-    /**Use hdgFB() & distFB() to calc steer commands.
+    /**Use hdgFB() & distFB() to calc arcade steer commands.
+     * If need can zero hdg or dist.
      * Return hdg & dist output in strCmd[], hdgOut & distOut.
      * 
      * @param x 
-     * <p>If 0 then hdgOut = strCmd[0] & distOut = strCmd[1].
-     * <p>If 1 then hdgOut = 0 & distOut = strCmd[1].
-     * <p>If 2 then hdgOut = strCmd[0] & distOut = 0.
+     * <p>0 then hdgOut = strCmd[0] & distOut = strCmd[1].
+     * <p>1 then hdgOut = 0 & distOut = strCmd[1].
+     * <p>2 then hdgOut = strCmd[0] & distOut = 0.
      */
     public static void setSteer(int x){
         // Calc heading & dist output. rotation X, speed Y
@@ -114,11 +105,17 @@ public class Drive {
         }
     }
 
-    public static void cmdUpdate(int type){
+    /**
+     * Calls steer.update using previous steerTo values and 
+     * then call the full cmdUpdate with hdgOut, distOut & square
+     * for arcade control.  hdgout or distOout can be zeroed.
+     * @param zero 0 - niether, 1 - hdgOut zeroed, 2 - distOut zeroed
+     */
+    public static void cmdUpdate(int zero){
         strCmd = steer.update();
         hdgOut = strCmd[0];     // Get hdg output, Y
         distOut = strCmd[1];    // Get dist output, X
-        switch(type) {
+        switch(zero) {
             case 0:
                 cmdUpdate(distOut, hdgOut, true, 2);
                 break;

@@ -133,8 +133,7 @@ public class Drv_Auto extends Drive {
 
 
     private static void optUpdate(){
-        boolean tstCmd = ((int)path[trajIdx][3] & 1) > 0;
-        brake = ((int)path[trajIdx][3] & 8) > 0;
+        brake = ((int)path[trajIdx][3] & 8) > 0;    //Opt. to apply braking
     }
 
 }

@@ -10,6 +10,16 @@ public class PropMath{
     private boolean k180 = false;   //Use Normalize180 for 0 - 360 continuous
 
     /**
+     * Constructor, for a simple Prop only control.  (Using defaults)
+     * <p>kSP = 0.0 kPB = 1.0 kDB = 0.0 outMn = 0.0 outMx = 1.0 k180 = false
+     * <p>Change defaults with setters, setSP, ...
+     */
+    public PropMath(){
+        kSP = 0.0;  kPB = 1.0;  kDB = 0.0;  outMn = 0.0;  outMx = 1.0;
+        k180 = false;
+    }
+
+    /**
      * Constructor, for a simple Prop only control.
      * 
      * @param _kSP  Setpoint

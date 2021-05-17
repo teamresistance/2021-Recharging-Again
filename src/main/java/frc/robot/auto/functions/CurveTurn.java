@@ -36,7 +36,7 @@ public class CurveTurn extends AutoFunction {
     public void init() {
         finished = false;
         diffDrv.curvatureDrive(0.0, 0.0, false);
-        IO.follow();
+        // IO.follow();
         // left.set(0);
         // right.set(0);
         state = -1;
@@ -65,7 +65,7 @@ public class CurveTurn extends AutoFunction {
     public void done() {
         finished = true;
         diffDrv.tankDrive(0, 0);
-        IO.follow();
+        // IO.follow();
         // left.set(ControlMode.Disabled, 0);
         // right.set(ControlMode.Disabled, 0);
     }
@@ -74,7 +74,7 @@ public class CurveTurn extends AutoFunction {
         //sdbUpdate();
         // leftSlave.follow(left);
         // rightSlave.follow(right);
-        IO.follow();
+        // IO.follow();
     }
     
 }

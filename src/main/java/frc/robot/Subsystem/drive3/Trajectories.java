@@ -11,7 +11,7 @@ public class Trajectories {
     private static double dfltPwr = 0.9;
     private static SendableChooser<String> chsr = new SendableChooser<String>();
     private static String[] chsrDesc = {
-        "getEmpty", "getSlalom", "getBarrel", "getBounce", "getSquare",
+        "getEmpty", "getSlalom", "getBarrel", "getBounce", "getSquare_TNM", "getSquare_MOH", "getFigure8",
         "getPathRedA", "getPathBluA", "getPathRedB", "getPathBluB", "getPAthBlue", "getPathGalaxtic",
     };
 
@@ -21,13 +21,13 @@ public class Trajectories {
             chsr.addOption(chsrDesc[i], chsrDesc[i]);
         }
         chsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrDesc[0]);   //Default MUST have a different name
-        SmartDashboard.putData("Traj/Choice", chsr);
+        SmartDashboard.putData("Drv/Traj/Choice", chsr);
     }
 
     /**Show on sdb traj chooser info.  Called from robotPeriodic  */
     public static void chsrUpdate(){
-        SmartDashboard.putString("Traj/String", chsr.getSelected());
-        SmartDashboard.putNumber("Traj/Gxtc Num", RPI.galacticShooter());
+        SmartDashboard.putString("Drv/Traj/Choosen", chsr.getSelected());
+        SmartDashboard.putNumber("Drv/Traj/Gxtc Num", RPI.galacticShooter());
     }
 
     /**
@@ -45,8 +45,12 @@ public class Trajectories {
             return getBarrel(pwr);
             case "getBounce":
             return getBounce(pwr);
-            case "getSquare":
-            return getSquare(pwr);
+            case "getSquare_TNM":
+            return getSquare_TNM(pwr);
+            case "getSquare_MOH":
+            return getSquare_MOH(pwr);
+            case "getFigure8":
+            return getFigure8(pwr);
             case "getPathRedA":
             return getPathRedA(pwr);
             case "getPathBluA":
@@ -126,13 +130,15 @@ public class Trajectories {
 
     public static ATrajFunction[] getBarrel(double pwr) {
         ATrajFunction[] traj = {
-            new TurnNMove(0,100,5.7),
-            new TankTurnHdg(-10, .75, 0.1),    //Turn to the right
-            new TurnNMove(0,100, 5),
-            new TankTurnHdg(40, .1, .85),
-            new TurnNMove(44, 100, 4.4),
-            new TankTurnHdg(-165, .1, .9),
-            new TurnNMove(180, 100, 18)
+            new TurnNMove(0.0,1.0,5.7),
+            new TankTurnHdg(-10.0, 0.75, 0.1),    //Turn to the right
+            new TurnNMove(0.0,1.0, 1.0),    //Test Traj
+
+            // new TurnNMove(0,100, 5),
+            // new TankTurnHdg(40, .1, .85),
+            // new TurnNMove(44, 100, 4.4),
+            // new TankTurnHdg(-165, .1, .9),
+            // new TurnNMove(180, 100, 18)
         };
         return traj;
     }
@@ -154,14 +160,43 @@ public class Trajectories {
         return traj;
     }
 
-    public static ATrajFunction[] getSquare(double pwr) {
-        System.out.println("Made it here: Traj Sq");
+    /**Runs a figure 8 pattern using various trajectory functions. */
+    public static ATrajFunction[] getFigure8(double pwr) {
+        // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
         ATrajFunction traj[] = {
-        new TurnNMove(0, pwr, 7),
-        new TurnNMove(90, pwr, 7),
-        new TurnNMove(180, pwr, 7),
-        new TurnNMove(270, pwr, 7),
-        new TurnNMove(350, pwr, 0)
+        new TankTurnHdg(180, 0.85, 0.1), //Turn right half circle
+        new TankTurnHdg(20, 0.85, 0.1),  //continue circle to 30, more then 360.
+        new MoveOnHdg(20, 1.0, 8.0),
+        new TankTurnHdg(-180, 0.1, 0.85), //Turn left half circle
+        new TankTurnHdg(160, 0.1, 0.85),  //continue circle to 30, more then 360.
+        new MoveOnHdg(160, 1.0, 8.0),
+        new TankTurnHdg(0, 0.85, 0.1), //Turn right half circle
+        };
+        return traj;
+    }
+
+    /**Runs a square pattern using TurnNMove trajectory function. */
+    public static ATrajFunction[] getSquare_TNM(double pwr) {
+        // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
+        ATrajFunction traj[] = {
+        new TurnNMove(0, pwr, 6),
+        new TurnNMove(90, pwr, 6),
+        new TurnNMove(180, pwr, 6),
+        new TurnNMove(270, pwr, 6),
+        new TurnNMove(360, pwr, 0)
+        };
+        return traj;
+    }
+
+    /**Runs a square pattern using MoveOnHdg trajectory function. */
+    public static ATrajFunction[] getSquare_MOH(double pwr) {
+        // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
+        ATrajFunction traj[] = {
+            new MoveOnHdg(0, pwr, 5),
+            new MoveOnHdg(90, pwr, 6),
+            new MoveOnHdg(180, pwr, 6),
+            new MoveOnHdg(270, pwr, 6),
+            new MoveOnHdg(360, pwr, 0)
         };
         return traj;
     }

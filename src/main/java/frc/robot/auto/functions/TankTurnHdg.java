@@ -135,7 +135,7 @@ public class TankTurnHdg extends AutoFunction {
 
     public void update() {
         sdbUpdate();
-        IO.follow();
+        // IO.follow();
     }
 
     private void sdbInit() {

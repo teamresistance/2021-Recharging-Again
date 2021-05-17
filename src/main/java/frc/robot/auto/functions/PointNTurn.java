@@ -130,7 +130,7 @@ public class PointNTurn extends AutoFunction {
 
     public void update() {
         sdbUpdate();
-        IO.follow();
+        // IO.follow();
     }
 
     private void sdbInit() {

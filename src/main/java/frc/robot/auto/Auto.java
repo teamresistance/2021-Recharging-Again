@@ -79,7 +79,7 @@ public class Auto {
 
     public void disable() {
         IO.diffDrv_M.tankDrive(0.0, 0.0);
-        IO.follow();  
+        // IO.follow();  
     }
 
     public void sdbInit() {

@@ -192,7 +192,7 @@ public class Steer {
      */
     private double calcY(double distFB) {
         setDistMx(Math.max(getDistMn(), Math.min(1.0, pwrScalar)));   //Limit Mx btwn Mn & 1.0
-        distOut = distProp.calcProp(distFB, true);
+        distOut = distProp.calcProp(distFB, false);
         if (distOut == 0.0) {
             status |= 2; // If in DB, set bit else clr
         } else {

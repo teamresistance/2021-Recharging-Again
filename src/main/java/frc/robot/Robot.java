@@ -76,9 +76,10 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         mode = 1; // Used to signal Auto drv/Snorfler, need to find FMSInfo call
-        // AutoSelector.sdbUpdate();
+        IO.update();
         Revolver.update();
         Snorfler.update();
+        // AutoSelector.sdbUpdate();
         // AutoSelector.update();
         // Drv_Auto.update();
         Drv_Auto2.update();     //Execute choosen trajectory

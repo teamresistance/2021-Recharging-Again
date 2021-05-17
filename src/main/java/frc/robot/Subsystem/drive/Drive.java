@@ -206,7 +206,7 @@ public class Drive {
         // left.set(ControlMode.PercentOutput, lSpeed);
         // right.set(ControlMode.PercentOutput, -rSpeed);
         diffDrv_M.tankDrive(lSpeed, rSpeed);
-        IO.follow();
+        // IO.follow();
         // leftSlave.set(ControlMode.PercentOutput, lSpeed);
         // rightSlave.set(ControlMode.PercentOutput, rSpeed);
     }
