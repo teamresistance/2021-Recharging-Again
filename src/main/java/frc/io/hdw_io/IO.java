@@ -51,8 +51,9 @@ public class IO {
     public static Victor turretRot = new Victor(4); // Turret rotation motor
     public static AnalogPotentiometer turretPosition = new AnalogPotentiometer(0, -370, 190);
     public static InvertibleDigitalInput turCCWLimitSw = new InvertibleDigitalInput(4, true); // Critical, DO NOT
-    public static InvertibleDigitalInput turCWLimitSw = new InvertibleDigitalInput(5, true);// EXCEED these limit
-                                                                                            // switches
+    public static InvertibleDigitalInput turCWLimitSw = new InvertibleDigitalInput(5, true);// EXCEED limit swithes
+    // public static Counter turCCWCntr = new Counter(4);  //Hdw cntr to trap lmt sw.  Must be cleared
+    // public static Counter turCWCntr = new Counter(5);   //Interupt driven.
 
     // Injector, injects balls in to the shooter (AKA, Columnator)
     public static VictorSPX injector4Whl = new VictorSPX(10);
@@ -93,6 +94,8 @@ public class IO {
         drvsInit();
         motorsInit();
         resetLoc();
+        // turCCWCntr.setUpSourceEdge(true, true);
+        // turCWCntr.setUpSourceEdge(true, true);
     }
 
     public static void drvsInit() {
@@ -111,13 +114,11 @@ public class IO {
         drvFollowerVSPX_L.configFactoryDefault();
         drvFollowerVSPX_L.setInverted(false);
         drvFollowerVSPX_L.setNeutralMode(NeutralMode.Brake); // change it back
-        // drvFollowerVSPX_L[i].set(ControlMode.Follower,
-        // drvMasterTSRX_L.getDeviceID());
+        // drvFollowerVSPX_L.set(ControlMode.Follower, drvMasterTSRX_L.getDeviceID());  //Doesn't work pn Victor SPX
         drvFollowerVSPX_R.configFactoryDefault();
         drvFollowerVSPX_R.setInverted(true);
         drvFollowerVSPX_R.setNeutralMode(NeutralMode.Brake); // change it back
-        // drvFollowerVSPX_R[i].set(ControlMode.Follower,
-        // drvMasterTSRX_R.getDeviceID());
+        // drvFollowerVSPX_R.set(ControlMode.Follower, drvMasterTSRX_R.getDeviceID());  //Doesn't work pn Victor SPX
 
         drvMasterTSRX_L.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
         drvMasterTSRX_R.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
@@ -148,11 +149,9 @@ public class IO {
 
     public static double drvFeetChk = 0.0;  //Testing Drv_Auto rdg.
     public static double drvAutoPwr = 0.9;  //Testing
+
     public static void update() {
-        // drvFollowerVSPX_L[0].set(ControlMode.Follower,
-        // drvMasterTSRX_L.getDeviceID());
-        // drvFollowerVSPX_R[0].set(ControlMode.Follower,
-        // drvMasterTSRX_R.getDeviceID());
+        victorSPXfollower();
         drvFeet = (drvEnc_L.feet() + drvEnc_R.feet() ) / 2.0;
         SmartDashboard.putNumber("Robot/Feet", drvFeet);
         SmartDashboard.putNumber("Robot/Feet Chk", drvFeetChk);  //Testing
@@ -162,7 +161,7 @@ public class IO {
         coorUpdate();    //Update the XY location
     }
 
-    public static void follow() {
+    public static void victorSPXfollower() {
         drvFollowerVSPX_L.follow(drvMasterTSRX_L);
         drvFollowerVSPX_R.follow(drvMasterTSRX_R);
     }
