@@ -13,9 +13,9 @@ public class LimeLight {
 
     public static void init() {
         limeTable = NetworkTableInstance.getDefault().getTable("limelight");
-        SmartDashboard.putNumber("led mode", ledmode);
-        SmartDashboard.putNumber("cam mode", cammode);
-        SmartDashboard.putNumber("pipeline", pipeline);
+        SmartDashboard.putNumber("LL/led mode", ledmode);
+        SmartDashboard.putNumber("LL/cam mode", cammode);
+        SmartDashboard.putNumber("LL/pipeline", pipeline);
         state = 0;
     }
 
@@ -77,13 +77,16 @@ public class LimeLight {
 
     public static void determ() {
         if (JS_IO.limeLightOnOff.onButtonPressed()) {
-            if (limeLightToggle) {
-                state = 1;
-                limeLightToggle = !limeLightToggle;
-            } else {
-                state = 0;
-                limeLightToggle = !limeLightToggle;
-            }
+            // if (limeLightToggle) {
+            //     state = 1;
+            //     limeLightToggle = !limeLightToggle;
+            // } else {
+            //     state = 0;
+            //     limeLightToggle = !limeLightToggle;
+            // }
+
+            state = limeLightToggle ? 1 : 0;
+            limeLightToggle = !limeLightToggle;
         }
     }
 
@@ -110,15 +113,15 @@ public class LimeLight {
 
     public static void sdbUpdate() {
         getLLX();
-        SmartDashboard.putBoolean("ll has target", llHasTarget());
-        SmartDashboard.putNumber("limelight x offset", getLLX());
-        SmartDashboard.putNumber("limelight y offset", getLLY());
-        SmartDashboard.putNumber("limelight percent area", getLLArea() * 100);
-        SmartDashboard.putNumber("LL state", state);
+        SmartDashboard.putBoolean("LL/has target", llHasTarget());
+        SmartDashboard.putNumber("LL/x offset", getLLX());
+        SmartDashboard.putNumber("LL/y offset", getLLY());
+        SmartDashboard.putNumber("LL/percent area", getLLArea() * 100);
+        SmartDashboard.putNumber("LL/state", state);
 
-        cammode = SmartDashboard.getNumber("cam mode", cammode);
+        cammode = SmartDashboard.getNumber("LL/cam mode", cammode);
         setCamMode();
-        pipeline = SmartDashboard.getNumber("pipeline", pipeline);
+        pipeline = SmartDashboard.getNumber("LL/pipeline", pipeline);
         setPipeline();
 
     }
