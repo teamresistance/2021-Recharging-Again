@@ -97,7 +97,7 @@ public class Drv_Teleop extends Drive {
                 // Drive.update();
                 break;
             case 2: // Arcade mode.
-            cmdUpdate(arcMove(), arcRot(), 2);     //Apply Hold, swap & scaling then send
+                cmdUpdate(arcMove(), arcRot(), 2);     //Apply Hold, swap & scaling then send
                 break;
             case 3: // Curvature mode.
                     cmdUpdate(curMove(), curRot(), 3); //Apply Hold, swap & scaling then send
@@ -126,10 +126,12 @@ public class Drv_Teleop extends Drive {
         SmartDashboard.putBoolean("Drv/Tele/Hold 180", hold180Btn());
         SmartDashboard.putNumber("Drv/Tele/HdgFB", hdgFB());
         SmartDashboard.putBoolean("Drv/Tele/Hdgk180", steer.getHdgk180());
+        SmartDashboard.putNumber("Drv/Tele/HdgFB", hdgFB());
         SmartDashboard.putNumber("Drv/Tele/HdgSP", steer.getHdgSP());
         SmartDashboard.putNumber("Drv/Tele/HdgOut", strCmd[0]);
-        SmartDashboard.putNumber("Drv/Tele/HdgFB", hdgFB());
         SmartDashboard.putNumber("Drv/Tele/DistFB", distFB());
+        // SmartDashboard.putNumber("Drv/Tele/DistSP", distSP;
+        SmartDashboard.putNumber("Drv/Tele/DistOut", strCmd[1]);
         SmartDashboard.putNumber("Drv/Tele/tankL", tnkLeft());
         SmartDashboard.putNumber("Drv/Tele/tankR", tnkRight());
     }

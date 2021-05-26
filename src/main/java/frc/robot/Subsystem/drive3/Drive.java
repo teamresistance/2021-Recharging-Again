@@ -2,6 +2,8 @@ package frc.robot.Subsystem.drive3;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.io.hdw_io.IO;
+import frc.io.hdw_io.NavX;
+// import frc.util.PropMath;
 
 /**
  * This is the super class for Drv_Auto & Drv_Teleop.
@@ -12,6 +14,7 @@ public class Drive {
 
     // Assignments used by DiffDrv. Slaves sent same command.  Slaves set to follow Masters in IO.
     private static DifferentialDrive diffDrv = IO.diffDrv_M;
+    private static NavX gyro = IO.navX;
 
     public static boolean frontSwapped;    // front of robot is swapped
     public static boolean scaledOutput;    // scale the output signal
@@ -23,8 +26,9 @@ public class Drive {
     /*                               */ { 0.0, 10.0, 0.7, 0.45, 1.0, 0.07 } };
     public static Steer steer = new Steer(parms);  //Create steer instance for hdg & dist, use default parms
     public static double strCmd[] = new double[2]; //Storage for steer return
-    public static double hdgFB() {return IO.navX.getAngle();}  //Only need hdg to Hold Angle 0 or 180
-    public static void hdgRst() { IO.navX.reset(); }
+    // public static double hdgFB() {return PropMath.normalizeTo180(IO.navX.getAngle());}  //Only need hdg to Hold Angle 0 or 180
+    public static double hdgFB() {return gyro.getNormalizeTo180();}  //Only need hdg to Hold Angle 0 or 180
+    public static void hdgRst() { gyro.reset(); }
     public static double hdgOut;
 
     public static double distFB() { return (IO.drvEnc_L.feet() + IO.drvEnc_R.feet()) / 2; }
@@ -56,6 +60,7 @@ public class Drive {
 
     /**
      * Common interface for all diff drv types
+     * 
      * @param lSpdY - tank(1)-left JS | arcade(2)-fwd  |  curvature(3)-fwd 
      * @param rSpdRot_XY - tank(1)-right JS | arcade(2)-rotation  |  curvature(3)-rotation
      * @param isSqOrQT - tank(1)/arcade(2)-apply sqrt  |  curvature(3)-quick turn
@@ -81,34 +86,11 @@ public class Drive {
         }
     }
 
-    /**Use hdgFB() & distFB() to calc arcade steer commands.
-     * If need can zero hdg or dist.
-     * Return hdg & dist output in strCmd[], hdgOut & distOut.
-     * 
-     * @param x 
-     * <p>0 then hdgOut = strCmd[0] & distOut = strCmd[1].
-     * <p>1 then hdgOut = 0 & distOut = strCmd[1].
-     * <p>2 then hdgOut = strCmd[0] & distOut = 0.
-     */
-    public static void setSteer(int x){
-        // Calc heading & dist output. rotation X, speed Y
-        strCmd = steer.update(hdgFB(), distFB());
-        hdgOut = strCmd[0]; // Get hdg output, Y
-        distOut = strCmd[1]; // Get hdg output, Y
-        switch(x) {
-            case 1:
-            hdgOut = 0; // Get hdg output, Y
-            break;
-            case 2:
-            distOut = 0; // Get hdg output, Y
-            break;
-        }
-    }
-
     /**
      * Calls steer.update using previous steerTo values and 
      * then call the full cmdUpdate with hdgOut, distOut & square
      * for arcade control.  hdgout or distOout can be zeroed.
+     * 
      * @param zero 0 - niether, 1 - hdgOut zeroed, 2 - distOut zeroed
      */
     public static void cmdUpdate(int zero){
@@ -150,5 +132,4 @@ public class Drive {
     public static void cmdUpdate(double lSpdY, double rSpdRot_XY, boolean isTank) {
         cmdUpdate(lSpdY, rSpdRot_XY, true, isTank ? 1 : 2);
     }
-
 }

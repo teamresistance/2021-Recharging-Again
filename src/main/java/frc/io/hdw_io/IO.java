@@ -1,18 +1,14 @@
 package frc.io.hdw_io;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Subsystem.ballHandler.Revolver;
-import frc.util.Timer;
 
 // import com.revrobotics.ColorSensorV3;
 
@@ -34,14 +30,16 @@ public class IO {
     // Drive
     public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1); // Cmds left wheels. Includes encoders
     public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
+    public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
+    public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
+    public static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
+
     public static final double drvMasterTPF_L = 368.4;  // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
     public static final double drvMasterTPF_R = -368.4; // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
     public static Encoder drvEnc_L = new Encoder(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
     public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
-    public static double drvFeet;
-    public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
-    public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
-    public static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
+    public static void drvFeetRst() { drvEnc_L.reset(); drvEnc_R.reset(); }
+    public static double drvFeet() { return (drvEnc_L.feet() + drvEnc_R.feet()) / 2.0; }
 
     public static WPI_TalonSRX shooterTSRX = new WPI_TalonSRX(9);
     public static Encoder shooter_Encoder = new Encoder(shooterTSRX, 0);
@@ -55,7 +53,7 @@ public class IO {
     // public static Counter turCCWCntr = new Counter(4);  //Hdw cntr to trap lmt sw.  Must be cleared
     // public static Counter turCWCntr = new Counter(5);   //Interupt driven.
 
-    // Injector, injects balls in to the shooter (AKA, Columnator)
+    // Injector, injects balls in to the shooter.
     public static VictorSPX injector4Whl = new VictorSPX(10);
     public static Victor injectorPickup = new Victor(8);
     public static InvertibleSolenoid injectorFlipper = new InvertibleSolenoid(22, 5, false);
@@ -64,7 +62,7 @@ public class IO {
     public static Victor revolverRot = new Victor(5);
     public static InvertibleDigitalInput revolerIndexer = new InvertibleDigitalInput(0, true);
     public static InvertibleDigitalInput revRcvSlotOpen = new InvertibleDigitalInput(1, false);
-    public static Timer revTimer;
+    // public static Timer revTimer;
 
     // Snorfler
     public static Victor snorfFeedMain = new Victor(9);
@@ -90,7 +88,7 @@ public class IO {
 
     // Initialize any hardware here
     public static void init() {
-        revTimer = new Timer(0);
+        // revTimer = new Timer(0);
         drvsInit();
         motorsInit();
         resetLoc();
@@ -152,8 +150,7 @@ public class IO {
 
     public static void update() {
         victorSPXfollower();
-        drvFeet = (drvEnc_L.feet() + drvEnc_R.feet() ) / 2.0;
-        SmartDashboard.putNumber("Robot/Feet", drvFeet);
+        SmartDashboard.putNumber("Robot/Feet", drvFeet());
         SmartDashboard.putNumber("Robot/Feet Chk", drvFeetChk);  //Testing
         SmartDashboard.putNumber("Robot/EncTicks L", drvEnc_L.ticks());
         SmartDashboard.putNumber("Robot/EncTicks R", drvEnc_R.ticks());
@@ -169,7 +166,7 @@ public class IO {
     //--------------------  XY Coordinates -----------------------------------
     private static double prstDist;     //Present distance traveled since last reset.
     private static double prvDist;      //previous distance traveled since last reset.
-    private static double deltaD;       //Disdtance traveled during this period.
+    private static double deltaD;       //Distance traveled during this period.
     private static double coorX = 0;    //Calculated X (Left/Right) coordinate on field
     private static double coorY = 0;    //Calculated Y (Fwd/Bkwd) coordinate on field.
     

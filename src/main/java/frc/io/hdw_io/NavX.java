@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj.SPI;
 *  it would be a copy of this but done in a normal construct.
 */
 
+/**
+ * Constructor for a Kauailabs navX, gyro, object.
+ */
 public class NavX {
 	/**
-	 * Constructor for a new navX gyro.
 	 * Declare a variable using SPI connector
 	 */
 	public AHRS ahrs = new AHRS(SPI.Port.kMXP);
@@ -29,7 +31,7 @@ public class NavX {
 	 * @return a value between 0 to 360.
 	 */
 	public double normalizedAngle( double angle ) {
-		return ((angle %  360) + 360) % 360;
+		return ((angle %  360) + 360) % 360;		//????
 	}
 
 	/**

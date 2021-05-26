@@ -3,7 +3,7 @@ package frc.robot.Subsystem.drive3;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-//TODO: still unsure on how to take the 2D array and use it as a trajectory object
+//TODO2: still unsure on how to take the 2D array and use it as a trajectory object
 public class Traj {
 
     // each trajectory/path/automode is stored in each method

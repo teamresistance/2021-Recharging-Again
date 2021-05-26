@@ -71,9 +71,7 @@ public class Drv_Auto extends Drive {
             case 1: // steer Auto Heading and Dist
                 // if(state != prvState) distRst();
                 // Calc heading & dist output. rotation X, speed Y
-                strCmd = steer.update(hdgFB(), IO.drvFeet);
-                IO.drvFeetChk = IO.drvFeet;
-                // strCmd = steer.update(hdgFB(), distFB());
+                strCmd = steer.update(hdgFB(), distFB());
                 hdgOut = strCmd[0];
                 distOut = strCmd[1];
                 cmdUpdate(distOut, hdgOut, true, 2);  // Apply as a arcade joystick input
@@ -121,7 +119,7 @@ public class Drv_Auto extends Drive {
         SmartDashboard.putNumber("Drv/Auto/Hdg FB", hdgFB());
         SmartDashboard.putNumber("Drv/Auto/Hdg Out", hdgOut);
 
-        SmartDashboard.putNumber("Drv/Auto/Dist FB2", IO.drvFeet);
+        SmartDashboard.putNumber("Drv/Auto/Dist FB2", IO.drvFeet());
         SmartDashboard.putNumber("Drv/Auto/Dist FB", distFB());
         SmartDashboard.putNumber("Drv/Auto/Dist Out", distOut);
         SmartDashboard.putNumber("Drv/Auto/Traj Idx", trajIdx);

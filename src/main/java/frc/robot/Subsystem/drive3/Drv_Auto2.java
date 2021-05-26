@@ -6,7 +6,7 @@ import frc.robot.Subsystem.drive3.trajFunk.*;
 public class Drv_Auto2 extends Drive {
 
     private static ATrajFunction[] traj;
-    private static boolean overallFin = false;
+    private static boolean allFinish = false;
     private static int autoStep = 0;
     private static int idx = 0;
 
@@ -21,9 +21,10 @@ public class Drv_Auto2 extends Drive {
         traj = Trajectories.getTraj(1.0);
         autoStep = 0;
         idx = 0;
-        overallFin = false;
+        allFinish = false;
         hdgRst();
         distRst();
+        System.out.println("Auto2 - Init");
     } 
 
     //OK, WTF does this do? 
@@ -31,33 +32,35 @@ public class Drv_Auto2 extends Drive {
         sdbUpdate();
         switch (autoStep) {
             case 0:                 //Initialize the traj funk
-                traj[idx].init();   //Sets traj[x] state to 0
+                // System.out.println("Auto2 - 0");
+                ATrajFunction.initTraj(); // Sets traj[x] state to 0
                 autoStep++;
                 break;
             case 1:                 //Run a leg of the path
-            traj[idx].execute();
-                if (traj[idx].finished()) autoStep++;
+                traj[idx].execute();
+                if (ATrajFunction.finished()) autoStep++;
                 break;
             case 2:                 //Closeout Leg
-                traj[idx].done();
+                ATrajFunction.done();
                 idx++;
                 autoStep = idx < traj.length ? 0 : autoStep++;
                 break;
             case 3:                 //Done path
                 setDone();          //Flag allFinished & Closeout all Legs (again?)
+                cmdUpdate();
                 break;
         }
     }
 
     private static void setDone() {
-        overallFin = true;
-        for (ATrajFunction at : traj) {      //Why do it again?
-            at.done();
-        }
+        allFinish = true;
+        // for (ATrajFunction at : traj) {      //Why do it again?
+        //     at.done();
+        // }
     }
 
-    public static boolean finished() {
-        return overallFin;
+    public static boolean isAllFinish() {
+        return allFinish;
     }
 
     public static void disable() {

@@ -3,8 +3,8 @@ package frc.robot.Subsystem.drive3;
 Author: Team 86
 History: 
 jch - 2/2020 - Original Release
-jch - 2/2021 - Mod to move hdg normalization to PropMath(..., k180)
-TODO: - Need to test
+jch - 2/2021 - Mod to move hdg normalization to PropMath(..., k180)0
+TODO2: - Need to test
 Desc.
 Returns arcade drive commands in an array[X(hdg), Y(dist)]
 to move bot along hdg at % speed for distance 
@@ -33,7 +33,7 @@ public class Steer {
     private double distXclLmt = 0.07;   //Limit change of distOut to this
 
     private PIDController hdgPID;
-    private PIDController distPID;
+    // private PIDController distPID;
 
 
     /**
@@ -61,7 +61,7 @@ public class Steer {
         hdgXclLmt = 1.0;                                            //and Xcl
 
         distProp = new PropMath(0.0, 5.0, 0.5, 0.5, 1.0, false);    //Initialize with defaults
-        distPID = new PIDController(5.0, 0.0, 0.0);                 //Testing WPI PID
+        // distPID = new PIDController(5.0, 0.0, 0.0);                 //Testing WPI PID
         distXclLmt = 0.07;                                          //and Xcl
     }
 

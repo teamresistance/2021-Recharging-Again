@@ -3,7 +3,7 @@ package frc.robot.Subsystem.drive;
 Author: Team 86
 History: 
 jch - 2/2020 - Original Release
-TODO: - Need to test
+
 Desc.
 Returns arcade drive commands in an array[X(hdg), Y(dist)]
 to move bot along hdg at % speed for distance 
