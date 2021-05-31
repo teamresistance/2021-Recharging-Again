@@ -26,7 +26,6 @@ public class Drive {
     /*                               */ { 0.0, 10.0, 0.7, 0.45, 1.0, 0.07 } };
     public static Steer steer = new Steer(parms);  //Create steer instance for hdg & dist, use default parms
     public static double strCmd[] = new double[2]; //Storage for steer return
-    // public static double hdgFB() {return PropMath.normalizeTo180(IO.navX.getAngle());}  //Only need hdg to Hold Angle 0 or 180
     public static double hdgFB() {return gyro.getNormalizeTo180();}  //Only need hdg to Hold Angle 0 or 180
     public static void hdgRst() { gyro.reset(); }
     public static double hdgOut;

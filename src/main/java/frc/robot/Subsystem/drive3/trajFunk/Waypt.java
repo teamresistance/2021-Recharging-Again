@@ -25,36 +25,41 @@ public class Waypt extends ATrajFunction {
     public void execute() {
         // update();
         switch (state) {
-            case -1: //Get present XY Loc and calc new MoveOnHdg
-                calcHdgDistSP();
-                break;
             case 0: // Init Trajectory, turn to hdg then (1) ...
-                steer.steerTo(hdgSP, pwrMx, distSP);
+                calcHdgDistSP();    //Get present XY Loc and calc new MoveOnHdg
+                tSteer.steerTo(hdgSP, pwrMx, distSP);
                 Drive.distRst();
                 state++;
             case 1: // Move forward, steer Auto Heading and Dist
-                Drive.cmdUpdate(0);
-                // Chk if distance is done
-                if (steer.isDone()) state++; // Chk distance only
+                strCmd = tSteer.update();
+                System.out.println("MWP1 \thdgSP: " + hdgSP + "\tdistSP: " + distSP);
+                Drive.cmdUpdate(strCmd[1], strCmd[0], true, 2); //Calls steerTo & cmdUpdate for hdg & dist.
+                // Drive.cmdUpdate(0); //Calls steerTo & cmdUpdate for hdg & dist.
+                if (tSteer.isDone()) state++; //Chk hdg & dist done.
                 break;
             case 2:
-                // Drive.distRst();
                 done();
+                System.out.print("DONE WPT: ");
+                System.out.println("\tCoorX: " + IO.getCoorX() + " \tCoorY " + IO.getCoorY() + " \tHdg " + hdgFB());
                 break;
         }
     }
 
     private void calcHdgDistSP(){
-        double x = IO.getCoorX() - wpX;
-        double y = IO.getCoorY() - wpY;
-        distSP = Math.sqrt(x*x + y*y);
+        System.out.println("wpX: " + wpX + "\twpY: " + wpY);
+        System.out.println("X: " + IO.getCoorX() + "\tY: " + IO.getCoorY());
+        double deltaX = wpX - IO.getCoorX();    //Adjacent
+        double deltaY = wpY - IO.getCoorY();    //Opposite
+        distSP = Math.sqrt(deltaX*deltaX + deltaY*deltaY);  //Hypotenuse
+        System.out.println("distSP: " + distSP);
+        System.out.println("hdgSP raw: " + Math.atan(deltaX/deltaY));
 
-        if( y == 0){
-            hdgSP = x < 0 ? -90 : 90;
+        if( deltaX == 0){
+            hdgSP = deltaY < 0 ? -90 : 90;
         }else{
-            hdgSP = Math.atan(x/y);
-            if(y < 0){
-                hdgSP += x < 0 ? 180 : -180; 
+            hdgSP = Math.toDegrees(Math.atan(deltaY/deltaX));
+            if(deltaY < 0){
+                hdgSP += deltaX < 0 ? -180 : 180; 
             }
         }
     }

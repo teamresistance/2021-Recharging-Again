@@ -9,7 +9,8 @@ public class Trajectories {
     private static double dfltPwr = 0.9;
     private static SendableChooser<String> chsr = new SendableChooser<String>();
     private static String[] chsrDesc = {
-        "getEmpty", "getSlalom", "getBarrel", "getBounce", "getSquare_TNM", "getSquare_MOH", "getFigure8R", "getFigure8L",
+        "getEmpty", "getSlalom", "getBarrel", "getBounce", "getSquare_TNM", "getSquare_MOH",
+        "getFigure8R", "getFigure8L", "getFigure8WPT",
         "getPathRedA", "getPathBluA", "getPathRedB", "getPathBluB", "getPAthBlue", "getPathGalaxtic",
     };
 
@@ -51,6 +52,8 @@ public class Trajectories {
             return getFigure8R(pwr);
             case "getFigure8L":
             return getFigure8L(pwr);
+            case "getFigure8WPT":
+            return getFigure8WPT(pwr);
             case "getPathRedA":
             return getPathRedA(pwr);
             case "getPathBluA":
@@ -160,22 +163,26 @@ public class Trajectories {
         return traj;
     }
 
-    /**Runs a figure 8 pattern using various trajectory functions. First turn to the right. */
+    /**Runs a figure 8 pattern using various trajectory functions. First turn to the right.
+     * Uses MoveOnHdg for straight runs.
+     */
     public static ATrajFunction[] getFigure8R(double pwr) {
         // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
         ATrajFunction traj[] = {
-        new TankTurnHdg(180, 0.85, 0.1), //Turn right half circle
-        new TankTurnHdg(45, 0.85, 0.1),  //continue circle to 30, more then 360.
-        new MoveOnHdg(45, 1.0, 8.8),
-        new TankTurnHdg(-170, 0.1, 0.85), //Turn left half circle
-        new TankTurnHdg(135, 0.1, 0.85),  //continue circle to 30, more then 360.
-        new MoveOnHdg(135, 1.0, 8.8),
-        new TankTurnHdg(-10, 0.85, 0.1), //Turn right half circle
+        new TankTurnHdg(180, 0.85, 0.0), //Turn right half circle
+        new TankTurnHdg(45, 0.85, 0.0),  //continue circle to 30, more then 360.
+        new MoveOnHdg(45, 1.0, 6.4),
+        new TankTurnHdg(-180, 0.0, 0.85), //Turn left half circle
+        new TankTurnHdg(135, 0.0, 0.85),  //continue circle to 30, more then 360.
+        new MoveOnHdg(135, 1.0, 6.4),
+        new TankTurnHdg(-10, 0.85, 0.0), //Turn right half circle
         };
         return traj;
     }
 
-    /**Runs a figure 8 pattern using various trajectory functions. First turn to the left. */
+    /**Runs a figure 8 pattern using various trajectory functions. First turn to the left.
+     * Uses MoveOnHdg for straight runs.
+     */
     public static ATrajFunction[] getFigure8L(double pwr) {
         // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
         ATrajFunction traj[] = {
@@ -186,6 +193,23 @@ public class Trajectories {
         new TankTurnHdg(-150, 0.85, 0.1),  //continue circle to 30, more then 360.
         new MoveOnHdg(-150, 1.0, 11.0),
         new TankTurnHdg(10, 0.1, 0.85), //Turn left half circle
+        };
+        return traj;
+    }
+
+    /**Runs a figure 8 pattern using various trajectory functions. First turn to the right.
+     * Uses Waypoints for straight runs.
+     */
+    public static ATrajFunction[] getFigure8WPT(double pwr) {
+        // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
+        ATrajFunction traj[] = {
+        new TankTurnHdg(180, 0.85, 0.1), //Turn right half circle
+        new TankTurnHdg(45, 0.85, 0.1),  //continue circle to 30, more then 360.
+        new Waypt(5.5, 6.8, 1.0),
+        new TankTurnHdg(-180, 0.0, 0.85), //Turn left half circle
+        new TankTurnHdg(135, 0.0, 0.85),  //continue circle to 30, more then 360.
+        new Waypt(5.5, 2.3, 1.0),
+        new TankTurnHdg(-10, 0.85, 0.0), //Turn right half circle
         };
         return traj;
     }

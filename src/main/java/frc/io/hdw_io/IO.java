@@ -91,7 +91,7 @@ public class IO {
         // revTimer = new Timer(0);
         drvsInit();
         motorsInit();
-        resetLoc();
+        resetCoor();
         // turCCWCntr.setUpSourceEdge(true, true);
         // turCWCntr.setUpSourceEdge(true, true);
     }
@@ -193,7 +193,7 @@ public class IO {
     /**Reset the location on the field to 0.0, 0.0.
      * If needed navX.Reset must be called separtely.
      */
-    public static void resetLoc(){
+    public static void resetCoor(){
         // IO.navX.reset();
         // encL.reset();
         // encR.reset();

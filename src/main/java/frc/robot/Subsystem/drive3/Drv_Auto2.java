@@ -1,6 +1,7 @@
 package frc.robot.Subsystem.drive3;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.IO;
 import frc.robot.Subsystem.drive3.trajFunk.*;
 
 public class Drv_Auto2 extends Drive {
@@ -24,6 +25,7 @@ public class Drv_Auto2 extends Drive {
         allFinish = false;
         hdgRst();
         distRst();
+        IO.resetCoor();
         System.out.println("Auto2 - Init");
     } 
 
@@ -44,12 +46,17 @@ public class Drv_Auto2 extends Drive {
                 ATrajFunction.done();
                 idx++;
                 autoStep = idx < traj.length ? 0 : autoStep++;
+                System.out.print("DONE Auto2: ");
+                System.out.println("\tCoorX: " + IO.getCoorX() + " \tCoorY " + IO.getCoorY() + " \tHdg " + hdgFB());
                 break;
             case 3:                 //Done path
+                System.out.println("---------- ALL DONE Auto2: ");
+                autoStep++;
+            case 4:                 //Done path
                 setDone();          //Flag allFinished & Closeout all Legs (again?)
                 cmdUpdate();
                 break;
-        }
+            }
     }
 
     private static void setDone() {

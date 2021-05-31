@@ -129,7 +129,7 @@ public class Drive {
     public static void update() {
         if(JS_IO.btnRstGyro.onButtonPressed()){     //Testing location
             IO.navX.reset();
-            IO.resetLoc();
+            IO.resetCoor();
         } 
         determ();
         sdbUpdate();

@@ -1,5 +1,6 @@
 package frc.robot.Subsystem.drive3.trajFunk;
 
+import frc.io.hdw_io.IO;
 import frc.robot.Subsystem.drive3.Drive;
 
 /**
@@ -22,16 +23,20 @@ public class MoveOnHdg extends ATrajFunction {
     public void execute() {
         switch (state) {
             case 0: // Init Trajectory, turn to hdg then (1) ...
-                steer.steerTo(hdgSP, pwrMx, distSP);
+                tSteer.steerTo(hdgSP, pwrMx, distSP);
                 Drive.distRst();
                 state++;
+                System.out.println("---- DONE MOH: 0");
             case 1: // Move forward, steer Auto Heading and Dist
-                Drive.cmdUpdate(0);
-                // Chk if distance is done
-                if (steer.isDone()) state++; // Chk distance only
+                strCmd = tSteer.update();
+                Drive.cmdUpdate(strCmd[1], strCmd[0], true, 2); //Calls steerTo & cmdUpdate for hdg & dist.
+                if (tSteer.isDone()) state++; //Chk hdg & dist done.
+                System.out.println("---- DONE MOH: 1");
                 break;
             case 2:
                 done();
+                System.out.print("DONE MOH: ");
+                System.out.println("\tCoorX: " + IO.getCoorX() + " \tCoorY " + IO.getCoorY() + " \tHdg " + hdgFB());
                 break;
         }
     }
