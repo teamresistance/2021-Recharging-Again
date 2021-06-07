@@ -203,13 +203,17 @@ public class Trajectories {
     public static ATrajFunction[] getFigure8WPT(double pwr) {
         // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
         ATrajFunction traj[] = {
-        new TankTurnHdg(180, 0.85, 0.1), //Turn right half circle
-        new TankTurnHdg(45, 0.85, 0.1),  //continue circle to 30, more then 360.
-        new Waypt(5.5, 6.8, 1.0),
-        new TankTurnHdg(-180, 0.0, 0.85), //Turn left half circle
-        new TankTurnHdg(135, 0.0, 0.85),  //continue circle to 30, more then 360.
-        new Waypt(5.5, 2.3, 1.0),
-        new TankTurnHdg(-10, 0.85, 0.0), //Turn right half circle
+        // new TankTurnHdg(180, 0.85, 0.1), //Turn right half circle
+        // new TankTurnHdg(45, 0.85, 0.1),  //continue circle to 30, more then 360.
+        new CurveCirToHdg(0.0, 2.3, 2.3, 135.0, 0.55, 0.2),
+        new CurveCirToHdg(0.0, 2.3, 2.3, 310.0, 0.55, 0.2),
+        new CurveCirToHdg(0.0, 2.3, 2.3, 45.0, 0.55, 0.2),
+        // new Waypt(3.9, 4.9, 1.0),
+        // new TankTurnHdg(-180, 0.0, 0.85), //Turn left half circle
+        // new TankTurnHdg(135, 0.0, 0.85),  //continue circle to 30, more then 360.
+        // new CurveCirToHdg(0.0, 6.5, 2.3, 45.0, 0.85, -0.8),
+        // new Waypt(3.9, 1.6, 1.0),
+        // new TankTurnHdg(-10, 0.85, 0.0), //Turn right half circle
         };
         return traj;
     }

@@ -13,7 +13,7 @@ public abstract class ATrajFunction {
     /*                               */ { 0.0, 10.0, 0.7, 0.7, 1.0, 0.07 } };
     public static Steer tSteer = new Steer(parms);  //Create steer instance for hdg & dist, use default parms
     public static double hdgFB() {return IO.navX.getNormalizeTo180();}  //Only need hdg to Hold Angle 0 or 180
-    public static double[] strCmd;
+    public static double[] strCmd = new double[2];
 
     public static void initTraj() {
         state = 0;
