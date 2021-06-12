@@ -4,28 +4,28 @@ import frc.io.hdw_io.IO;
 import frc.robot.Subsystem.drive3.Drive;
 import frc.robot.Subsystem.drive3.Steer;
 
-public class CurveCirToHdg extends ATrajFunction {
+public class TankCirToHdg extends ATrajFunction {
 
     private double[] ctrXY = {0.0, 0.0};
     private double radiusSP = 0.0;
-    private double fwdCmd = 0.0;
-    private double rotCmd = 0.0;
+    private double lCmd = 0.0;
+    private double rCmd = 0.0;
     private double hdgSP = 0.0;
     private double[] tCmd = new double[2];
 
     // public static Steer steer = Drive.steer;  // Used to steer to a hdg with power for distance
     /*                [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
     private static double[][] parms = { { 0.0, -45.0, 5.0, 0.55, 1.0, 1.0 },
-    /*                               */ { 0.0, 1.0, 0.0, -0.5, 0.5, 1.0 } };   //Dist applied to radius
+    /*                               */ { 0.0, 1.0, 0.0, -0.3, 0.3, 1.0 } };   //Dist applied to radius
 
-    public CurveCirToHdg(double _ctrX, double _ctrY, double _radiusSP,
-                         double _hdgSP, double _fwdCmdBase, double _rotCmdBase) {
+    public TankCirToHdg(double _ctrX, double _ctrY, double _radiusSP,
+                         double _hdgSP, double _lCmdBase, double _rCmdBase) {
         ctrXY[0] = _ctrX;
         ctrXY[1] = _ctrY;
         radiusSP = _radiusSP;
         hdgSP = _hdgSP;
-        fwdCmd = _fwdCmdBase;
-        rotCmd = _rotCmdBase;
+        lCmd = _lCmdBase;
+        rCmd = _rCmdBase;
     }
 
     /*Trying something different.
@@ -54,10 +54,16 @@ public class CurveCirToHdg extends ATrajFunction {
                 tCmd = tSteer.update(hdgFB(), radiusFB());
                 System.out.println("rFB: " + radiusFB() + "\trSP: " + radiusSP);
                 System.out.println("rot,C0: " + tCmd[0] + "\tfwd,C1: " + tCmd[1]);
-                tCmd[1] = rotCmd * (1.0 + tCmd[1]);
-                tCmd[0] *= fwdCmd;
-                System.out.println("fwdCmd,C0: " + tCmd[0] + "\trotCmd,C1: " + tCmd[1]);
-                Drive.cmdUpdate(tCmd[1], tCmd[0], true, 3); //Calls steerTo & cmdUpdate for hdg & dist.
+                //Figure out which is the inside wheel and offset.
+                if(lCmd < rCmd){        //If left is inside wheel
+                    tCmd[0] += lCmd;    //add to left base cmd
+                    tCmd[1] *= rCmd;    //multi right base cmd
+                }else{                  //else
+                    tCmd[1] += rCmd;    //add to right base cmd
+                    tCmd[0] *= lCmd;    //multi left base cmd
+                }
+                System.out.println("leftCmd,C0: " + tCmd[0] + "\trightCmd,C1: " + tCmd[1]);
+                Drive.cmdUpdate(tCmd[0], tCmd[1], true, 1); //Calls steerTo & cmdUpdate for hdg & dist.
                 if (tSteer.isHdgDone()) state++;    // Chk hdg only
                 break;
             case 2:
