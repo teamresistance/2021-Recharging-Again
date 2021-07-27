@@ -154,6 +154,10 @@ public class IO {
         SmartDashboard.putNumber("Robot/Feet Chk", drvFeetChk);  //Testing
         SmartDashboard.putNumber("Robot/EncTicks L", drvEnc_L.ticks());
         SmartDashboard.putNumber("Robot/EncTicks R", drvEnc_R.ticks());
+        SmartDashboard.putNumber("Robot/Mtr0 Cmd", drvMasterTSRX_R.get());
+        SmartDashboard.putNumber("Robot/Mtr1 Cmd", drvFollowerVSPX_R.get());
+        SmartDashboard.putNumber("Robot/Mtr12 Cmd", drvMasterTSRX_L.get());
+        SmartDashboard.putNumber("Robot/Mtr11 Cmd", drvFollowerVSPX_L.get());
         drvAutoPwr = SmartDashboard.getNumber("Robot/Feet Pwr2", drvAutoPwr);  //Testing
         coorUpdate();    //Update the XY location
     }
@@ -185,8 +189,8 @@ public class IO {
         if (Math.abs(deltaD) > 0.2) deltaD = 0.0;       //Skip this update if too large.
 
         if (Math.abs(deltaD) > 0.0){    //Deadband for encoders if needed (vibration?).  Presently set to 0.0
-            coorY += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle()));
-            coorX += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle()));
+            coorY += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle())) * 1.10;
+            coorX += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle())) * 1.05;
         }
     }
 

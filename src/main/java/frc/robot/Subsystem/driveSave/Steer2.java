@@ -1,4 +1,4 @@
-package frc.robot.Subsystem.drive3;
+package frc.robot.Subsystem.driveSave;
 /*
 Author: Team 86
 History: 
@@ -14,39 +14,60 @@ Returns 0.0 for respective item when within DB.
 Also limits acceleration, increase in out, to respective Xcl value.
 */
 
-import edu.wpi.first.wpilibj.controller.PIDController;
-import frc.util.PropMath;
+import frc.util.PIDXController;
 
-public class Steer {
+public class Steer2 {
     private double drvCmds[] = { 0.0, 0.0 }; // Cmds X, Y - Rot, FwdBkwd
     private int status = 0; // 0-Running, 1=On Hdg, 2=at Dist, 3=both in DB
     private double pwrScalar = 100.0; // %Scale output, apply to hdg & distance
     //Heading variables
-    private PropMath hdgProp;           // Instance of PropMath to calculate prop response for hdg
+    private PIDXController hdgPid;
+    // private PropMath hdgProp;           // Instance of PropMath to calculate prop response for hdg
     private double hdgOut = 0.0;        //Calc X(rot) output
     private double prvHdgOut = 0.0;     //Previous hdgOut
     private double hdgXclLmt = 1.0;     //Limit change of hdgOut to this
     //Distance variables
-    private PropMath distProp;          // Instance of PropMath to calculate prop response for dist
+    private PIDXController distPid;
+    // private PropMath distProp;          // Instance of PropMath to calculate prop response for dist
     private double distOut = 0.0;       //Calc Y(dist) output
     private double prvDistOut = 0.0;    //Previous distOut
     private double distXclLmt = 0.07;   //Limit change of distOut to this
 
-    private PIDController hdgPID;
-    // private PIDController distPID;
-
-
     /**
      * Constructor using a 2d array.  Creates a proportional object for hdg & dist.
-     * >p>[0=hdg | 1=dist][0=SP, 1=PB, 2=DB, 3=Mn, 4=Mx, 5=Xcl]
+     * >p>[0=hdg | 1=dist][0=PB, 1=IT, 2=DT, 3=SP, 4=DB, 5=Mn, 6=Mx, 7=FF, 8=Exp]
      * 
      * @param propParm - a 2d array of doubles[2][5]
      */
-    public Steer(double[][] propParm) {
-        hdgProp = new PropMath(propParm[0], true);      //Initialize with parms array, SP, PB, DB, Mn, Mx & k180
-        hdgXclLmt = propParm[0][5];                     //and Xcl
-        distProp = new PropMath(propParm[1], false);    //Initialize with parms array, SP, PB, DB, Mn, Mx & k180
-        distXclLmt = propParm[1][5];                    //and Xcl
+    public Steer2(double[][] propParm) {
+        int pphCnt = propParm[0].length;
+        int ppdCnt = propParm[1].length;
+        if(pphCnt > 2 && ppdCnt > 2){
+            hdgPid = new PIDXController(propParm[0][0], propParm[0][1],propParm[0][2]);
+    
+            if(pphCnt > 2) hdgPid.setSetpoint(propParm[0][3]);
+            if(pphCnt > 3) hdgPid.setTolerance(propParm[0][4]);
+            if(pphCnt > 4) hdgPid.setOutMn(propParm[0][5]);
+            if(pphCnt > 5) hdgPid.setOutMx(propParm[0][6]);
+            if(pphCnt > 6) hdgPid.setOutFF(propParm[0][7]);
+            if(pphCnt > 7) hdgPid.setOutExp(propParm[0][8]);
+    
+            distPid = new PIDXController(propParm[1][0], propParm[1][1],propParm[1][2]);
+            
+            if(ppdCnt > 2) distPid.setSetpoint(propParm[1][3]);
+            if(ppdCnt > 3) distPid.setTolerance(propParm[1][4]);
+            if(ppdCnt > 4) distPid.setOutMn(propParm[1][5]);
+            if(ppdCnt > 5) distPid.setOutMx(propParm[1][6]);
+            if(ppdCnt > 6) distPid.setOutFF(propParm[1][7]);
+            if(ppdCnt > 7) distPid.setOutFF(propParm[1][8]);
+        }else{
+            hdgPid = new PIDXController();
+        }
+        hdgPid.enableContinuousInput(-180.0, 180.0);
+        hdgXclLmt = 1.0;
+        distPid.disableContinuousInput();
+        distXclLmt = 0.07;
+        
     }
 
     /**
@@ -54,53 +75,55 @@ public class Steer {
      * <p>hdg => SP=0.0, PB=-150.0, DB=3.0, Mn=0.1, Mx=1.0, Xcl=1.0, k180=true
      * <p>dist => SP=0.0, PB=5.0, DB=0.5, Mn=0.1, Mx=1.0, Xcl=1.0, k180=false
      */
-    public Steer() {
-        hdgProp = new PropMath(0.0, -70.0, 5.0, 0.3, 1.0, true);    //Initalize with defaults
-        hdgPID = new PIDController(-70.0, 0.0, 0.0);                //Testing WPI PID
-        hdgPID.enableContinuousInput(-180.0, 180.0);                //Testing continuous -180 to 180 degrees
+    public Steer2() {
+        hdgPid = new PIDXController((1/90.0), 0.0, 0.0);                //Testing WPI PID
+        hdgPid.enableContinuousInput(-180.0, 180.0);                //Testing continuous -180 to 180 degrees
         hdgXclLmt = 1.0;                                            //and Xcl
 
-        distProp = new PropMath(0.0, 5.0, 0.5, 0.5, 1.0, false);    //Initialize with defaults
-        // distPID = new PIDController(5.0, 0.0, 0.0);                 //Testing WPI PID
+        distPid = new PIDXController((-1/5.0), 0.0, 0.0);                 //Testing WPI PID
         distXclLmt = 0.07;                                          //and Xcl
     }
 
     /**
-     * Start steering, set hdg, pwr & dist.
+     * Start steering, set hdg & dist.
      * <p>Call update after setting setpoints.
      * 
      * @param _hdgSP - heading setpoint
-     * @param _pwrSc - power pct to use in rotation and distance as double
      * @param _distSP - distance setpoint in feet
      */
-    public void steerTo(double _hdgSP, double _pwrSc, double _distSP) {
-        pwrScalar = _pwrSc; // Scalar
+    public void steerTo(double _hdgSP, double _distSP, double _pwrMx) {
+        status = 0;         // Status, 0=No, 1=Hdg in DB, 2=Dist in DB, 3=Both in DB
+        setHdgSP(_hdgSP);
+        setDistSP(_distSP);
+        setHdgMx(_pwrMx);
+        setDistMx(_pwrMx);
+    }
+
+    /**
+     * Start steering, set hdg & dist.
+     * <p>Call update after setting setpoints.
+     * 
+     * @param _hdgSP - heading setpoint
+     * @param _distSP - distance setpoint in feet
+     */
+    public void steerTo(double _hdgSP, double _distSP) {
         status = 0;         // Status, 0=No, 1=Hdg in DB, 2=Dist in DB, 3=Both in DB
         setHdgSP(_hdgSP);
         setDistSP(_distSP);
     }
 
     /**
-     * Start steering, set hdg, pwr & dist.
+     * Start steering, set hdg, dist & pwr(opt) using double[2(3)] array.
      * <p>Call update after setting setpoints.
      * 
-     * @param _hdgSP - heading setpoint
-     * @param _pwrSc - power pct to use in rotation and distance as interger
-     * @param _distSP - distance setpoint in feet
-     */
-    public void steerTo(double _hdgSP, int _pwrSc, double _distSP) {
-        steerTo(_hdgSP, _pwrSc / 100.0, _distSP);
-    }
-
-    /**
-     * Start steering, set hdg, pwr & dist using double[3] array.
-     * <p>Call update after setting setpoints.
-     * 
-     * @param traj - double[3] = { hdgSP, pwr, ftSP }
+     * @param traj - double[2(3)] = { hdgSP, ftSP, pwr(opt) }
      */
     public void steerTo(double[] traj) {
-        steerTo(traj[0], traj[1], traj[2]);
-        System.out.println("----------SPs: " + traj[0] + "  " + traj[1] + "  " + traj[2]);
+        if(traj.length > 2){
+            steerTo(traj[0], traj[1], traj[2]);
+        }else{
+            steerTo(traj[0], traj[1]);
+        }
     }
 
     /**
@@ -169,14 +192,15 @@ public class Steer {
      * @return  calc'ed arcade JS X(rot) value.
      */
     private double calcX(double hdgFB) {
-        setHdgMx(Math.max(getHdgMn(), Math.min(1.0, pwrScalar)));   //Limit Mx btwn Mn & 1.0
-        hdgOut = hdgProp.calcProp(hdgFB, false);
+        //???? Think this needsto behandled in diff drive
+        // setHdgMx(Math.max(getHdgMn(), Math.min(1.0, pwrScalar)));   //Limit Mx btwn Mn & 1.0
+        hdgOut = hdgPid.calculate(hdgFB);
 
-        if (hdgOut == 0.0) {
+        if (hdgPid.atSetpoint()) {
             status |= 1; // If in DB, set bit,
         } else {
             status &= ~1; // else clear
-            hdgOut = accelLimiter(hdgOut, prvHdgOut, hdgXclLmt, getHdgMn());    //Accel limiter
+            // hdgOut = accelLimiter(hdgOut, prvHdgOut, hdgXclLmt, getHdgMn());    //Accel limiter
         }
         return hdgOut;
     }
@@ -191,13 +215,15 @@ public class Steer {
      * @return  Calc'ed arcade JS Y(dist) value
      */
     private double calcY(double distFB) {
-        setDistMx(Math.max(getDistMn(), Math.min(1.0, pwrScalar)));   //Limit Mx btwn Mn & 1.0
-        distOut = distProp.calcProp(distFB, false);
-        if (distOut == 0.0) {
+        //???? Think this needsto behandled in diff drive
+        // setDistMx(Math.max(getDistMn(), Math.min(1.0, pwrScalar)));   //Limit Mx btwn Mn & 1.0
+        distOut = distPid.calculate(distFB);
+
+        if (distPid.atSetpoint()) {
             status |= 2; // If in DB, set bit else clr
         } else {
             status &= ~2;
-            distOut = accelLimiter(distOut, prvDistOut, distXclLmt, getDistMn());   //Accel limiter
+            // distOut = accelLimiter(distOut, prvDistOut, distXclLmt, getDistMn());   //Accel limiter
         }
         return distOut;
     }
@@ -219,33 +245,49 @@ public class Steer {
         return psntVal;
     }
 
-    public void setHdgSP(double hdgSP){ hdgProp.setSP(hdgSP); }
-    public void setHdgPB(double hdgPB){ hdgProp.setPB(hdgPB); }
-    public void setHdgDB(double hdgDB){ hdgProp.setDB(hdgDB); }
-    public void setHdgMn(double hdgMn){ hdgProp.setOutMn(hdgMn); }
-    public void setHdgMx(double hdgMx){ hdgProp.setOutMx(hdgMx); }
+    public void setHdgSP(double hdgSP){ hdgPid.setSetpoint(hdgSP);}
+    public void setHdgPB(double hdgPB){ hdgPid.setP(hdgPB);}
+    public void setHdgIT(double hdgIT){ hdgPid.setP(hdgIT);}
+    public void setHdgDT(double hdgDT){ hdgPid.setP(hdgDT);}
+    public void setHdgDB(double hdgDB){ hdgPid.setInDB(hdgDB);}
+    public void setHdgMn(double hdgMn){ hdgPid.setOutMn(hdgMn); }
+    public void setHdgMx(double hdgMx){ hdgPid.setOutMx(hdgMx); }
+    public void setHdgFF(double hdgFF){ hdgPid.setOutFF(hdgFF); }
+    public void setHdgExp(double hdgExp){ hdgPid.setOutExp(hdgExp); }
     public void setHdgXcl(double hdgXcl){ hdgXclLmt = hdgXcl; }
 
-    public double getHdgSP(){ return hdgProp.getSP(); }
-    public double getHdgPB(){ return hdgProp.getPB(); }
-    public double getHdgDB(){ return hdgProp.getDB(); }
-    public double getHdgMn(){ return hdgProp.getOutMn(); }
-    public double getHdgMx(){ return hdgProp.getOutMx(); }
+    public double getHdgSP(){ return hdgPid.getSetpoint(); }
+    public double getHdgPB(){ return hdgPid.getP(); }
+    public double getHdgIT(){ return hdgPid.getI(); }
+    public double getHdgDT(){ return hdgPid.getD(); }
+    public double getHdgDB(){ return hdgPid.getInDB(); }
+    public double getHdgMn(){ return hdgPid.getOutMn(); }
+    public double getHdgMx(){ return hdgPid.getOutMx(); }
+    public double getHdgFF(){ return hdgPid.getOutFF(); }
+    public double getHdgExp(){ return hdgPid.getOutExp(); }
     public double getHdgXcl(){ return hdgXclLmt; }
-    public boolean getHdgk180(){ return hdgProp.get180(); }
+    // public boolean getHdgk180(){ return hdgProp.get180(); }
 
-    public void setDistSP(double distSP){ distProp.setSP(distSP); }
-    public void setDistPB(double distPB){ distProp.setPB(distPB); }
-    public void setDistDB(double distDB){ distProp.setDB(distDB); }
-    public void setDistMn(double distMn){ distProp.setOutMn(distMn); }
-    public void setDistMx(double distMx){ distProp.setOutMx(distMx); }
+    public void setDistSP(double distSP){ distPid.setSetpoint(distSP); }
+    public void setDistPB(double distPB){ distPid.setP(distPB); }
+    public void setDistIT(double distIT){ distPid.setI(distIT); }
+    public void setDistDT(double distDT){ distPid.setD(distDT); }
+    public void setDistDB(double distDB){ distPid.setInDB(distDB); }
+    public void setDistMn(double distMn){ distPid.setOutMn(distMn); }
+    public void setDistMx(double distMx){ distPid.setOutMx(distMx); }
+    public void setDistFF(double distFF){ distPid.setOutFF(distFF); }
+    public void setDistExp(double distExp){ distPid.setOutExp(distExp); }
     public void setDistXcl(double distXcl){ distXclLmt = distXcl; }
 
-    public double getDistSP(){ return distProp.getSP(); }
-    public double getDistPB(){ return distProp.getPB(); }
-    public double getDistDB(){ return distProp.getDB(); }
-    public double getDistMn(){ return distProp.getOutMn(); }
-    public double getDistMx(){ return distProp.getOutMx(); }
+    public double getDistSP(){ return distPid.getSetpoint(); }
+    public double getDistPB(){ return distPid.getP(); }
+    public double getDistIT(){ return distPid.getI(); }
+    public double getDistDT(){ return distPid.getD(); }
+    public double getDistDB(){ return distPid.getInDB(); }
+    public double getDistMn(){ return distPid.getOutMn(); }
+    public double getDistMx(){ return distPid.getOutMx(); }
+    public double getDistFF(){ return distPid.getOutFF(); }
+    public double getDistExp(){ return distPid.getOutExp(); }
     public double getDistXcl(){ return distXclLmt; }
 
 }

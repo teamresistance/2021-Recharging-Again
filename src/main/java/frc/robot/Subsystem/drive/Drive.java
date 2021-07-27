@@ -1,218 +1,140 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.Subsystem.drive;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.io.hdw_io.Encoder;
 import frc.io.hdw_io.IO;
-import frc.io.joysticks.JS_IO;
-import frc.util.PropMath;
+import frc.io.hdw_io.NavX;
 
 /**
- * Add your docs here.
+ * This is the super class for Drv_Auto & Drv_Teleop.
+ * <p>Handles common variables & methods.
+ * <p>All commands to drive motors should be issue thru here.
  */
 public class Drive {
 
-    private static int state;
+    // Assignments used by DiffDrv. Slaves sent same command.  Slaves set to follow Masters in IO.
+    private static DifferentialDrive diffDrv = IO.diffDrv_M;
 
-    private static boolean invToggle; // toggles between inverted and not
-    private static boolean scaleToggle;
-    private static boolean inverted;
-    private static boolean scaled;
+    public static boolean frontSwapped;    // front of robot is swapped
+    public static boolean scaledOutput;    // scale the output signal
+    public static double scale = 0.5;      //Scale to apply to output is active
+    public static double scale() { return !scaledOutput ?  1.0 : scale; }
+    public static double deadband = 0.45;
 
-    private static double scale = -0.5;
+    /*                [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
+    private static double[][] parms = { { 0.0, -110.0, 1.0, 0.55, 1.0, 0.20 },
+    /*                               */ { 0.0, 10.0, 0.7, 0.45, 1.0, 0.07 } };
+    public static Steer steer = new Steer(parms);  //Create steer instance for hdg & dist, use default parms
 
-    // TODO: Need to see if this split modes will work when switching between them.
-    // Don't think will work. Don't think we can do this. May not be able to
-    // send cmds to slaves by DiffDrv AND define Followers.
-    // Assignments used by ControlMode. Slaves "follow" masters.
-    // private static TalonSRX left = IO.drvMasterTSRX_L;
-    // private static TalonSRX right = IO.drvMasterTSRX_R;
-    // private static VictorSPX leftSlave = IO.drvFollowerVSPX_L;
-    // private static VictorSPX rightSlave = IO.drvFollowerVSPX_R;
-    private static Encoder encL = IO.drvEnc_L;
-    private static Encoder encR = IO.drvEnc_R;
+    public static double strCmd[] = new double[2]; //Storage for steer return
+    public static double hdgFB() {return IO.navX.getNormalizeTo180();}  //Only need hdg to Hold Angle 0 or 180
+    public static void hdgRst() { IO.navX.reset(); }
+    public static double hdgOut;
 
-    // Assignments used by DiffDrv. Slaves sent same command.
-    private static DifferentialDrive diffDrv_M = IO.diffDrv_M;
-    // private static DifferentialDrive diffDrv_S = new DifferentialDrive(IO.drvFollowerVSPX_L, IO.drvFollowerVSPX_R);
-
-    private static Steer steer = new Steer();
-    private static double[] strCmd;
-    private static double hdgFB;
-
-    private static double dist_Avg;
-
-    private static double hdgOut;
+    public static double distFB() { return (IO.drvEnc_L.feet() + IO.drvEnc_R.feet()) / 2; }
+    public static void distRst() { IO.drvEnc_L.reset(); IO.drvEnc_R.reset(); }
+    public static double distOut;
 
     public static void init() {
-        SmartDashboard.putNumber("Drive Scale", -0.5);
-        cmdUpdate(0, 0);
-        state = 0;
-        invToggle = true;
-        scaleToggle = true;
-        inverted = false;
-        scaled = false;
-        // IO.drvMasterTSRX_L.set(ControlMode.Disabled, 0);
-        // IO.drvMasterTSRX_R.set(ControlMode.Disabled, 0);
+        cmdUpdate(0.0, 0.0, false, 0);
     }
 
-    // Determine the drive mode.
-    // TODO: How does the driver return to unscaled, normal mode?
-    public static void determ() {
-        // if (JS_IO.btnInvOrientation.onButtonPressed()) {
-        //     if (invToggle) {
-        //         state = scaled ? 2 : 5;
-        //     } else {
-        //         state = scaled ? 1 : 0;
-        //     }
-        //     invToggle = !invToggle;
-        // }
+    /**
+     * Determine any state that needs to interupt the present state, usually by way of a JS button but
+     * can be caused by other events.
+     */
+    private static void determ() {
 
-        // if (JS_IO.btnScaledDrive.onButtonPressed()) {
-        //     if (scaleToggle) {
-        //         state = inverted ? 2 : 1;
-        //     } else {
-        //         state = inverted ? 5 : 0;
-        //     }
-        //     scaleToggle = !scaleToggle;
-        // }
-
-        if (JS_IO.btnInvOrientation.onButtonPressed()) {
-            if (invToggle) {
-                if (scaled) {
-                    state = 2;
-                } else {
-                    state = 5;
-                }
-                invToggle = !invToggle;
-            } else {
-                if (scaled) {
-                    state = 1;
-                } else {
-                    state = 0;
-                }
-                invToggle = !invToggle;
-            }
-        }
-
-        if (JS_IO.btnScaledDrive.onButtonPressed()) {
-            if (scaleToggle) {
-                if (inverted) {
-                    state = 2;
-                } else {
-                    state = 1;
-                }
-                scaleToggle = !scaleToggle;
-            } else {
-                if (inverted) {
-                    state = 5;
-                } else {
-                    state = 0;
-                }
-                scaleToggle = !scaleToggle;
-            }
-        }
     }
 
-    // Update Drive mode. Called from Robot.
+    /**
+     * Called from Robot telopPerodic every 20mS to Update the drive sub system.
+     */
     public static void update() {
-        if(JS_IO.btnRstGyro.onButtonPressed()){     //Testing location
-            IO.navX.reset();
-            IO.resetCoor();
-        } 
         determ();
         sdbUpdate();
-        switch (state) {
-            case 0: // Tank mode, no scaling. JSs to wheels.
-                cmdUpdate(-JS_IO.axLeftDrive.get(), -JS_IO.axRightDrive.get());
-                scaled = false;
-                inverted = false;
-                // diffDrv_M.tankDrive(-JS_IO.axLeftDrive.get(), -JS_IO.axRightDrive.get());
-                // diffDrv_S.tankDrive(-JS_IO.axLeftDrive.get(), -JS_IO.axRightDrive.get());
-                break;
-            case 1: // Tank mode, w/ scaling. JSs * scale to wheels.
-                cmdUpdate(scale * JS_IO.axLeftDrive.get(), scale * JS_IO.axRightDrive.get());
-                scaled = true;
-                inverted = false;
-                break;
-            case 2: // Tank mode, w/ scaling. Reversre direction, front & back. swaps axes
-                cmdUpdate(-scale * JS_IO.axRightDrive.get(), -scale * JS_IO.axLeftDrive.get());
-                scaled = true;
-                inverted = true;
-                break;
-            case 5: // reverse no scaled, swaps axes
-                cmdUpdate(JS_IO.axRightDrive.get(), JS_IO.axLeftDrive.get());
-                scaled = false;
-                inverted = true;
-                break;
-            // TODO: This doesn't work. Talons followers don't work in Diff Drive.
-            case 3: // hold 0
-                steer.steerTo(0, 100.0, 0.0);
-                strCmd = steer.update(hdgFB, distFB());
-                hdgOut = strCmd[0];
-                // diffDrv_M.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
-                // diffDrv_S.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
-                break;
-            case 4: // hold 180
-                steer.steerTo(180, 100.0, 0.0);
-                strCmd = steer.update(hdgFB, distFB());
-                hdgOut = strCmd[0];
-                // diffDrv_M.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
-                // diffDrv_S.arcadeDrive(JS_IO.axLeftDrive.get(), hdgOut, false);
-                break;
+    }
+
+    private static void sdbUpdate() {
+    }
+
+    /**
+     * Common interface for all diff drv types
+     * 
+     * @param lSpdY - tank(1)-left JS | arcade(2)-fwd  |  curvature(3)-fwd 
+     * @param rSpdRot_XY - tank(1)-right JS | arcade(2)-rotation  |  curvature(3)-rotation
+     * @param isSqOrQT - tank(1)/arcade(2)-apply sqrt  |  curvature(3)-quick turn
+     * @param diffType - 0-Off  |  1=tank  |  2=arcade  |  3=curvature
+     */
+    public static void cmdUpdate(double lSpdY, double rSpdRot_XY, boolean isSqOrQT, int diffType) {
+        switch(diffType){
+            case 0:     //Off
+            diffDrv.tankDrive(0.0, 0.0, false);
+            break;
+            case 1:     //Tank
+            diffDrv.tankDrive(-lSpdY, -rSpdRot_XY, isSqOrQT);
+            System.out.println("Drive-1: lSpd: " + lSpdY + "\trSpdRot: " + rSpdRot_XY);
+            break;
+            case 2:     //Arcade
+            diffDrv.arcadeDrive(-lSpdY, rSpdRot_XY, isSqOrQT);
+            System.out.println("Drive-2: lSpd: " + lSpdY + "\trSpdRot: " + rSpdRot_XY);
+            break;
+            case 3:     //Curvature
+            diffDrv.curvatureDrive(-lSpdY, rSpdRot_XY, isSqOrQT);
+            System.out.println("Drive-3: " + lSpdY + ", " + rSpdRot_XY);
+            break;
             default:
-                cmdUpdate(0, 0);
-                System.out.println("Invaid Drive State - " + state);
+            diffDrv.tankDrive(0.0, 0.0, false);
+            System.out.println("Bad Diff Drive type - " + diffType);
+        }
+        SmartDashboard.putNumber("Drive/MtrL Out", IO.drvMasterTSRX_L.get());
+        SmartDashboard.putNumber("Drive/MtrR Out", IO.drvMasterTSRX_R.get());
+    }
+
+    /**
+     * Calls steer.update using previous steerTo values and 
+     * then call the full cmdUpdate with hdgOut, distOut & square
+     * for arcade control.  hdgout or distOout can be zeroed.
+     * 
+     * @param zero 0 - niether, 1 - hdgOut zeroed, 2 - distOut zeroed
+     */
+    public static void cmdUpdate(int zero){
+        strCmd = steer.update();
+        hdgOut = strCmd[0];     // Get hdg output, Y
+        distOut = strCmd[1];    // Get dist output, X
+        switch(zero) {
+            case 0:
+                cmdUpdate(distOut, hdgOut, true, 2);
+                break;
+            case 1:
+                cmdUpdate(distOut, 0.0, true, 2);
+                break;
+            case 2:
+                cmdUpdate(0.0, hdgOut, true, 2);
                 break;
         }
     }
 
-    public static void sdbUpdate() {
-        SmartDashboard.putNumber("Driver State", state);
-        scale = SmartDashboard.getNumber("Drive Scale", -0.5);
-        SmartDashboard.putNumber("Right Drive Enc", encL.ticks());
-        SmartDashboard.putNumber("Left Drive Enc", encR.ticks());
-        SmartDashboard.putNumber("dist L", encL.feet());
-        SmartDashboard.putNumber("dist R", encR.feet());
-        SmartDashboard.putBoolean("scaled", scaled);
-        SmartDashboard.putBoolean("inverted", inverted);
+    //------------------- Legacy -------------------------
+    /**
+     * Stop moving  (Legacy & quick calls)
+     */
+    public static void cmdUpdate() { cmdUpdate(0.0, 0.0, true, 0); }
 
-        // Location test
-        SmartDashboard.putNumber("ALoc/Angle", IO.navX.getAngle());
-        SmartDashboard.putNumber("ALoc/Distance", IO.getDeltaD());
-        SmartDashboard.putNumber("ALoc/X", IO.getCoorX());
-        SmartDashboard.putNumber("ALoc/Y", IO.getCoorY());
-        SmartDashboard.putNumberArray("ALoc/arXY", IO.getCoor());
-        SmartDashboard.putNumber("ALoc/arX", IO.getCoor()[0]);
-        SmartDashboard.putNumber("ALoc/arY", IO.getCoor()[1]);
-    }
+    /**
+     * Tank drive
+     * @param lSpdY - left tank control
+     * @param rSpdRot_XY - right tank control
+     */
+    public static void cmdUpdate(double lSpdY, double rSpdRot_XY) { cmdUpdate(lSpdY, rSpdRot_XY, false, 1); }
 
-    public static int getState() {
-        return state;
-    }
-
-    public static void cmdUpdate(double lSpeed, double rSpeed) {
-        // left.set(ControlMode.PercentOutput, lSpeed);
-        // right.set(ControlMode.PercentOutput, -rSpeed);
-        diffDrv_M.tankDrive(lSpeed, rSpeed);
-        // IO.follow();
-        // leftSlave.set(ControlMode.PercentOutput, lSpeed);
-        // rightSlave.set(ControlMode.PercentOutput, rSpeed);
-    }
-
-    private static double distFB() {
-        dist_Avg = (encL.feet() + encR.feet()) / 2.0;
-        return dist_Avg;
+    /**
+     * Tank or Arcade drive  (Legacy & quick calls, Sqr true.)
+     * @param lSpdY - tank-left | arcade-fwd
+     * @param rSpdRot_XY - tank-right | arcade-rotation
+     * @param isTank else arcade
+     */
+    public static void cmdUpdate(double lSpdY, double rSpdRot_XY, boolean isTank) {
+        cmdUpdate(lSpdY, rSpdRot_XY, true, isTank ? 1 : 2);
     }
 }

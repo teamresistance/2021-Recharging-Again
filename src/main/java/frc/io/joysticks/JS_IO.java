@@ -138,8 +138,10 @@ public class JS_IO {
         //chsr.setDefaultOption doesn't appear to work.  Shouldn't need to trap null.
         //Default MUST have a different name
         if (jsConfig != (chsr.getSelected() == null ? 0 : chsr.getSelected())) {
-            caseDefault();
-            configJS();
+            sdbUpdChsr();
+            caseDefault();      //Clear exisitng jsConfig
+            System.out.println("JS Chsn: " + chsr.getSelected());
+            configJS();         //then assign new jsConfig
         }
     }
 
@@ -153,7 +155,7 @@ public class JS_IO {
                 norm3JS();
                 break;
 
-                case 1: // Normal 2 joystick config No CoDrvr
+            case 1: // Normal 2 joystick config No CoDrvr
                 norm2JS();
                 break;
 
@@ -173,6 +175,7 @@ public class JS_IO {
 
     // ----------- Normal 3 Joysticks -------------
     private static void norm3JS() {
+        System.out.println("JS assigned to 3JS");
 
         // All stick axisesssss
         axLeftDrive.setAxis(leftJoystick, 1);
@@ -225,10 +228,17 @@ public class JS_IO {
 
     // ----- gamePad only --------
     private static void a_GP() {
+        System.out.println("JS assigned to GP");
+
         // All stick axisesssss
         axLeftDrive.setAxis(gamePad, 1); // left stick Y
         axRightDrive.setAxis(gamePad, 5); // right stick Y
         axTurretRot.setAxis(gamePad, 4); // Neg = CW, Pos = CCW (left stick X?)
+
+        axLeftX.setAxis( gamePad, 0);       //Added to test drive3
+        axLeftY.setAxis( gamePad, 1);
+        axRightX.setAxis(gamePad, 4);
+        axRightY.setAxis(gamePad, 5);
 
         // Drive buttons
         btnScaledDrive.setButton(gamePad, 5); // L1
@@ -263,11 +273,18 @@ public class JS_IO {
 
     // ----------- Normal 2 Joysticks -------------
     private static void norm2JS() {
+        System.out.println("JS assigned to 2JS");
 
         // All stick axisesssss
         axLeftDrive.setAxis(leftJoystick, 1);
         axRightDrive.setAxis(rightJoystick, 1);
         axTurretRot.setAxis(coJoystick, 0);
+
+        axLeftX.setAxis(leftJoystick, 0);       //Added to test drive3
+        axLeftY.setAxis(leftJoystick, 1);
+        axRightX.setAxis(rightJoystick, 0);
+        axRightY.setAxis(rightJoystick, 1);
+
         // axClimb.setAxis(coJoystick, 1);
 
         // Drive buttons
@@ -301,6 +318,13 @@ public class JS_IO {
         axLeftDrive.setAxis(null, 0);
         axRightDrive.setAxis(null, 0);
         axTurretRot.setAxis(null, 0);
+
+        axLeftX.setAxis(null, 0);       //Added to test drive3
+        axLeftY.setAxis(null, 1);
+        axRightX.setAxis(null, 0);
+        axRightY.setAxis(null, 1);
+
+        btnSelDrv.setButton(null, 4);     //Added to test drive3
 
         btnScaledDrive.setButton(null, 0); // scale the drive
         btnInvOrientation.setButton(null, 0); // invert the orientation of the robot (joystick: forwards becomes

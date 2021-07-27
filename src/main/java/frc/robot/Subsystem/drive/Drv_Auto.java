@@ -1,10 +1,10 @@
-package frc.robot.Subsystem.drive3;
+package frc.robot.Subsystem.drive;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
-import frc.robot.Subsystem.drive3.trajFunk.*;
+import frc.robot.Subsystem.drive.trajFunk.*;
 
-public class Drv_Auto2 extends Drive {
+public class Drv_Auto extends Drive {
 
     private static ATrajFunction[] traj;
     private static boolean allFinish = false;
@@ -12,7 +12,7 @@ public class Drv_Auto2 extends Drive {
     private static int idx = 0;
 
     //Constructor.  Called with the path array
-    public Drv_Auto2() {
+    public Drv_Auto() {
     }
 
     /**Get the active Trajectories and initialize indexes.
@@ -26,15 +26,15 @@ public class Drv_Auto2 extends Drive {
         hdgRst();
         distRst();
         IO.resetCoor();
-        System.out.println("Auto2 - Init");
-    } 
+        System.out.println("Auto - Init");
+    }
 
     //OK, WTF does this do? 
     public static void update() {
         sdbUpdate();
         switch (autoStep) {
             case 0:                 //Initialize the traj funk
-                // System.out.println("Auto2 - 0");
+                System.out.println("Auto - 0");
                 ATrajFunction.initTraj(); // Sets traj[x] state to 0
                 autoStep++;
                 break;
@@ -46,8 +46,8 @@ public class Drv_Auto2 extends Drive {
                 ATrajFunction.done();
                 idx++;
                 autoStep = idx < traj.length ? 0 : autoStep++;
-                System.out.print("DONE Auto2: ");
-                System.out.println("\tCoorX: " + IO.getCoorX() + " \tCoorY " + IO.getCoorY() + " \tHdg " + hdgFB());
+                System.out.print("DONE Auto: ");
+                System.out.println("\tCoorX: " + IO.getCoorX() + "\tCoorY " + IO.getCoorY() + "\tHdg " + hdgFB() + "\tDist: " + IO.drvFeet());
                 break;
             case 3:                 //Done path
                 System.out.println("---------- ALL DONE Auto2: ");
@@ -85,5 +85,4 @@ public class Drv_Auto2 extends Drive {
         SmartDashboard.putNumber("Drv/Auto/distFB", distFB());
         SmartDashboard.putNumber("Drv/Auto/distSP", steer.getDistSP());
     }
-
 }

@@ -1,9 +1,8 @@
-package frc.robot.Subsystem.drive3;
+package frc.robot.Subsystem.drive;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
-// import frc.io.hdw_io.NavX;
 import frc.io.joysticks.JS_IO;
 
 /**
@@ -86,31 +85,32 @@ public class Drv_Teleop extends Drive {
      * Called from Robot telopPerodic every 20mS to Update the drive sub system.
      */
     public static void update() {
+        Drive.update();
         determ();
         sdbUpdate();
         switch (state) {
             case 0: // Stop Moving
-                cmdUpdate();    //Stop moving
-                break;
+            cmdUpdate(); // Stop moving
+            break;
             case 1: // Tank mode.
-                cmdUpdate(tnkLeft(), tnkRight(), 1);   //Apply Hold, swap & scaling then send
-                // Drive.update();
-                break;
+            cmdUpdate(tnkLeft(), tnkRight(), 1); // Apply Hold, swap & scaling then send
+            break;
             case 2: // Arcade mode.
-                cmdUpdate(arcMove(), arcRot(), 2);     //Apply Hold, swap & scaling then send
-                break;
+            cmdUpdate(arcMove(), arcRot(), 2); // Apply Hold, swap & scaling then send
+            break;
             case 3: // Curvature mode.
-                    cmdUpdate(curMove(), curRot(), 3); //Apply Hold, swap & scaling then send
-                break;
+            cmdUpdate(curMove(), curRot(), 3); // Apply Hold, swap & scaling then send
+            break;
             default:
-                cmdUpdate();
-                System.out.println("Invaid Drive State - " + state);
-                break;
+            cmdUpdate();
+            System.out.println("Invaid Drive State - " + state);
+            break;
         }
     }
 
     /**Initialize sdb  */
     private static void sdbInit(){
+        SmartDashboard.putNumber("Drv/Tele/Drive DB", deadband);                //push to NetworkTable, sdb
         SmartDashboard.putNumber("Drv/Tele/Drive Scale", scale);                //push to NetworkTable, sdb
     }
 
@@ -119,6 +119,7 @@ public class Drv_Teleop extends Drive {
         SmartDashboard.putNumber("Drv/Tele/state", state);
         SmartDashboard.putString("Drv/Tele/Choosen", teleDrvType[state]);
 
+        deadband = SmartDashboard.getNumber("Drv/Tele/Drive DB", deadband);
         scale = SmartDashboard.getNumber("Drv/Tele/Drive Scale", scale);
         SmartDashboard.putBoolean("Drv/Tele/scaled", scaledOutput);
         SmartDashboard.putBoolean("Drv/Tele/Front Swap", frontSwapped);
@@ -170,7 +171,7 @@ public class Drv_Teleop extends Drive {
         }
 
         // lspdOrMov *= scale();  rSpdOrRot *= scale();        //scale it all (moved to diffDrv)
-        cmdUpdate(lspdOrMov, rSpdOrRot, false, diffType);   //and send
+        cmdUpdate(lspdOrMov, rSpdOrRot, true, diffType);   //and send
     }
 
 }

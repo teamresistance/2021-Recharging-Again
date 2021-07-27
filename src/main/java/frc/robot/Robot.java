@@ -9,21 +9,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.joysticks.JS_IO;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.vision.LimeLight;
 import frc.io.hdw_io.vision.RPI;
-import frc.io.joysticks.JS_IO;
 
-// import frc.robot.auto.AutoSelector;
-// import frc.robot.auto.Trajectories;
-
-// import frc.robot.Subsystem.drive.Drive;
-// import frc.robot.Subsystem.drive3.Drv_Auto;
-import frc.robot.Subsystem.drive3.Drv_Teleop;
-// import frc.robot.Subsystem.drive3.Drv_Auto;
-// import frc.robot.Subsystem.drive3.Traj;
-import frc.robot.Subsystem.drive3.Drv_Auto2;
-import frc.robot.Subsystem.drive3.Trajectories;
+import frc.robot.Subsystem.drive.Drv_Auto;
+import frc.robot.Subsystem.drive.Drv_Teleop;
+import frc.robot.Subsystem.drive.Trajectories;
 
 import frc.robot.Subsystem.Turret;
 import frc.robot.Subsystem.ballHandler.Injector;
@@ -36,6 +29,7 @@ import edu.wpi.first.wpilibj.Relay;
 public class Robot extends TimedRobot {
     // Used to signal Auto drv/Snorfler, need to find FMSInfo call
     private static int mode = 0; // 0=Not Init, 1=autoPeriodic, 2=teleopPeriodic
+    private static boolean cmprEna = false;  //Don't need cmpr when testing drive.
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -47,15 +41,17 @@ public class Robot extends TimedRobot {
         JS_IO.init();
         Shooter.chsrInit();
 
-        Drv_Teleop.chsrInit(); // Added for Drive3 testing.
-        // AutoSelector.sdbInit();
-        // Traj.chsrInit(); // Added for Drive3 testing.
-        Trajectories.chsrInit(); // Added for Drive3 testing.
+        Drv_Teleop.chsrInit();      //Drv_Teleop init JS Chooser.
+        Trajectories.chsrInit();    //Drv_Auto init Traj Chooser.
+
+        SmartDashboard.putBoolean("Robot/Cmpr Enabled", cmprEna);
     }
 
     @Override
     public void robotPeriodic() {
-        IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
+        //System has leak.  Dont need it when testing drive.
+        cmprEna = SmartDashboard.getBoolean("Robot/Cmpr Enabled", cmprEna);
+        IO.compressorRelay.set(IO.compressor.enabled() && cmprEna ? Relay.Value.kForward : Relay.Value.kOff);
         IO.update();
         JS_IO.update();
 
@@ -67,10 +63,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         Revolver.init();
         Snorfler.init();
-
-        // AutoSelector.init();
-        // Drv_Auto.init();    //Test Drive3
-        Drv_Auto2.init();    //Test Drive3 Get Choosen trajectory
+        Drv_Auto.init();    //Drv_Auto Get Choosen trajectory
     }
 
     @Override
@@ -79,16 +72,12 @@ public class Robot extends TimedRobot {
         IO.update();
         Revolver.update();
         Snorfler.update();
-        // AutoSelector.sdbUpdate();
-        // AutoSelector.update();
-        // Drv_Auto.update();
-        Drv_Auto2.update();     //Execute choosen trajectory
+        Drv_Auto.update();     //Execute choosen trajectory
     }
 
     @Override
     public void teleopInit() {
-        // AutoSelector.disable();
-        Drv_Auto2.disable();  // Added for Drive3 testing.  Disable Auto if still executing.
+        Drv_Auto.disable();  //Disable Auto if still executing.
 
         Snorfler.init();
         Revolver.init();
@@ -98,8 +87,7 @@ public class Robot extends TimedRobot {
         LimeLight.init();
         RPI.init();
 
-        // Drive.init();
-        Drv_Teleop.init();  // Added for Drive3 testing.
+        Drv_Teleop.init();  //Drv_Teleop initialize.
     }
 
     @Override
@@ -115,8 +103,7 @@ public class Robot extends TimedRobot {
         LimeLight.update();     // Changed from sbdUpdate - AS
         RPI.sdbUpdate();
 
-        // Drive.update();
-        Drv_Teleop.update();    // Added for Drive3 testing.
+        Drv_Teleop.update();
     }
 
     @Override
@@ -127,7 +114,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         mode = 0;
-        // SmartDashboard.putNumber("Robot/Mode", mode);
     }
 
     public static int getMode() {

@@ -1,6 +1,6 @@
-package frc.robot.Subsystem.drive3.trajFunk;
+package frc.robot.Subsystem.drive.trajFunk;
 
-import frc.robot.Subsystem.drive3.Drive;
+import frc.robot.Subsystem.drive.Drive;
 import frc.util.Timer;
 
 public class CurveTurn extends ATrajFunction {

@@ -1,9 +1,9 @@
-package frc.robot.Subsystem.drive3;
+package frc.robot.Subsystem.drive;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.vision.RPI;
-import frc.robot.Subsystem.drive3.trajFunk.*;
+import frc.robot.Subsystem.drive.trajFunk.*;
 
 public class Trajectories {
     private static double dfltPwr = 0.9;
@@ -12,6 +12,7 @@ public class Trajectories {
         "getEmpty", "getSlalom", "getBarrel", "getBounce", "getSquare_TNM", "getSquare_MOH",
         "getFigure8R", "getFigure8L", "getFigure8WPT",
         "getPathRedA", "getPathBluA", "getPathRedB", "getPathBluB", "getPAthBlue", "getPathGalaxtic",
+        "getCurveTry"
     };
 
     /**Initialize Traj chooser */
@@ -66,6 +67,8 @@ public class Trajectories {
             return getPathBlue(pwr);
             case "getPathGalaxtic":
             return getPathGalaxtic(pwr);
+            case "getCurveTry":
+            return getCurveTry(pwr);
             case "getCurve1_1":
             return getCurve1_1(pwr);
             case "getCurve1_7":
@@ -84,8 +87,6 @@ public class Trajectories {
             return getCurve5_7(pwr);
             case "getCurve5_5":
             return getCurve5_5(pwr);
-            case "getCurveTry":
-            return getCurveTry(pwr);
             default:
             System.out.println("Traj/Bad Traj Desc - " + chsr.getSelected());
             return getEmpty(0);
@@ -112,70 +113,71 @@ public class Trajectories {
     // name each method by the path its doing
 
     public static ATrajFunction[] getEmpty(double pwr) {
-        ATrajFunction[] traj = { new TurnNMove(0, pwr, 0) };
+        ATrajFunction[] traj = { new TurnNMove(0.0, 0.0, pwr) };
         return traj;
     }
 
     public static ATrajFunction[] getSlalom(double pwr) {
         ATrajFunction traj[] = {
-            new TurnNMove(0, pwr, 2.5), 
-            new TurnNMove(-55, pwr, 5.17), 
-            new TurnNMove(0, pwr, 8.5),
-            new TurnNMove(57, pwr, 3.2),
-            new TankTurnHdg(135, 0, .80),
-            new TurnNMove(132, pwr, 5),
-            new TurnNMove(180, pwr, 8.5), 
-            new TurnNMove(-125, pwr, 4.57),
-            new TurnNMove(180, pwr, 2)
+            new TurnNMove(0,    2.5, pwr), 
+            new TurnNMove(-55, 5.17, pwr), 
+            new TurnNMove(0,    8.5, pwr),
+            new TurnNMove(57,   3.2, pwr),
+            new TankTurnHdg(135, 0.0,  0.80),
+            new TurnNMove(132,  5.0, pwr),
+            new TurnNMove(180,  8.5, pwr), 
+            new TurnNMove(-125,4.57, pwr),
+            new TurnNMove(180,  2.0, pwr)
         };
         return traj;
     }
 
     public static ATrajFunction[] getBarrel(double pwr) {
         ATrajFunction[] traj = {
-            new TurnNMove(0.0,1.0,5.7),
+            new TurnNMove(0.0, 5.7, 1.0),
             new TankTurnHdg(-10.0, 0.75, 0.1),    //Turn to the right
-            new TurnNMove(0.0,1.0, 1.0),    //Test Traj
+            new TurnNMove(0.0, 1.0, 1.0),    //Test Traj
 
-            // new TurnNMove(0,100, 5),
-            // new TankTurnHdg(40, .1, .85),
-            // new TurnNMove(44, 100, 4.4),
-            // new TankTurnHdg(-165, .1, .9),
-            // new TurnNMove(180, 100, 18)
+            // new TurnNMove(0.0, 5.0, 1.0),
+            // new TankTurnHdg(40.0, 0.1, 0.85),
+            // new TurnNMove(44.0, 4.4, 1.0),
+            // new TankTurnHdg(-165.0, 0.1, 0.9),
+            // new TurnNMove(180, 18, 100)
         };
         return traj;
     }
 
     public static ATrajFunction[] getBounce(double pwr) {
         ATrajFunction[] traj = {
-            new TurnNMove(0, pwr, 3), //2.8
-            new TurnNMove(270, pwr, 3.4), //3.2
-            new TurnNMove(270, pwr, -2.5),
-            new TurnNMove(230, pwr, -5.5), //6.3
-            new TurnNMove(315, pwr, 1.8), 
-            new TurnNMove(270, pwr, 7.3), //6.8
-            new TurnNMove(270, pwr, -6.2), //6.8
-            new TurnNMove(0, pwr, 5.7), //6
-            new TurnNMove(270, pwr, 8.2),
-            new TurnNMove(270, pwr, -1.8), //2.4
-            new TurnNMove(-10, pwr, 4)
+            new TurnNMove(0,   3.0, pwr), //2.8
+            new TurnNMove(270, 3.4, pwr), //3.2
+            new TurnNMove(270,-2.5, pwr),
+            new TurnNMove(230,-5.5, pwr), //6.3
+            new TurnNMove(315, 1.8, pwr), 
+            new TurnNMove(270, 7.3, pwr), //6.8
+            new TurnNMove(270,-6.2, pwr), //6.8
+            new TurnNMove(0,   5.7, pwr), //6
+            new TurnNMove(270, 8.2, pwr),
+            new TurnNMove(270,-1.8, pwr), //2.4
+            new TurnNMove(-10, 4.0, pwr)
          };
         return traj;
     }
 
     /**Runs a figure 8 pattern using various trajectory functions. First turn to the right.
      * Uses MoveOnHdg for straight runs.
+     * <p>Est. for various radii
+     * <p> 3.5' right 0.72.0, 0.0
      */
     public static ATrajFunction[] getFigure8R(double pwr) {
-        // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
         ATrajFunction traj[] = {
-        new TankTurnHdg(180, 0.85, 0.0), //Turn right half circle
-        new TankTurnHdg(45, 0.85, 0.0),  //continue circle to 30, more then 360.
-        new MoveOnHdg(45, 1.0, 6.4),
-        new TankTurnHdg(-180, 0.0, 0.85), //Turn left half circle
-        new TankTurnHdg(135, 0.0, 0.85),  //continue circle to 30, more then 360.
-        new MoveOnHdg(135, 1.0, 6.4),
-        new TankTurnHdg(-10, 0.85, 0.0), //Turn right half circle
+        new MoveOnHdg(0.0, 5.0),
+        new CirToHdgTank(3.5, 5.5, 3.5, 135.0, -0.71, 0.0 ), //Turn right half circle
+        // new CirToHdgTank(3.5, 0.0, 3.5, 270.0, 0.8, -0.2 ), //Turn right half circle
+        // new CirToHdgTank(3.5, 0.0, 3.5, 45.0, 0.8, -0.2 ), //Turn right half circle
+        // new MoveOnHdg(45, 6.4, 1.0),
+
+        // new CirToHdgTank(-3.5, 0.0, 3.5, -135.0, -0.2, 0.8 ), //Turn left half circle
         };
         return traj;
     }
@@ -188,10 +190,10 @@ public class Trajectories {
         ATrajFunction traj[] = {
         new TankTurnHdg(180, 0.1, 0.85), //Turn left half circle
         new TankTurnHdg(-30, 0.1, 0.85),  //continue circle to 30, more then 360.
-        new MoveOnHdg(-30, 1.0, 11.0),
+        new MoveOnHdg(-30.0, 11.0, 1.0),
         new TankTurnHdg(-180, 0.85, 0.1), //Turn right half circle
         new TankTurnHdg(-150, 0.85, 0.1),  //continue circle to 30, more then 360.
-        new MoveOnHdg(-150, 1.0, 11.0),
+        new MoveOnHdg(-150, 11.0, 1.0),
         new TankTurnHdg(10, 0.1, 0.85), //Turn left half circle
         };
         return traj;
@@ -201,19 +203,13 @@ public class Trajectories {
      * Uses Waypoints for straight runs.
      */
     public static ATrajFunction[] getFigure8WPT(double pwr) {
-        // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
+        pwr = 0.8;
         ATrajFunction traj[] = {
-        // new TankTurnHdg(180, 0.85, 0.1), //Turn right half circle
-        // new TankTurnHdg(45, 0.85, 0.1),  //continue circle to 30, more then 360.
-        new CurveCirToHdg(0.0, 2.3, 2.3, 135.0, 0.55, 0.2),
-        new CurveCirToHdg(0.0, 2.3, 2.3, 310.0, 0.55, 0.2),
-        new CurveCirToHdg(0.0, 2.3, 2.3, 45.0, 0.55, 0.2),
-        // new Waypt(3.9, 4.9, 1.0),
-        // new TankTurnHdg(-180, 0.0, 0.85), //Turn left half circle
-        // new TankTurnHdg(135, 0.0, 0.85),  //continue circle to 30, more then 360.
-        // new CurveCirToHdg(0.0, 6.5, 2.3, 45.0, 0.85, -0.8),
-        // new Waypt(3.9, 1.6, 1.0),
-        // new TankTurnHdg(-10, 0.85, 0.0), //Turn right half circle
+            new Waypt(0.0, 5.5, 0.6),
+            new Waypt(-5.5, 5.5, pwr, 15),
+            new Waypt(-5.5, 0.0, pwr, 15),
+            new Waypt(0.0, 0.0, pwr, 15),
+            new TankTurnHdg(5, -0.8, 0.8),
         };
         return traj;
     }
@@ -222,11 +218,11 @@ public class Trajectories {
     public static ATrajFunction[] getSquare_TNM(double pwr) {
         // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
         ATrajFunction traj[] = {
-        new TurnNMove(0, pwr, 6),
-        new TurnNMove(90, pwr, 6),
-        new TurnNMove(180, pwr, 6),
-        new TurnNMove(270, pwr, 6),
-        new TurnNMove(360, pwr, 0)
+        new TurnNMove(0,   6, pwr),
+        new TurnNMove(90,  6, pwr),
+        new TurnNMove(180, 6, pwr),
+        new TurnNMove(270, 6, pwr),
+        new TurnNMove(360, 0, pwr)
         };
         return traj;
     }
@@ -235,11 +231,17 @@ public class Trajectories {
     public static ATrajFunction[] getSquare_MOH(double pwr) {
         // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
         ATrajFunction traj[] = {
-            new MoveOnHdg(0, pwr, 5),
-            new MoveOnHdg(90, pwr, 6),
-            new MoveOnHdg(180, pwr, 6),
-            new MoveOnHdg(270, pwr, 6),
-            new MoveOnHdg(360, pwr, 0)
+            new MoveOnHdg(0,   6, pwr),
+            new MoveOnHdg(90,  6, pwr),
+            new MoveOnHdg(180, 6, pwr),
+            new MoveOnHdg(270, 6, pwr),
+            // new MoveOnHdg2(350, 6, pwr),
+            new MoveOnHdg(90, 0, pwr),
+            new MoveOnHdg(90,  6, pwr),
+            new MoveOnHdg(0, 6, pwr),
+            new MoveOnHdg(-90, 6, pwr),
+            new MoveOnHdg(-180, 6, pwr),
+            new MoveOnHdg(-350, 0, pwr),
         };
         return traj;
     }
@@ -248,49 +250,59 @@ public class Trajectories {
     //------------- Path in name open Snorfler --------------
     public static ATrajFunction[] getPathRedA(double pwr) {
         ATrajFunction[] traj = {
-            new TurnNMove(0, pwr, 3),
-            new TurnNMove(25, pwr, 5.3),
-            new TurnNMove(-85, pwr, 6.2),
-            new TurnNMove(0, pwr, 10.3)
+            new SnorfDrvAuto(true),
+            new TurnNMove(0,   3.0, pwr),
+            new TurnNMove(25,  5.3, pwr),
+            new TurnNMove(-85, 6.2, pwr),
+            new TurnNMove(0,  10.3, pwr),
+            new SnorfDrvAuto(false)
          };
         return traj;
     }
 
     public static ATrajFunction[] getPathBluA(double pwr) {
         ATrajFunction[] traj = { 
-            new TurnNMove(22, pwr, 9.3),
-            new TurnNMove(-70, pwr, 6.5),
-            new TurnNMove(27, pwr, 4),
-            new TurnNMove(10, pwr, 4)
+            new SnorfDrvAuto(true),
+            new TurnNMove(22,  9.3, pwr),
+            new TurnNMove(-70, 6.5, pwr),
+            new TurnNMove(27,  4.0, pwr),
+            new TurnNMove(10,  4.0, pwr),
+            new SnorfDrvAuto(false)
         };
         return traj;
     }
 
     public static ATrajFunction[] getPathRedB(double pwr) {
         ATrajFunction[] traj = {
-            new TurnNMove(-33, 65, 3.5),
-            new TurnNMove(40, pwr, 7),
-            new TurnNMove(-60, pwr, 7.1),
-            new TurnNMove(-10, pwr, 6.5)
+            new SnorfDrvAuto(true),
+            new TurnNMove(-33, 3.5, 65),
+            new TurnNMove(40,  7.0, pwr),
+            new TurnNMove(-60, 7.1, pwr),
+            new TurnNMove(-10, 6.5, pwr),
+            new SnorfDrvAuto(false)
          };
         return traj;
     }
 
     public static ATrajFunction[] getPathBluB(double pwr) {
         ATrajFunction[] traj = {
-            new TurnNMove(11, pwr, 11),
-            new TurnNMove(-60, pwr, 5),
-            new TurnNMove(40, pwr, 4),
-            new TurnNMove(20, pwr, 4)
+            new SnorfDrvAuto(true),
+            new TurnNMove(11,  1.0, pwr),
+            new TurnNMove(-60, 5.0, pwr),
+            new TurnNMove(40,  4.0, pwr),
+            new TurnNMove(20,  4.0, pwr),
+            new SnorfDrvAuto(false)
          };
         return traj;
     }
 
     public static ATrajFunction[] getPathBlue(double pwr) {
         ATrajFunction[] traj = {
-            new TurnNMove(21, pwr, 9.5),  //Move to BlueA ball1
-            new TurnNMove(-72, pwr, 8.7),  //Move to B6 thru BlueB ball1
-            new TurnNMove(48, pwr, 10.0),   //Move to BlueAB ball3
+            new SnorfDrvAuto(true),
+            new TurnNMove(21,  9.5, pwr),  //Move to BlueA ball1
+            new TurnNMove(-72, 8.7, pwr),  //Move to B6 thru BlueB ball1
+            new TurnNMove(48, 10.0, pwr),   //Move to BlueAB ball3
+            new SnorfDrvAuto(false)
          };
         return traj;
     }
@@ -320,10 +332,11 @@ public class Trajectories {
 
     public static ATrajFunction[] getCurveTry(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(1.0, -0.9, 1.0),
-            new CurveTurn(1.0, 0.9, 1.0),
-            new TurnNMove(0.0, 1.0, 4.0),
-            new CurveTurn(1.0, 1.0, 1.0),
+            new MoveOnHdg(0.0, 3.5, 1.0),
+            new CirToHdgCurve(2.5, 3.5, 2.5, 135, 1.0, 0.5),
+            // new CurveTurn(1.0, 0.9, 1.0),
+            // new TurnNMove(0.0, 1.0, 4.0),
+            // new CurveTurn(1.0, 1.0, 1.0),
         };
         return traj;
     }
