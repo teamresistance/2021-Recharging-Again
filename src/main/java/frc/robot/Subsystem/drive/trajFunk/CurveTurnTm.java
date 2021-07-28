@@ -3,15 +3,19 @@ package frc.robot.Subsystem.drive.trajFunk;
 import frc.robot.Subsystem.drive.Drive;
 import frc.util.Timer;
 
-public class CurveTurn extends ATrajFunction {
+public class CurveTurnTm extends ATrajFunction {
 
-    private double pwrMx = 0;
+    private double fwd = 0;
     private double rot = 0;
     private double time = 0;
     private Timer curveTime;
 
-    public CurveTurn(double ePWR, double eROT, double eTime) {
-        pwrMx = ePWR;
+/**
+ * This ATrajFunction uses Curvature drive to circle for a time period.
+ * The rotation (JSX), fwd speed (JSY) and time period are passed.
+ */
+public CurveTurnTm(double eFwd, double eROT, double eTime) {
+        fwd = eFwd;
         rot = eROT;
         time = eTime;
         curveTime = new Timer(eTime);
@@ -24,7 +28,7 @@ public class CurveTurn extends ATrajFunction {
                 break;
             case 1:
                 // diffDrv.curvatureDrive(pwr, rot, false);
-                Drive.cmdUpdate(pwrMx, rot, true, 3);
+                Drive.cmdUpdate(fwd, rot, false, 3);
                 if (curveTime.hasExpired(time, state)) {
                     state++;
                 }

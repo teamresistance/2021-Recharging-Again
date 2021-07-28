@@ -1,3 +1,12 @@
+/*
+Desc.  This is a super class for control of autonomous driving methods and
+other autonomous subsystems, ie. Snorfler.
+
+History:
+3/1/2020 - Kinfe Bankole - Initial release
+7/11    - JCH - Chgd to PIDX from TSteer and some cleanup
+*/
+
 package frc.robot.Subsystem.drive.trajFunk;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

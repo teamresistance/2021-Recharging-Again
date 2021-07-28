@@ -5,8 +5,8 @@ import frc.util.PIDXController;
 
 /**
  * This ATrajFunction uses Curve drive to circle a radius distance.
- * It calculates the radius to control the rotation(X) command from the
- * present XY position in IO to the center XY passed.  The forward(Y) command
+ * It calculates the radius to control the rotation(JSX) command from the
+ * present XY position in IO to the center XY passed.  The forward(JSY) command
  * is calculated until heading is reached.
  */
 public class CirToHdgCurve extends ATrajFunction {

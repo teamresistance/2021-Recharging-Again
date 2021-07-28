@@ -7,6 +7,8 @@ import frc.util.PIDXController;
  * This ATrajFunction calculates a heading and distance from the 
  * present XY position in IO and the Waypoint XY passed.  It then
  * steers on the calculated hdg & distance.
+ * <p>IF hdgErrLT is included then this turns to hdg THEN moves 
+ * on hdg for distance.  Found this to be more accurate.
  */
 public class Waypt extends ATrajFunction {
 

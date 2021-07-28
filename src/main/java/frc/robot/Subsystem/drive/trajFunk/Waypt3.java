@@ -8,7 +8,7 @@ import frc.util.PIDXController;
  * present XY position in IO and the Waypoint XY passed.  It then
  * steers on the calculated hdg & distance.
  * <p>This version hdg & dist are continuously recalculated.
- * <p>Doesn't seemto work well may takeanother  look.
+ * <p>Doesn't seem to work well may take another look.
  */
 public class Waypt3 extends ATrajFunction {
 

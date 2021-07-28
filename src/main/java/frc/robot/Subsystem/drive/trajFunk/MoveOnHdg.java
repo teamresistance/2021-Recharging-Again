@@ -4,7 +4,7 @@ import frc.robot.Subsystem.drive.Drive;
 import frc.util.PIDXController;
 
 /**
- * This ATrajFunction turns to heading passed while it moves distance passed.
+ * This ATrajFunction holds heading while it moves distance.
  */
 public class MoveOnHdg extends ATrajFunction {
 

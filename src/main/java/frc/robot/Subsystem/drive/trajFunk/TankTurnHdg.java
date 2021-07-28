@@ -4,7 +4,7 @@ import frc.robot.Subsystem.drive.Drive;
 import frc.util.PIDXController;
 
 /**
- * This AutoFunction turns to passed heading using tank drive.
+ * This AutoFunction uses Tank drive to turn to heading.
  */
 public class TankTurnHdg extends ATrajFunction {
 

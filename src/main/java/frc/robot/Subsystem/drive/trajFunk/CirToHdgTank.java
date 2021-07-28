@@ -3,6 +3,13 @@ package frc.robot.Subsystem.drive.trajFunk;
 import frc.robot.Subsystem.drive.Drive;
 import frc.util.PIDXController;
 
+/**
+ * This ATrajFunction uses Tank drive to circle a radius distance.
+ * It calculates the radius to control the inside(JSX) wheel command from the
+ * present XY position in IO to the center XY passed.  The outside(JSY) command
+ * is calculated until heading is reached.
+ * NOTE: May need to control the outside and hold the inside.  Testing.
+ */
 public class CirToHdgTank extends ATrajFunction {
 
     private double ctrX;

@@ -4,7 +4,7 @@ import frc.robot.Subsystem.drive.Drive;
 import frc.util.PIDXController;
 
 /**
- * This AutoFunction turns to passed heading then moves passed distance.
+ * This AutoFunction uses Arcade to turn to heading THEN moves distance.
  */
 public class TurnNMove extends ATrajFunction {
 
