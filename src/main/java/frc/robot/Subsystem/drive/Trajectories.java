@@ -343,63 +343,63 @@ public class Trajectories {
 
     public static ATrajFunction[] getCurve1_1(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(1.0, 1.0, 3.0)
+            new CurveTurnTm(1.0, 1.0, 3.0)
         };
         return traj;
     }
 
     public static ATrajFunction[] getCurve1_7(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(1.0, 0.75, 3.0)
+            new CurveTurnTm(1.0, 0.75, 3.0)
         };
         return traj;
     }
 
     public static ATrajFunction[] getCurve1_5(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(1.0, 0.5, 3.0)
+            new CurveTurnTm(1.0, 0.5, 3.0)
         };
         return traj;
     }
 
     public static ATrajFunction[] getCurve7_1(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(0.75, 1.0, 3.0)
+            new CurveTurnTm(0.75, 1.0, 3.0)
         };
         return traj;
     }
 
     public static ATrajFunction[] getCurve7_7(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(0.75, 0.75, 3.0)
+            new CurveTurnTm(0.75, 0.75, 3.0)
         };
         return traj;
     }
 
     public static ATrajFunction[] getCurve7_5(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(0.75, 0.5, 3.0)
+            new CurveTurnTm(0.75, 0.5, 3.0)
         };
         return traj;
     }
 
     public static ATrajFunction[] getCurve5_1(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(0.5, 1.0, 3.0)
+            new CurveTurnTm(0.5, 1.0, 3.0)
         };
         return traj;
     }
 
     public static ATrajFunction[] getCurve5_7(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(0.5, 0.75, 3.0)
+            new CurveTurnTm(0.5, 0.75, 3.0)
         };
         return traj;
     }
 
     public static ATrajFunction[] getCurve5_5(double fwd) {
         ATrajFunction traj[] = {
-            new CurveTurn(0.5, 0.5, 3.0)
+            new CurveTurnTm(0.5, 0.5, 3.0)
         };
         return traj;
     }
