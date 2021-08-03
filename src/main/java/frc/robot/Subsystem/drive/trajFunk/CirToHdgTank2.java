@@ -66,7 +66,7 @@ public class CirToHdgTank2 extends ATrajFunction {
 
         pidDist = new PIDXController(1.0/0.4, 0.0, 0.0);
             //Set extended values pidCtlr, SP, DB, Mn, Mx, Exp, Cmp
-            setExt(pidDist, radiusSP, 0.0, 0.0, 0.5, 1.0, false);
+            PIDXController.setExt(pidDist, radiusSP, 0.0, 0.0, 0.5, 1.0, false);
             pidDist.setIntegratorRange(-0.5, 0.5);  //Limt integration to +/-
             pidDist.setOutFF(turnRight ? lCmd : rCmd);  //Inside whl
             //--------- maybe ------------
@@ -78,25 +78,29 @@ public class CirToHdgTank2 extends ATrajFunction {
             state++;
             System.out.println("CHT2 - 0 \thdgSP: " + pidHdg.getSetpoint() + "\tdistSP: " + pidDist.getSetpoint());
         case 1: // Turn to heading.  Mx spd on out whl.  Hold radius on inside whl.
-            strCmd[0] = turnRight ? lCmd : rCmd;                    //cmd[0]=Outside
-            strCmd[0] += pidDist.calculateX(radiusFB(ctrX, ctrY));  //outside radius offset
-            strCmd[1] = turnRight ? rCmd : lCmd;                    //cmd[1]=Inside
+            trajCmd[0] = turnRight ? lCmd : rCmd;                    //cmd[0]=Outside
+            trajCmd[0] += pidDist.calculateX(radiusFB(ctrX, ctrY));  //outside radius offset
+            trajCmd[1] = turnRight ? rCmd : lCmd;                    //cmd[1]=Inside
             //--------- maybe ------------
             // strCmd[0] = pidDist.calculateX(radiusFB(ctrX, ctrY));   //outside w/ radius offset
             // strCmd[1] = turnRight ? rCmd : lCmd;                    //cmd[1]=Inside
 
-            System.out.println("rad cmd0: " + strCmd[0] + "\tcmd1: " + strCmd[1] );
+            System.out.println("rad cmd0: " + trajCmd[0] + "\tcmd1: " + trajCmd[1] );
             if(turnRight){      //If left is inside wheel
-                Drive.cmdUpdate(strCmd[0], strCmd[1], false, 1); //Turning right, left whl is outside
+                Drive.cmdUpdate(trajCmd[0], trajCmd[1], false, 1); //Turning right, left whl is outside
             }else{              //else right is inside wheel
-                Drive.cmdUpdate(strCmd[1], strCmd[0], false, 1); //Turning left, right whl is outside
+                Drive.cmdUpdate(trajCmd[1], trajCmd[0], false, 1); //Turning left, right whl is outside
             }
             if (pidHdg.atSetpoint()) state++;    // Chk hdg only
             prtShtuff("CHT2");
             break;
         case 2: // Done
-            done();
-            System.out.println("CHT2 - 2: Final Inside Cmd: " + strCmd[turnRight ? 1 : 0]);
+            setDone();
+            System.out.println("CHT2 - 2: Final Inside Cmd: " + trajCmd[turnRight ? 1 : 0]);
+            break;
+        default:
+            setDone();
+            System.out.println("CHT2 - Dflt: ------  Bad state  ----");
             break;
         }
         updSDB();

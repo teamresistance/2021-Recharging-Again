@@ -23,19 +23,23 @@ public CurveTurnTm(double eFwd, double eROT, double eTime) {
 
     public void execute() {
         switch (state) {
-            case 0:
+        case 0:
+            state++;
+            break;
+        case 1:
+            // diffDrv.curvatureDrive(pwr, rot, false);
+            Drive.cmdUpdate(fwd, rot, false, 3);
+            if (curveTime.hasExpired(time, state)) {
                 state++;
-                break;
-            case 1:
-                // diffDrv.curvatureDrive(pwr, rot, false);
-                Drive.cmdUpdate(fwd, rot, false, 3);
-                if (curveTime.hasExpired(time, state)) {
-                    state++;
-                }
-                break;
-            case 2:
-                done();
-                break;
+            }
+            break;
+        case 2:
+            setDone();
+            break;
+        default:
+            setDone();
+            System.out.println("Snf - Dflt: ------  Bad state  ----");
+            break;
         }
     }
 }

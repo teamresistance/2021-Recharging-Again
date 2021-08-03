@@ -24,8 +24,12 @@ public class SnorfDrvAuto extends ATrajFunction {
             state++;
             System.out.println("Snf - 0: ---------- Init -----------");
         case 1:
-            done();
+            setDone();
             System.out.println("Snf - 1: ---------- Done -----------");
+            break;
+        default:
+            setDone();
+            System.out.println("Snf - Dflt: ------  Bad state  ----");
             break;
         }
     }

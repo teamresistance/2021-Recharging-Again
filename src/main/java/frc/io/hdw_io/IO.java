@@ -180,7 +180,8 @@ public class IO {
      * <p>Needs to be called periodically from IO.update called in robotPeriodic in Robot.
      */
     public static void coorUpdate(){
-        prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;   //Distance since last reset.
+        // prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;   //Distance since last reset.
+        prstDist = drvFeet();   //Distance since last reset.
         deltaD = prstDist - prvDist;                        //Distancce this pass
         prvDist = prstDist;                                 //Save for next pass
 
@@ -189,8 +190,8 @@ public class IO {
         if (Math.abs(deltaD) > 0.2) deltaD = 0.0;       //Skip this update if too large.
 
         if (Math.abs(deltaD) > 0.0){    //Deadband for encoders if needed (vibration?).  Presently set to 0.0
-            coorY += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle())) * 1.10;
-            coorX += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle())) * 1.05;
+            coorY += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle())) * 1.0;
+            coorX += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle())) * 1.1;
         }
     }
 

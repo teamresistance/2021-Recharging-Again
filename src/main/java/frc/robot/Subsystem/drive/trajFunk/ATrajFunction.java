@@ -20,12 +20,14 @@ import frc.util.PIDXController;
 public abstract class ATrajFunction {
 
     public static int state = 0;
-    public static boolean finished = false;
+    private static boolean done = false;
     public static PIDXController pidHdg, pidDist;
 
     public static double hdgFB() {return IO.navX.getNormalizeTo180();}  //Only need hdg to Hold Angle 0 or 180
     public static double distFB() {return IO.drvFeet();}  //Only need hdg to Hold Angle 0 or 180
-    public static double[] strCmd = new double[2];
+    public static double[] trajCmd = new double[2];
+    public static boolean sqOrQT = false;
+    public static int diffType = 0;
 
     public static double hdgFB = 0;     //For simulator testing
     public static double distFB = 0;
@@ -34,7 +36,7 @@ public abstract class ATrajFunction {
 
     public static void initTraj() {
         state = 0;
-        finished = false;
+        done = false;
         System.out.println("ATraj - Init");
     }
 
@@ -43,28 +45,35 @@ public abstract class ATrajFunction {
 
     }
 
-    public static void done() {
-        finished = true;
+    public static void setDone() {
+        done = true;
+        // Drive.cmdUpdate();      //Stop motors
     }
 
-    public static boolean finished() {
-        return finished;
+    public static boolean getDone() {
+        return done;
     }
+
+    public static double[] getTrajCmd(){ return trajCmd; }
+
+    public static boolean getSqOrQT(){ return sqOrQT; }
+
+    public static int getDiffType(){ return diffType; }
 
     //------------------------------ Helper methods ------------------------
 
-    /**In a PIDXController set extended values for
-     * <p> SP, DB, Mn, Mx, Exp, Cmp
-     */
-    public static void setExt(PIDXController aPidX, double sp, double db, 
-    /*                      */double mn, double mx,double exp, Boolean clmp){
-        aPidX.setSetpoint(sp);
-        aPidX.setInDB(db);
-        aPidX.setOutMn(mn);
-        aPidX.setOutMx(mx);
-        aPidX.setOutExp(exp);
-        aPidX.setClamp(clmp);
-    }
+    // /**In a PIDXController set extended values for
+    //  * <p> SP, DB, Mn, Mx, Exp, Cmp
+    //  */
+    // public static void setExt(PIDXController aPidX, double sp, double db, 
+    // /*                      */double mn, double mx,double exp, Boolean clmp){
+    //     aPidX.setSetpoint(sp);
+    //     aPidX.setInDB(db);
+    //     aPidX.setOutMn(mn);
+    //     aPidX.setOutMx(mx);
+    //     aPidX.setOutExp(exp);
+    //     aPidX.setClamp(clmp);
+    // }
 
     /**
      * Calculate the heading & distance from existing coor to coor passed.
@@ -135,70 +144,43 @@ public abstract class ATrajFunction {
 
     /**Trajectory SDB initialize */
     public static void initSDB() {
-        initSDBPid(pidHdg, "pidHdg");
-        initSDBPid(pidDist, "pidDist");
+        PIDXController.initSDBPid(pidHdg, "Auto/pidHdg");
+        PIDXController.initSDBPid(pidDist, "Auto/pidDist");
 
-        SmartDashboard.putNumber("Drv/pidTst/1_HdgOut", pidHdg.getOut());
-        SmartDashboard.putNumber("Drv/pidTst/2_HdgAdj", pidHdg.getAdj());
-        SmartDashboard.putBoolean("Drv/pidTst/3_atSP", pidHdg.atSetpoint());
+        SmartDashboard.putNumber("Drv/Auto/pidTst/1_HdgOut", pidHdg.getOut());
+        SmartDashboard.putNumber("Drv/Auto/pidTst/2_HdgAdj", pidHdg.getAdj());
+        SmartDashboard.putBoolean("Drv/Auto/pidTst/3_atSP", pidHdg.atSetpoint());
 
-        SmartDashboard.putNumber("Drv/pidTst/A_DistOut", pidDist.getOut());
-        SmartDashboard.putNumber("Drv/pidTst/B_DistAdj", pidDist.getAdj());
-        SmartDashboard.putBoolean("Drv/pidTst/C_atSP", pidDist.atSetpoint());
+        SmartDashboard.putNumber("Drv/Auto/pidTst/A_DistOut", pidDist.getOut());
+        SmartDashboard.putNumber("Drv/Auto/pidTst/B_DistAdj", pidDist.getAdj());
+        SmartDashboard.putBoolean("Drv/Auto/pidTst/C_atSP", pidDist.atSetpoint());
     }
 
     /**Trajectory SDB update */
     public static void updSDB() {
-        updSDBPid(pidHdg, "pidHdg");
-        updSDBPid(pidDist, "pidDist");
+        PIDXController.updSDBPid(pidHdg, "Auto/pidHdg");
+        PIDXController.updSDBPid(pidDist, "Auto/pidDist");
 
-        SmartDashboard.putNumber("Drv/pidTst/1_HdgOut", pidHdg.getOut());
-        SmartDashboard.putNumber("Drv/pidTst/2_HdgAdj", pidHdg.getAdj());
-        SmartDashboard.putBoolean("Drv/pidTst/3_atSP", pidHdg.atSetpoint());
+        SmartDashboard.putNumber( "Drv/Auto/pidTst/1_HdgOut", pidHdg.getOut());
+        SmartDashboard.putNumber( "Drv/Auto/pidTst/2_HdgAdj", pidHdg.getAdj());
+        SmartDashboard.putBoolean("Drv/Auto/pidTst/3_atSP", pidHdg.atSetpoint());
 
-        SmartDashboard.putNumber("Drv/pidTst/A_DistOut", pidDist.getOut());
-        SmartDashboard.putNumber("Drv/pidTst/B_DistAdj", pidDist.getAdj());
-        SmartDashboard.putBoolean("Drv/pidTst/C_atSP", pidDist.atSetpoint());
+        SmartDashboard.putNumber( "Drv/Auto/pidTst/A_DistOut", pidDist.getOut());
+        SmartDashboard.putNumber( "Drv/Auto/pidTst/B_DistAdj", pidDist.getAdj());
+        SmartDashboard.putBoolean("Drv/Auto/pidTst/C_atSP", pidDist.atSetpoint());
 
-        SmartDashboard.putNumber("Drv/pidTst/M_CoorX", IO.getCoorX());
-        SmartDashboard.putNumber("Drv/pidTst/M_CoorY", IO.getCoorY());
-    }
-
-    /**Initialize SDB for a PIDXController.  Note groups limited to 10 */
-    private static void initSDBPid(PIDXController pidCtlr, String pidTag) {
-        SmartDashboard.putNumber("Drv/" + pidTag +"/1_P", pidCtlr.getP());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/2_I", pidCtlr.getI());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/3_D", pidCtlr.getD());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/4_SP",pidCtlr.getSetpoint());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/5_FB", pidCtlr.getInFB());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/6_DB", pidCtlr.getInDB());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/7_Mn", pidCtlr.getOutMn());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/8_Mx", pidCtlr.getOutMx());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/9_FF", pidCtlr.getOutFF());
-        SmartDashboard.putNumber("Drv/" + pidTag +"/A_Exp",pidCtlr.getOutExp());
-    }
-
-    /**Update SDB for a PIDXController.  Note groups limited to 10 */
-    private static void updSDBPid(PIDXController pidCtlr, String pidTag) {
-        pidCtlr.setP( SmartDashboard.getNumber("Drv/" + pidTag +"/1_P", pidCtlr.getP()));
-        pidCtlr.setI( SmartDashboard.getNumber("Drv/" + pidTag +"/2_I", pidCtlr.getI()));
-        pidCtlr.setD( SmartDashboard.getNumber("Drv/" + pidTag +"/3_D", pidCtlr.getD()));
-        pidCtlr.setSetpoint( SmartDashboard.getNumber("Drv/" + pidTag +"/4_SP", pidCtlr.getSetpoint()));
-        SmartDashboard.putNumber("Drv/" + pidTag +"/5_FB", pidCtlr.getInFB());
-        pidCtlr.setInDB( SmartDashboard.getNumber("Drv/" + pidTag +"/6_DB", pidCtlr.getInDB()));
-        pidCtlr.setOutMn( SmartDashboard.getNumber("Drv/" + pidTag +"/7_Mn", pidCtlr.getOutMn()));
-        pidCtlr.setOutMx( SmartDashboard.getNumber("Drv/" + pidTag +"/8_Mx", pidCtlr.getOutMx()));
-        pidCtlr.setOutFF( SmartDashboard.getNumber("Drv/" + pidTag +"/9_FF", pidCtlr.getOutFF()));
-        pidCtlr.setOutExp( SmartDashboard.getNumber("Drv/" + pidTag +"/A_Exp", pidCtlr.getOutExp()));
+        SmartDashboard.putNumber("Drv/Auto/pidTst/M_CoorX", IO.getCoorX());
+        SmartDashboard.putNumber("Drv/Auto/pidTst/M_CoorY", IO.getCoorY());
     }
 
     /**Print common stuff for pidHdg, pidDist & coors XY.  Pid SP, FB & cmd
      * @param traj name (tag) to ID the print as "tag - state:"
      */
     public static void prtShtuff(String traj){
-        System.out.println(traj + " - " + state + ":\tdist   SP: " + pidDist.getSetpoint() + "\tFB: " + pidDist.getInFB() + "\tcmd: " + pidDist.getAdj());
+        System.out.println(traj + " - " + state + ": Feet\t" + IO.drvFeet());
+        System.out.println("\t\tdist   SP: " + pidDist.getSetpoint() + "\tFB: " + pidDist.getInFB() + "\tcmd: " + pidDist.getAdj());
         System.out.println("\t\thdg\tSP: " + pidHdg.getSetpoint() + "\tFB: " + pidHdg.getInFB() + "\tcmd: " + pidHdg.getAdj());
-        System.out.println("Coor\tX: " + IO.getCoorX() + "\tY " + IO.getCoorY() + "\tHdg " + pidHdg.getInFB());
+        System.out.println("\tCoor\tX: " + IO.getCoorX() + "\tY " + IO.getCoorY() + "\tHdg " + pidHdg.getInFB());
     }
 
 }

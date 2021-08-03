@@ -14,6 +14,7 @@ import frc.io.hdw_io.IO;
 import frc.io.hdw_io.vision.LimeLight;
 import frc.io.hdw_io.vision.RPI;
 
+import frc.robot.Subsystem.drive.Drive;
 import frc.robot.Subsystem.drive.Drv_Auto;
 import frc.robot.Subsystem.drive.Drv_Teleop;
 import frc.robot.Subsystem.drive.Trajectories;
@@ -39,8 +40,8 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         IO.init();
         JS_IO.init();
-        Shooter.chsrInit();
 
+        Shooter.chsrInit();         //Shooter preset RPMs Chooser
         Drv_Teleop.chsrInit();      //Drv_Teleop init JS Chooser.
         Trajectories.chsrInit();    //Drv_Auto init Traj Chooser.
 
@@ -49,7 +50,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        //System has leak.  Dont need it when testing drive.
+        //Pneu. system has leak.  Dont need it when testing drive.
         cmprEna = SmartDashboard.getBoolean("Robot/Cmpr Enabled", cmprEna);
         IO.compressorRelay.set(IO.compressor.enabled() && cmprEna ? Relay.Value.kForward : Relay.Value.kOff);
         IO.update();

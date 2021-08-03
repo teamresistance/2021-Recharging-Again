@@ -44,16 +44,20 @@ public class TankTurnHdg extends ATrajFunction {
             state++;
             System.out.println("TTH - 0");
         case 1: // Turn to heading using l & r Pwr's passed as tank drive.
-            strCmd[0] = pidHdg.calculateX(hdgFB());   //left power
-            strCmd[1] = pidDist.calculateX(hdgFB());  //right power
-            Drive.cmdUpdate(strCmd[0], strCmd[1], false, 1);
+            trajCmd[0] = pidHdg.calculateX(hdgFB());   //left power
+            trajCmd[1] = pidDist.calculateX(hdgFB());  //right power
+            Drive.cmdUpdate(trajCmd[0], trajCmd[1], false, 1);
             // Chk if trajectory is done
             if (pidHdg.atSetpoint()) state++;    // Chk hdg only
             prtShtuff("TTH");
             break;
         case 2:
-            done();
+            setDone();
             System.out.println("TTH - 2: ---------- Done -----------");
+            break;
+        default:
+            setDone();
+            System.out.println("TTH - Dflt: ------  Bad state  ----");
             break;
         }
         updSDB();

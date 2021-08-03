@@ -33,19 +33,19 @@ public class TurnNMove extends ATrajFunction {
             pidHdg = new PIDXController(1.0/70, 0.0, 0.0);
             pidHdg.enableContinuousInput(-180.0, 180.0);
             //Set extended values SP, DB, Mn, Mx, Exp, Cmp
-            setExt(pidHdg, hdgSP, 2.0, 0.35, pwrMx, 2.0, true);
+            PIDXController.setExt(pidHdg, hdgSP, 2.0, 0.35, pwrMx, 2.0, true);
 
             pidDist = new PIDXController(-1.0/10, 0.0, 0.0);
             //Set extended values SP, DB, Mn, Mx, Exp, Cmp
-            setExt(pidDist, distSP, 1.0, 0.2, pwrMx, 1.0, true);
+            PIDXController.setExt(pidDist, distSP, 1.0, 0.2, pwrMx, 1.0, true);
 
             Drive.distRst();
             initSDB();
             state++;
-            System.out.println("TNM2 - 0");
+            System.out.println("TNM - 0");
         case 1: // Turn to heading.  Do not move forward, yet.
-            strCmd[0] = pidHdg.calculate(hdgFB());
-            Drive.cmdUpdate(0.0, strCmd[0], false, 2);
+            trajCmd[0] = pidHdg.calculate(hdgFB());
+            Drive.cmdUpdate(0.0, trajCmd[0], false, 2);
             // Chk if hdg is done
             if (pidHdg.atSetpoint()) {
                 state++;    // Chk hdg only
@@ -54,16 +54,20 @@ public class TurnNMove extends ATrajFunction {
             prtShtuff("TNM");
             break;
         case 2: // Move forward, steer Auto Heading and Dist
-            strCmd[0] = pidHdg.calculate(hdgFB());
-            strCmd[1] = pidDist.calculate(distFB());
-            Drive.cmdUpdate(strCmd[1], strCmd[0], false, 2);
+            trajCmd[0] = pidHdg.calculate(hdgFB());
+            trajCmd[1] = pidDist.calculate(distFB());
+            Drive.cmdUpdate(trajCmd[1], trajCmd[0], false, 2);
             // Chk if distance is done
             if (pidDist.atSetpoint()) state++; // Chk distance only
             prtShtuff("TNM");
             break;
         case 3:
-            done();
-            System.out.println("TNM2 - 3: ---------- Done -----------");
+            setDone();
+            System.out.println("TNM - 3: ---------- Done -----------");
+            break;
+        default:
+            setDone();
+            System.out.println("TNM - Dflt: ------  Bad state  ----");
             break;
         }
         updSDB();

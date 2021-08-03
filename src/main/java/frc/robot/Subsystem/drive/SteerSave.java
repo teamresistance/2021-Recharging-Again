@@ -17,7 +17,7 @@ Also limits acceleration, increase in out, to respective Xcl value.
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.util.PropMath;
 
-public class Steer {
+public class SteerSave {
     private double drvCmds[] = { 0.0, 0.0 }; // Cmds X, Y - Rot, FwdBkwd
     private int status = 0; // 0-Running, 1=On Hdg, 2=at Dist, 3=both in DB
     private double pwrScalar = 100.0; // %Scale output, apply to hdg & distance
@@ -42,7 +42,7 @@ public class Steer {
      * 
      * @param propParm - a 2d array of doubles[2][5]
      */
-    public Steer(double[][] propParm) {
+    public SteerSave(double[][] propParm) {
         hdgProp = new PropMath(propParm[0], true);      //Initialize with parms array, SP, PB, DB, Mn, Mx & k180
         hdgXclLmt = propParm[0][5];                     //and Xcl
         distProp = new PropMath(propParm[1], false);    //Initialize with parms array, SP, PB, DB, Mn, Mx & k180
@@ -54,7 +54,7 @@ public class Steer {
      * <p>hdg => SP=0.0, PB=-150.0, DB=3.0, Mn=0.1, Mx=1.0, Xcl=1.0, k180=true
      * <p>dist => SP=0.0, PB=5.0, DB=0.5, Mn=0.1, Mx=1.0, Xcl=1.0, k180=false
      */
-    public Steer() {
+    public SteerSave() {
         hdgProp = new PropMath(0.0, -70.0, 5.0, 0.3, 1.0, true);    //Initalize with defaults
         hdgPID = new PIDController(-70.0, 0.0, 0.0);                //Testing WPI PID
         hdgPID.enableContinuousInput(-180.0, 180.0);                //Testing continuous -180 to 180 degrees

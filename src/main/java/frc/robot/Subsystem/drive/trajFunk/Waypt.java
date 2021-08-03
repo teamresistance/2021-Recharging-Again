@@ -47,42 +47,49 @@ public class Waypt extends ATrajFunction {
             pidHdg = new PIDXController(1.0/50, 0.0, 0.0);
             pidHdg.enableContinuousInput(-180.0, 180.0);
             //Set extended values pidCtlr, SP, DB, Mn, Mx, Exp, Cmp
-            setExt(pidHdg, 0.0, 2.0, 0.4, pwrMx, 2.0, true);
+            PIDXController.setExt(pidHdg, 0.0, 2.0, 0.4, pwrMx, 2.0, true);
 
             pidDist = new PIDXController(-1.0/8, 0.0, 0.0);
             //Set ext vals pidCtlr, SP, DB, Mn, Mx, Exp, Cmp
-            setExt(pidDist, 0.0, 0.7, 0.3, pwrMx, 1.0, true);
+            PIDXController.setExt(pidDist, 0.0, 0.5, 0.3, pwrMx, 2.0, true);
 
-            strCmd = wpCalcHdgDistSP(wpX, wpY); //Get present XY Loc and calc hdg & distSP's (static)
-            pidHdg.setSetpoint(strCmd[0]);  //Used strCmd as tmp holder
-            pidDist.setSetpoint(strCmd[1]);
+            trajCmd = wpCalcHdgDistSP(wpX, wpY); //Get present XY Loc and calc hdg & distSP's (static)
+            pidHdg.setSetpoint(trajCmd[0]);  //Used strCmd as tmp holder
+            pidDist.setSetpoint(trajCmd[1]);
 
             Drive.distRst();
             initSDB();
-            System.out.println("WPT2 - 0 \thdgSP: " + pidHdg.getSetpoint() + "\tdistSP: " + pidDist.getSetpoint());
+            System.out.println("WPT - 0 \thdgSP: " + pidHdg.getSetpoint() + "\tdistSP: " + pidDist.getSetpoint());
             state++;
-        case 1: // Turn to heg error LT turnTo
-            strCmd[0] = pidHdg.calculateX(hdgFB()); //cmd[0]=rotate(JSX)
-            Drive.cmdUpdate(0.0, strCmd[0], false, 2); // cmdUpdate for hdg & dist.
-            if (Math.abs(pidHdg.getPositionError()) < hdgErrLT ){
-                strCmd = wpCalcHdgDistSP(wpX, wpY); //Get present XY Loc and calc hdg & distSP's (static)
-                pidHdg.setSetpoint(strCmd[0]);      //Used strCmd as tmp holder
-                pidDist.setSetpoint(strCmd[1]);
-        
-                state++;
+        case 1: // Turn to hdg error LT then move to WPT
+            trajCmd[0] = pidHdg.calculateX(hdgFB()); //cmd[0]=rotate(JSX)
+            Drive.cmdUpdate(0.0, trajCmd[0], false, 2); // cmdUpdate for hdg & dist.
+            prtShtuff("WPT");
+            if (Math.abs(pidHdg.getPositionError()) > hdgErrLT ){
+                trajCmd = wpCalcHdgDistSP(wpX, wpY); //Get present XY Loc and calc hdg & distSP's (static)
+                pidHdg.setSetpoint(trajCmd[0]);      //Used strCmd as tmp holder
+                pidDist.setSetpoint(trajCmd[1]);
+                break;
             }
-            prtShtuff("WPT2");
-            break;
+            state++;
+            trajCmd = wpCalcHdgDistSP(wpX, wpY); //Get present XY Loc and calc hdg & distSP's (static)
+            pidHdg.setSetpoint(trajCmd[0]);  //Used strCmd as tmp holder
+            pidDist.setSetpoint(trajCmd[1]);
+
         case 2: // Move forward, steer Auto Heading and Dist
-            strCmd[0] = pidHdg.calculateX(hdgFB()); //cmd[0]=rotate(JSX)
-            strCmd[1] = pidDist.calculateX(distFB()); //cmd[1]=fwd(JSY)
-            prtShtuff("WPT2");
-            Drive.cmdUpdate(strCmd[1], strCmd[0], false, 2); // cmdUpdate for hdg & dist.
-            if (pidDist.atSetpoint() && pidHdg.atSetpoint()) state++; //Chk hdg & dist done.
-            break;
+            trajCmd[0] = pidHdg.calculateX(hdgFB()); //cmd[0]=rotate(JSX)
+            trajCmd[1] = pidDist.calculateX(distFB()); //cmd[1]=fwd(JSY)
+            prtShtuff("WPT");
+            Drive.cmdUpdate(trajCmd[1], trajCmd[0], false, 2); // cmdUpdate for hdg & dist.
+            if (!pidDist.atSetpoint() || !pidHdg.atSetpoint()) break; //Chk hdg & dist done.
+            state++;
         case 3: //Done
-            done();
-            System.out.println("WPT2 - 3: ---------- Done -----------");
+            setDone();
+            System.out.println("WPT - 3: ---------- Done -----------");
+            break;
+        default:
+            setDone();
+            System.out.println("WPT - Dflt: ------  Bad state  ----");
             break;
         }
         updSDB();

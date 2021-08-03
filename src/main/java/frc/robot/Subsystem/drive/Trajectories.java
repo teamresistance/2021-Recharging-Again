@@ -205,11 +205,11 @@ public class Trajectories {
     public static ATrajFunction[] getFigure8WPT(double pwr) {
         pwr = 0.8;
         ATrajFunction traj[] = {
-            new Waypt(0.0, 5.5, 0.6),
-            new Waypt(-5.5, 5.5, pwr, 15),
-            new Waypt(-5.5, 0.0, pwr, 15),
-            new Waypt(0.0, 0.0, pwr, 15),
-            new TankTurnHdg(5, -0.8, 0.8),
+            new Waypt( 0.0, 9.0, 0.6),
+            new Waypt( 9.0, 9.0, 1.0, 10),
+            new Waypt( 9.0, 0.0, 1.0, 10),
+            new Waypt( 0.0, 0.0, 1.0, 10),
+            new TankTurnHdg(5, -0.8, 0.8)
         };
         return traj;
     }
@@ -231,17 +231,16 @@ public class Trajectories {
     public static ATrajFunction[] getSquare_MOH(double pwr) {
         // System.out.println("---------- Made it here: Traj Sq " + pwr + " ----------------");
         ATrajFunction traj[] = {
-            new MoveOnHdg(0,   6, pwr),
-            new MoveOnHdg(90,  6, pwr),
-            new MoveOnHdg(180, 6, pwr),
-            new MoveOnHdg(270, 6, pwr),
-            // new MoveOnHdg2(350, 6, pwr),
-            new MoveOnHdg(90, 0, pwr),
-            new MoveOnHdg(90,  6, pwr),
-            new MoveOnHdg(0, 6, pwr),
-            new MoveOnHdg(-90, 6, pwr),
-            new MoveOnHdg(-180, 6, pwr),
-            new MoveOnHdg(-350, 0, pwr),
+            new MoveOnHdg(   0, 6, 1.0, 30),
+            new MoveOnHdg(  90, 6, 1.0, 30),
+            new MoveOnHdg( 180, 6, 1.0, 30),
+            new MoveOnHdg( 270, 6, 1.0, 30),
+            new MoveOnHdg( 350, 0, 1.0, 30)
+            // new MoveOnHdg(  90, 6, 1.0, 30),
+            // new MoveOnHdg(   0, 6, 1.0, 30),
+            // new MoveOnHdg( -90, 6, 1.0, 30),
+            // new MoveOnHdg(-180, 6, 1.0, 30),
+            // new MoveOnHdg(-350, 0, 1.0, 30)
         };
         return traj;
     }

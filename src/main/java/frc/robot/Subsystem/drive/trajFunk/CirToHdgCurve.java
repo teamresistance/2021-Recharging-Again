@@ -55,11 +55,11 @@ public class CirToHdgCurve extends ATrajFunction {
             pidHdg = new PIDXController(-1.0/45, 0.0, 0.0);
             pidHdg.enableContinuousInput(-180.0, 180.0);
             //Set extended values SP, DB, Mn, Mx, Exp, Cmp
-            setExt(pidHdg, hdgSP, 2.0, 0.35, fwdCmd, 2.0, true);
+            PIDXController.setExt(pidHdg, hdgSP, 2.0, 0.35, fwdCmd, 2.0, true);
 
             pidDist = new PIDXController(1.0/2, 0.0, 0.0);
             //Set extended values SP, DB, Mn, Mx, Exp, Cmp
-            setExt(pidDist, radiusSP, 0.3, (0.6 * fwdCmd), fwdCmd, 1.0, false);
+            PIDXController.setExt(pidDist, radiusSP, 0.3, (0.6 * fwdCmd), fwdCmd, 1.0, false);
             //P must be the inverse of the sign of rotCmd.
             pidDist.setP(-Math.copySign(pidDist.getP(), rotCmd));
             pidDist.setOutFF(rotCmd);
@@ -69,8 +69,8 @@ public class CirToHdgCurve extends ATrajFunction {
             initSDB();
             state++;
         case 1: // Rotate forward, steer with Dist to maintain radius
-            strCmd[0] = pidHdg.calculateX(hdgFB);                   //[0]=fwd(Y)
-            strCmd[1] = pidDist.calculateX(radiusFB(ctrX, ctrY));   //[1]=radius(X)
+            trajCmd[0] = pidHdg.calculateX(hdgFB);                   //[0]=fwd(Y)
+            trajCmd[1] = pidDist.calculateX(radiusFB(ctrX, ctrY));   //[1]=radius(X)
             // strCmd[1] = pidDist.calculateX(radiusFB);   //[1]=radius(X)
             prtShtuff("CHC");    //--------- Print info --------------
             // if(turnRight){
@@ -78,12 +78,16 @@ public class CirToHdgCurve extends ATrajFunction {
             // }else{
 
             // }
-            Drive.cmdUpdate(strCmd[0], strCmd[1], false, 3); // cmdUpdate for curvature hdg & dist.
+            Drive.cmdUpdate(trajCmd[0], trajCmd[1], false, 3); // cmdUpdate for curvature hdg & dist.
             if (pidHdg.atSetpoint()) state++;    // Chk hdg only
             break;
         case 2:
-            done();
-            System.out.println("CHC - 2: Final Rotate Cmd: " + strCmd[1]);
+            setDone();
+            System.out.println("CHC - 2: Final Rotate Cmd: " + trajCmd[1]);
+            break;
+        default:
+            setDone();
+            System.out.println("CHC - Dflt: ------  Bad state  ----");
             break;
         }
         updSDB();
