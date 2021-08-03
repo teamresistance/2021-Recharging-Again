@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.joysticks.JS_IO;
+import frc.util.PIDXController;
 
 /**
  * Extends the Drive class to manually control the robot in teleop mode.
@@ -19,7 +20,7 @@ public class Drv_Teleop extends Drive {
 
     private static boolean tglFrontBtn() {return JS_IO.btnInvOrientation.onButtonPressed();}//Toggle orientation
     private static boolean tglScaleBtn() {return JS_IO.btnScaledDrive.onButtonPressed();}   //Toggle appling scaling
-    private static boolean holdZeroBtn() {return JS_IO.btnHoldZero.isDown();}               //Hold zero hdg when help down
+    private static boolean holdZeroBtn() {return JS_IO.btnHoldZero.isDown();}               //Hold zero hdg when held down
     private static boolean hold180Btn() {return JS_IO.btnHold180.isDown();}                 //Hold 180 hdg when held down
 
     //Defined (moved) to Drive.  Maybe common to telop & auto.
@@ -53,13 +54,16 @@ public class Drv_Teleop extends Drive {
  
     /**Initial items to teleop driving */
     public static void init() {
+        Drive.init();
+
         sdbInit();
         teleDrvChoice = teleDrvChsr.getSelected();
         cmdUpdate(0, 0);
         IO.navX.reset();
 
-        frontSwapped = false;
-        scaledOutput = false;
+        setSwapFront(false);
+        setScaled(false);
+        relAngleHold();
     }
 
     /**
@@ -77,8 +81,15 @@ public class Drv_Teleop extends Drive {
             teleDrvChoice = state;
         }
 
-        if (tglFrontBtn()) frontSwapped = !frontSwapped;    //Switch the direction of the front
-        if (tglScaleBtn()) scaledOutput = !scaledOutput;     //Switch applying scaling to output
+        if(tglFrontBtn()) setSwapFront(!isSwappedFront());    //Switch the direction of the front
+        if(tglScaleBtn()) setScaled(!isScaled());
+        if(holdZeroBtn()){
+            setAngleHold(0.0);
+        }else if(hold180Btn()){
+            setAngleHold(180.0);
+        }else{
+            relAngleHold();
+        }
     }
 
     /**
@@ -93,13 +104,13 @@ public class Drv_Teleop extends Drive {
             cmdUpdate(); // Stop moving
             break;
             case 1: // Tank mode.
-            cmdUpdate(tnkLeft(), tnkRight(), 1); // Apply Hold, swap & scaling then send
+            cmdUpdate(tnkLeft(), tnkRight(), false, 1); // Apply Hold, swap & scaling then send
             break;
             case 2: // Arcade mode.
-            cmdUpdate(arcMove(), arcRot(), 2); // Apply Hold, swap & scaling then send
+            cmdUpdate(arcMove(), arcRot(), false, 2); // Apply Hold, swap & scaling then send
             break;
             case 3: // Curvature mode.
-            cmdUpdate(curMove(), curRot(), 3); // Apply Hold, swap & scaling then send
+            cmdUpdate(curMove(), curRot(), false, 3); // Apply Hold, swap & scaling then send
             break;
             default:
             cmdUpdate();
@@ -110,29 +121,25 @@ public class Drv_Teleop extends Drive {
 
     /**Initialize sdb  */
     private static void sdbInit(){
-        SmartDashboard.putNumber("Drv/Tele/Drive DB", deadband);                //push to NetworkTable, sdb
-        SmartDashboard.putNumber("Drv/Tele/Drive Scale", scale);                //push to NetworkTable, sdb
+        PIDXController.initSDBPid(pidHdgHold, "Tele/pidHdgHold");
+        SmartDashboard.putNumber("Drv/Tele/Drive Scale", getScaledOut());                //push to NetworkTable, sdb
     }
 
     /**Update sdb stuff.  Called every 20mS from update. */
     public static void sdbUpdate() {
+        PIDXController.updSDBPid(pidHdgHold, "Tele/pidHdgHold");
+
         SmartDashboard.putNumber("Drv/Tele/state", state);
         SmartDashboard.putString("Drv/Tele/Choosen", teleDrvType[state]);
 
-        deadband = SmartDashboard.getNumber("Drv/Tele/Drive DB", deadband);
-        scale = SmartDashboard.getNumber("Drv/Tele/Drive Scale", scale);
-        SmartDashboard.putBoolean("Drv/Tele/scaled", scaledOutput);
-        SmartDashboard.putBoolean("Drv/Tele/Front Swap", frontSwapped);
+        setScaledOut(SmartDashboard.getNumber("Drv/Tele/Drive Scale", getScaledOut()));
+        SmartDashboard.putBoolean("Drv/Tele/scaled", isScaled());
+        SmartDashboard.putBoolean("Drv/Tele/Front Swap", isSwappedFront());
         SmartDashboard.putBoolean("Drv/Tele/Hold 0", holdZeroBtn());
         SmartDashboard.putBoolean("Drv/Tele/Hold 180", hold180Btn());
         SmartDashboard.putNumber("Drv/Tele/HdgFB", hdgFB());
-        SmartDashboard.putBoolean("Drv/Tele/Hdgk180", steer.getHdgk180());
-        SmartDashboard.putNumber("Drv/Tele/HdgFB", hdgFB());
-        SmartDashboard.putNumber("Drv/Tele/HdgSP", steer.getHdgSP());
-        SmartDashboard.putNumber("Drv/Tele/HdgOut", strCmd[0]);
-        SmartDashboard.putNumber("Drv/Tele/DistFB", distFB());
-        // SmartDashboard.putNumber("Drv/Tele/DistSP", distSP;
-        SmartDashboard.putNumber("Drv/Tele/DistOut", strCmd[1]);
+        SmartDashboard.putNumber("Drv/Tele/HdgHoldSP", pidHdgHold.getSetpoint());
+        SmartDashboard.putNumber("Drv/Tele/HdgHoldOut", pidHdgHold.getAdj());
         SmartDashboard.putNumber("Drv/Tele/tankL", tnkLeft());
         SmartDashboard.putNumber("Drv/Tele/tankR", tnkRight());
     }
@@ -145,33 +152,32 @@ public class Drv_Teleop extends Drive {
         return state;
     }
 
-    /**
-     * Condition JS input for Hold angle, front swap and/or scaling.
-     * 
-     * @param lspdOrMov - left tank or move arcade or curvature
-     * @param rSpdOrRot - right tank or rotation arcade or curvature
-     * @param diffType - 0=Off, 1=tank, 2=arcade, 3=curvature
-     */
-    private static void cmdUpdate(double lspdOrMov, double rSpdOrRot, int diffType) {
-        if(holdZeroBtn() || hold180Btn()){                  //If call for hold angle
-            steer.setHdgSP(holdZeroBtn() ? 0.0 : 180.0);    //Set hdgSP
-            strCmd = steer.update(hdgFB(), 0.0);            //Calc rotation
-            rSpdOrRot = frontSwapped ? -strCmd[0] : strCmd[0];                          //store in rotation
-            System.out.println("StrCmd[0]: " + strCmd[0]);
-            if(diffType == 1) diffType = 2;                 //If type tank Chg to arcade
-        }
+    // /**
+    //  * Condition JS input for Hold angle, front swap and/or scaling.
+    //  * 
+    //  * @param lspdOrMov - left tank or move arcade or curvature
+    //  * @param rSpdOrRot - right tank or rotation arcade or curvature
+    //  * @param diffType - 0=Off, 1=tank, 2=arcade, 3=curvature
+    //  */
+    // private static void cmdUpdate(double lspdOrMov, double rSpdOrRot, int diffType) {
+    //     if(holdZeroBtn() || hold180Btn()){                  //If call for hold angle
+    //         pidHdg.setSetpoint(holdZeroBtn() ? 0.0 : 180.0);    //Set hdgSP
+    //         strCmd[0] = pidHdg.calculateX(hdgFB());             //Calc rotation
+    //         rSpdOrRot = swapFront ? -strCmd[0] : strCmd[0];  //store in rot, neg if front swap
+    //         if(diffType == 1) diffType = 2;                 //If type tank Chg to arcade
+    //     }
 
-        if(frontSwapped){
-            lspdOrMov *= -1.0;  rSpdOrRot *= -1.0;  //Negate values
-            if(diffType == 1){                      //If tank swap left and right also
-                strCmd[0] = lspdOrMov;              //use strCmd as tmp storage
-                lspdOrMov = rSpdOrRot;
-                rSpdOrRot = strCmd[0];
-            }
-        }
+    //     if(swapFront){
+    //         lspdOrMov *= -1.0;  rSpdOrRot *= -1.0;  //Negate values
+    //         if(diffType == 1){                      //If tank swap left and right also
+    //             strCmd[0] = lspdOrMov;              //use strCmd as tmp storage
+    //             lspdOrMov = rSpdOrRot;
+    //             rSpdOrRot = strCmd[0];
+    //         }
+    //     }
 
-        // lspdOrMov *= scale();  rSpdOrRot *= scale();        //scale it all (moved to diffDrv)
-        cmdUpdate(lspdOrMov, rSpdOrRot, true, diffType);   //and send
-    }
+    //     // lspdOrMov *= scale();  rSpdOrRot *= scale();        //scale it all (moved to diffDrv)
+    //     cmdUpdate(lspdOrMov, rSpdOrRot, true, diffType);   //and send
+    // }
 
 }

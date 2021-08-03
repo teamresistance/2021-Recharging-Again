@@ -3,7 +3,7 @@ package frc.robot.Subsystem.drive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
-import frc.io.hdw_io.NavX;
+import frc.util.PIDXController;
 
 /**
  * This is the super class for Drv_Auto & Drv_Teleop.
@@ -15,28 +15,40 @@ public class Drive {
     // Assignments used by DiffDrv. Slaves sent same command.  Slaves set to follow Masters in IO.
     private static DifferentialDrive diffDrv = IO.diffDrv_M;
 
-    public static boolean frontSwapped;    // front of robot is swapped
-    public static boolean scaledOutput;    // scale the output signal
-    public static double scale = 0.5;      //Scale to apply to output is active
-    public static double scale() { return !scaledOutput ?  1.0 : scale; }
-    public static double deadband = 0.45;
+    private static double lSpdY, rSpdRot_XY;    //Cmd values
+    private static boolean isSqOrQT;            //DiffDrvshould sq input or quick turn
+    private static int diffType;                //0-Off | 1=tank | 2=arcade | 3=curvature
 
-    /*                [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
-    private static double[][] parms = { { 0.0, -110.0, 1.0, 0.55, 1.0, 0.20 },
-    /*                               */ { 0.0, 10.0, 0.7, 0.45, 1.0, 0.07 } };
-    public static Steer steer = new Steer(parms);  //Create steer instance for hdg & dist, use default parms
+    private static boolean swapFront;       // front of robot is swapped
+    private static boolean scaleOutput;     // scale the output signal
+    private static double scale = 0.5;       //Scale to apply to output is active
+    private static Double angleHold = null;
+    public static PIDXController pidHdgHold = new PIDXController();
 
+
+    // public static double deadband = 0.45;
+
+    // /*                [0][]=hdg [1][]=dist SP, PB, DB, Mn, Mx, Xcl */
+    // private static double[][] parms = { { 0.0, -110.0, 1.0, 0.55, 1.0, 0.20 },
+    // /*                               */ { 0.0, 10.0, 0.7, 0.45, 1.0, 0.07 } };
+    // public static Steer steer = new Steer(parms);  //Create steer instance for hdg & dist, use default parms
+
+    public static PIDXController pidHdg, pidDist;
     public static double strCmd[] = new double[2]; //Storage for steer return
+
     public static double hdgFB() {return IO.navX.getNormalizeTo180();}  //Only need hdg to Hold Angle 0 or 180
     public static void hdgRst() { IO.navX.reset(); }
-    public static double hdgOut;
-
     public static double distFB() { return (IO.drvEnc_L.feet() + IO.drvEnc_R.feet()) / 2; }
     public static void distRst() { IO.drvEnc_L.reset(); IO.drvEnc_R.reset(); }
-    public static double distOut;
 
     public static void init() {
         cmdUpdate(0.0, 0.0, false, 0);
+        pidHdgHold = new PIDXController(1.0/45, 0.0, 0.0);
+        pidHdgHold.enableContinuousInput(-180.0, 180.0);
+        pidHdgHold.setInDB(2.0);
+        pidHdgHold.setOutMn(0.30);
+        pidHdgHold.setOutMx(1.0);
+        pidHdgHold.setOutExp(1.0);
     }
 
     /**
@@ -44,7 +56,6 @@ public class Drive {
      * can be caused by other events.
      */
     private static void determ() {
-
     }
 
     /**
@@ -66,54 +77,106 @@ public class Drive {
      * @param isSqOrQT - tank(1)/arcade(2)-apply sqrt  |  curvature(3)-quick turn
      * @param diffType - 0-Off  |  1=tank  |  2=arcade  |  3=curvature
      */
-    public static void cmdUpdate(double lSpdY, double rSpdRot_XY, boolean isSqOrQT, int diffType) {
+    public static void cmdUpdate(double _lSpdY, double _rSpdRot_XY, boolean _isSqOrQT, int _diffType) {
+        lSpdY = _lSpdY;  rSpdRot_XY = _rSpdRot_XY; isSqOrQT = _isSqOrQT; diffType = _diffType;
+        chkInput();     //Chk for angle hold, front swap or scaling
         switch(diffType){
             case 0:     //Off
             diffDrv.tankDrive(0.0, 0.0, false);
             break;
             case 1:     //Tank
             diffDrv.tankDrive(-lSpdY, -rSpdRot_XY, isSqOrQT);
-            System.out.println("Drive-1: lSpd: " + lSpdY + "\trSpdRot: " + rSpdRot_XY);
             break;
             case 2:     //Arcade
             diffDrv.arcadeDrive(-lSpdY, rSpdRot_XY, isSqOrQT);
-            System.out.println("Drive-2: lSpd: " + lSpdY + "\trSpdRot: " + rSpdRot_XY);
             break;
             case 3:     //Curvature
             diffDrv.curvatureDrive(-lSpdY, rSpdRot_XY, isSqOrQT);
-            System.out.println("Drive-3: " + lSpdY + ", " + rSpdRot_XY);
             break;
             default:
             diffDrv.tankDrive(0.0, 0.0, false);
             System.out.println("Bad Diff Drive type - " + diffType);
         }
+        // System.out.println("Drive-" + diffType + ":\tlSpd: " + lSpdY + "\trSpdRot: " + rSpdRot_XY);
         SmartDashboard.putNumber("Drive/MtrL Out", IO.drvMasterTSRX_L.get());
         SmartDashboard.putNumber("Drive/MtrR Out", IO.drvMasterTSRX_R.get());
     }
 
-    /**
-     * Calls steer.update using previous steerTo values and 
-     * then call the full cmdUpdate with hdgOut, distOut & square
-     * for arcade control.  hdgout or distOout can be zeroed.
-     * 
-     * @param zero 0 - niether, 1 - hdgOut zeroed, 2 - distOut zeroed
-     */
-    public static void cmdUpdate(int zero){
-        strCmd = steer.update();
-        hdgOut = strCmd[0];     // Get hdg output, Y
-        distOut = strCmd[1];    // Get dist output, X
-        switch(zero) {
-            case 0:
-                cmdUpdate(distOut, hdgOut, true, 2);
-                break;
-            case 1:
-                cmdUpdate(distOut, 0.0, true, 2);
-                break;
-            case 2:
-                cmdUpdate(0.0, hdgOut, true, 2);
-                break;
+    /**Chk for angle hold, front swap or scaling */
+    private static void chkInput(){
+        if(diffType > 0 && diffType < 4){   //If tank(1), arcade(2) or curve(3)
+            chkHoldAngle();
+            chkSwapFront();
+            chkScale();
         }
     }
+
+    /**Condition JS input for Hold angle. */
+    private static void chkHoldAngle() {
+        if(angleHold != null){                //If call for hold angle
+            strCmd[0] = pidHdgHold.calculateX(hdgFB(), angleHold);             //Calc rotation
+            rSpdRot_XY = swapFront ? -strCmd[0] : strCmd[0];  //store in rot, neg if front swap
+            if(diffType == 1) diffType = 2;                 //If type tank Chg to arcade
+        }
+    }
+
+    /**Condition JS input for front swap. */
+    private static void chkSwapFront() {
+        if(swapFront){
+            lSpdY *= -1.0;  rSpdRot_XY *= -1.0; //Negate values
+            if(diffType == 1){                  //If tank swap left and right also
+                strCmd[0] = lSpdY;              //use strCmd as tmp storage to swap sides
+                lSpdY = rSpdRot_XY;
+                rSpdRot_XY = strCmd[0];
+            }
+        }
+    }
+
+    /**Condition JS input for scaling.
+     * Set the max output of the diffDrv */
+    private static void chkScale(){ 
+        diffDrv.setMaxOutput(getWkgScale());
+    }
+
+    /**Set if front and backof robot should be swapped. */
+    public static void setSwapFront(boolean _swapFront){ swapFront = _swapFront; }
+
+    /**Get if front and backof robot should be swapped. */
+
+    /**@return true if front and backof robot are swapped. */
+    public static boolean isSwappedFront(){ return swapFront; }
+
+    /**Set and hold robot on an heading.
+     * <p>Can pass null or use () to release
+     * <p>Or call relAngleHold();
+     * @param angle to hold (else null)
+     */
+    public static void setAngleHold(Double angle){ angleHold = angle; }
+    public static void setAngleHold(){ relAngleHold(); }
+
+    /**Release angle hold */
+    public static void relAngleHold(){ angleHold = null; }
+
+    /**@return true if robot is being held on an angle. */
+    public static boolean isAngleHold(){ return angleHold != null; }
+
+    /**@return the angle being held else return null */
+    public static Double getAngleHold(){ return angleHold; }
+
+    /**@param _scaleOutput to scale the output max to scale else use 1.0 */
+    public static void setScaled(boolean _scaleOutput){ scaleOutput = _scaleOutput; }
+
+    /**@param _scaleOutput to scale the output max to scale else use 1.0 */
+    public static boolean isScaled(){ return scaleOutput; }
+
+    /**@param _scale value to use if scaleOutput is set */
+    public static void setScaledOut(double _scale){ scale = _scale; }
+
+    /**@return value of scale used if scaleOutput is set */
+    public static double getScaledOut(){ return scale; }
+
+    /**@return scale if scaleOutput is set else return 1.0 */
+    public static double getWkgScale(){ return scaleOutput ? scale : 1.0; }
 
     //------------------- Legacy -------------------------
     /**

@@ -242,6 +242,8 @@ public class JS_IO {
 
         // Drive buttons
         btnScaledDrive.setButton(gamePad, 5); // L1
+        btnHoldZero.setButton(gamePad, 4); // Y
+        btnHold180.setButton(gamePad, 6); // R1
         btnInvOrientation.setButton(gamePad, 10); // r-stick push
 
         // snorfler buttons
@@ -249,8 +251,8 @@ public class JS_IO {
         btnTglSnorArmDn.setButton(gamePad, 1); // A
 
         // turret buttons
-        btnLimeSearch.setButton(gamePad, 4); // Y
-        btnLimeAim.setButton(gamePad, 6); // R1
+        // btnLimeSearch.setButton(gamePad, 4); // Y
+        // btnLimeAim.setButton(gamePad, 6); // R1
 
         // shooting buttons
         btnRampShooter.setButton(gamePad, 3); // X
