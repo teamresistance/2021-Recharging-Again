@@ -23,16 +23,6 @@ public class Drv_Teleop extends Drive {
     private static boolean holdZeroBtn() {return JS_IO.btnHoldZero.isDown();}               //Hold zero hdg when held down
     private static boolean hold180Btn() {return JS_IO.btnHold180.isDown();}                 //Hold 180 hdg when held down
 
-    //Defined (moved) to Drive.  Maybe common to telop & auto.
-    // private static boolean frontSwapped;    // front of robot is swapped
-    // private static boolean scaledOutput;    // scale the output signal
-    // private static double scale = 0.5;      //Scale to apply to output is active
-    // private static double scale() { return !scaledOutput ?  1.0 : scale; }
-
-    // private static Steer steer = new Steer();       //Create steer instance for hdg & dist, use default parms
-    // private static double strCmd[] = new double[2]; //Storage for steer return
-    // private static double hdgFB() {return IO.navX.getAngle();}  //Only need hdg to Hold Angle 0 or 180
-
     private static int state = 1;   //Can be set by btn or sdb chooser
     private static String[] teleDrvType = {"Off", "Tank", "Arcade", "Curvature"};       //All drive type choices
 
@@ -63,7 +53,7 @@ public class Drv_Teleop extends Drive {
 
         setSwapFront(false);
         setScaled(false);
-        relAngleHold();
+        relHdgHold();
     }
 
     /**
@@ -76,19 +66,19 @@ public class Drv_Teleop extends Drive {
             state = ((++state) % teleDrvType.length);
         }
 
-        if(teleDrvChoice != teleDrvChsr.getSelected()){  //If sdb chgs switch states to sdb choice
+        if(teleDrvChoice != teleDrvChsr.getSelected()){ //If sdb chgs switch states to sdb choice
             state = teleDrvChsr.getSelected();
             teleDrvChoice = state;
         }
 
-        if(tglFrontBtn()) setSwapFront(!isSwappedFront());    //Switch the direction of the front
-        if(tglScaleBtn()) setScaled(!isScaled());
-        if(holdZeroBtn()){
-            setAngleHold(0.0);
-        }else if(hold180Btn()){
-            setAngleHold(180.0);
+        if(tglFrontBtn()) setSwapFront(!isSwappedFront());  //Switch the direction of the front
+        if(tglScaleBtn()) setScaled(!isScaled());           //Apply scale limiting
+        if(holdZeroBtn()){          //Hold 0 heading
+            setHdgHold(0.0);
+        }else if(hold180Btn()){     //else gold 180 heading
+            setHdgHold(180.0);
         }else{
-            relAngleHold();
+            relHdgHold();           //else release
         }
     }
 
@@ -122,7 +112,7 @@ public class Drv_Teleop extends Drive {
     /**Initialize sdb  */
     private static void sdbInit(){
         PIDXController.initSDBPid(pidHdgHold, "Tele/pidHdgHold");
-        SmartDashboard.putNumber("Drv/Tele/Drive Scale", getScaledOut());                //push to NetworkTable, sdb
+        SmartDashboard.putNumber("Drv/Tele/Drive Scale", getScaledOut());   //push to NetworkTable, sdb
     }
 
     /**Update sdb stuff.  Called every 20mS from update. */
@@ -151,33 +141,5 @@ public class Drv_Teleop extends Drive {
     public static int getState() {
         return state;
     }
-
-    // /**
-    //  * Condition JS input for Hold angle, front swap and/or scaling.
-    //  * 
-    //  * @param lspdOrMov - left tank or move arcade or curvature
-    //  * @param rSpdOrRot - right tank or rotation arcade or curvature
-    //  * @param diffType - 0=Off, 1=tank, 2=arcade, 3=curvature
-    //  */
-    // private static void cmdUpdate(double lspdOrMov, double rSpdOrRot, int diffType) {
-    //     if(holdZeroBtn() || hold180Btn()){                  //If call for hold angle
-    //         pidHdg.setSetpoint(holdZeroBtn() ? 0.0 : 180.0);    //Set hdgSP
-    //         strCmd[0] = pidHdg.calculateX(hdgFB());             //Calc rotation
-    //         rSpdOrRot = swapFront ? -strCmd[0] : strCmd[0];  //store in rot, neg if front swap
-    //         if(diffType == 1) diffType = 2;                 //If type tank Chg to arcade
-    //     }
-
-    //     if(swapFront){
-    //         lspdOrMov *= -1.0;  rSpdOrRot *= -1.0;  //Negate values
-    //         if(diffType == 1){                      //If tank swap left and right also
-    //             strCmd[0] = lspdOrMov;              //use strCmd as tmp storage
-    //             lspdOrMov = rSpdOrRot;
-    //             rSpdOrRot = strCmd[0];
-    //         }
-    //     }
-
-    //     // lspdOrMov *= scale();  rSpdOrRot *= scale();        //scale it all (moved to diffDrv)
-    //     cmdUpdate(lspdOrMov, rSpdOrRot, true, diffType);   //and send
-    // }
 
 }

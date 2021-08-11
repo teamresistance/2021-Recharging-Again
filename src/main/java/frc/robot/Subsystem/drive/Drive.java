@@ -22,8 +22,8 @@ public class Drive {
     private static boolean swapFront;       // front of robot is swapped
     private static boolean scaleOutput;     // scale the output signal
     private static double scale = 0.5;       //Scale to apply to output is active
-    private static Double angleHold = null;
-    public static PIDXController pidHdgHold = new PIDXController();
+    private static Double hdgHold = null;   // Hold heading, if not null
+    public static PIDXController pidHdgHold = new PIDXController(); //PIDX for hdgHold
 
 
     // public static double deadband = 0.45;
@@ -79,7 +79,7 @@ public class Drive {
      */
     public static void cmdUpdate(double _lSpdY, double _rSpdRot_XY, boolean _isSqOrQT, int _diffType) {
         lSpdY = _lSpdY;  rSpdRot_XY = _rSpdRot_XY; isSqOrQT = _isSqOrQT; diffType = _diffType;
-        chkInput();     //Chk for angle hold, front swap or scaling
+        chkInput();     //Chk for hdg hold, front swap or scaling
         switch(diffType){
             case 0:     //Off
             diffDrv.tankDrive(0.0, 0.0, false);
@@ -105,16 +105,16 @@ public class Drive {
     /**Chk for angle hold, front swap or scaling */
     private static void chkInput(){
         if(diffType > 0 && diffType < 4){   //If tank(1), arcade(2) or curve(3)
-            chkHoldAngle();
+            chkHdgHold();
             chkSwapFront();
             chkScale();
         }
     }
 
     /**Condition JS input for Hold angle. */
-    private static void chkHoldAngle() {
-        if(angleHold != null){                //If call for hold angle
-            strCmd[0] = pidHdgHold.calculateX(hdgFB(), angleHold);             //Calc rotation
+    private static void chkHdgHold() {
+        if(hdgHold != null){                //If call for hold angle
+            strCmd[0] = pidHdgHold.calculateX(hdgFB(), hdgHold);             //Calc rotation
             rSpdRot_XY = swapFront ? -strCmd[0] : strCmd[0];  //store in rot, neg if front swap
             if(diffType == 1) diffType = 2;                 //If type tank Chg to arcade
         }
@@ -146,22 +146,22 @@ public class Drive {
     /**@return true if front and backof robot are swapped. */
     public static boolean isSwappedFront(){ return swapFront; }
 
-    /**Set and hold robot on an heading.
+    /**Set and hold robot on a heading.
      * <p>Can pass null or use () to release
-     * <p>Or call relAngleHold();
-     * @param angle to hold (else null)
+     * <p>Or call relHdgHold();
+     * @param hdg to hold (else null)
      */
-    public static void setAngleHold(Double angle){ angleHold = angle; }
-    public static void setAngleHold(){ relAngleHold(); }
+    public static void setHdgHold(Double hdg){ hdgHold = hdg; }
+    public static void setHddgHold(){ relHdgHold(); }
 
     /**Release angle hold */
-    public static void relAngleHold(){ angleHold = null; }
+    public static void relHdgHold(){ hdgHold = null; }
 
-    /**@return true if robot is being held on an angle. */
-    public static boolean isAngleHold(){ return angleHold != null; }
+    /**@return true if robot is being held on a hdg. */
+    public static boolean isHdgHold(){ return hdgHold != null; }
 
-    /**@return the angle being held else return null */
-    public static Double getAngleHold(){ return angleHold; }
+    /**@return the heading being held else return null */
+    public static Double getHdgHold(){ return hdgHold; }
 
     /**@param _scaleOutput to scale the output max to scale else use 1.0 */
     public static void setScaled(boolean _scaleOutput){ scaleOutput = _scaleOutput; }
