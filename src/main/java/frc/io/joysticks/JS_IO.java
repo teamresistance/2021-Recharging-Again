@@ -115,7 +115,7 @@ public class JS_IO {
         for(int i = 0; i < chsrDesc.length; i++){
             chsr.addOption(chsrDesc[i], chsrNum[i]);
         }
-        chsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrNum[0]);   //Default MUST have a different name
+        chsr.setDefaultOption(chsrDesc[2] + " (Default)", chsrNum[2]);   //Default MUST have a different name
         SmartDashboard.putData("JS/Choice", chsr);
         sdbUpdChsr();
     }
@@ -241,18 +241,19 @@ public class JS_IO {
         axRightY.setAxis(gamePad, 5);
 
         // Drive buttons
-        btnScaledDrive.setButton(gamePad, 5); // L1
-        btnHoldZero.setButton(gamePad, 4); // Y
-        btnHold180.setButton(gamePad, 6); // R1
-        btnInvOrientation.setButton(gamePad, 10); // r-stick push
+        // btnScaledDrive.setButton(gamePad, 4); // Y
+        // btnHoldZero.setButton(gamePad, 5);  // LB
+        // btnHold180.setButton(gamePad, 6);   // RB
+        // btnInvOrientation.setButton(gamePad, 10); // r-stick push
 
         // snorfler buttons
         btnReverseSnorfler.setButton(gamePad, 9); // l-stick push
         btnTglSnorArmDn.setButton(gamePad, 1); // A
 
         // turret buttons
-        // btnLimeSearch.setButton(gamePad, 4); // Y
-        // btnLimeAim.setButton(gamePad, 6); // R1
+        limeLightOnOff.setButton(gamePad, 5); // LB
+        btnLimeSearch.setButton(gamePad, 6); // RB
+        btnLimeAim.setButton(gamePad, 4); // Y
 
         // shooting buttons
         btnRampShooter.setButton(gamePad, 3); // X
