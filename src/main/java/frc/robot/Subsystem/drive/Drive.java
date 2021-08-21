@@ -102,6 +102,23 @@ public class Drive {
         SmartDashboard.putNumber("Drive/MtrR Out", IO.drvMasterTSRX_R.get());
     }
 
+    /**
+     * Defaults to no squaring and arcade drive
+     * @param [0] = rotation, [1] = fwd
+     */
+    public void cmdUpdate(double tCmd[]){
+        cmdUpdate(tCmd[0], tCmd[1], false, 2);
+    }
+
+    /**
+     * Defaults to no squaring
+     * @param [0] = rotation, [1] = fwd
+     * @param dType - 0-Off  |  1=tank  |  2=arcade  |  3=curvature
+     */
+    public void cmdUpdate(double tCmd[], int dType){
+        cmdUpdate(tCmd[0], tCmd[1], false, dType);
+    }
+
     /**Chk for angle hold, front swap or scaling */
     private static void chkInput(){
         if(diffType > 0 && diffType < 4){   //If tank(1), arcade(2) or curve(3)
@@ -140,8 +157,6 @@ public class Drive {
 
     /**Set if front and backof robot should be swapped. */
     public static void setSwapFront(boolean _swapFront){ swapFront = _swapFront; }
-
-    /**Get if front and backof robot should be swapped. */
 
     /**@return true if front and backof robot are swapped. */
     public static boolean isSwappedFront(){ return swapFront; }
