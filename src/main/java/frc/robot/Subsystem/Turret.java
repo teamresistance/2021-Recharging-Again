@@ -22,10 +22,11 @@ public class Turret {
     private static boolean limeToggle;
 
     private static int state;
-    static double[][] span = { { -30.0, -2.0, -2.0, 2.0, 2.0, 30.0
-            /*            */ }, { -0.45, -0.15, 0, 0, 0.15, 0.45 } };
-    static double[][] span2 = { { -30.0, -10.0, -2.0, -2.0, 2.0, 2.0, 10.0, 30.0
-            /*            */ }, { -0.6, -0.2, -0.17, 0, 0, 0.17, 0.2, 0.6 } };
+    //If input in range of {[0] to [1] then interpolate between [0] and [1]} etc.
+    static double[][] span = { { -30.0, -2.0, -2.0, 2.0, 2.0, 30.0 },   //Input
+            /*             */  { -0.45, -0.15, 0, 0, 0.15, 0.45 } };    //Output, interpolate
+    static double[][] span2 = { { -30.0, -10.0, -2.0, -2.0, 2.0, 2.0, 10.0, 30.0 },
+            /*              */  { -0.6, -0.3, -0.17, 0, 0, 0.17, 0.25, 0.6 } };
 
     public static void init() {
         state = 0;
@@ -67,7 +68,7 @@ public class Turret {
         cmdUpdate(0);
         switch (state) {
             case 0: // cojoyControl
-                cmdUpdate(JS_IO.axTurretRot.get() * .2);
+                cmdUpdate(JS_IO.axTurretRot.get() * 0.3);
                 break;
             case 1:// Lime Control\
                 int limeNum = LimeLight.llOnTarget();
@@ -78,7 +79,7 @@ public class Turret {
                 }
                 break;
             case 2:
-                cmdUpdate(.2);
+                cmdUpdate(0.25);
                 if (LimeLight.llOnTarget() != 999) {
                     state = 1;
                 } else if (turretPot.get() > 0) {
@@ -86,7 +87,7 @@ public class Turret {
                 }
                 break;
             case 3:
-                cmdUpdate(-.2);
+                cmdUpdate(-.3);
                 if (LimeLight.llOnTarget() != 999) {
                     state = 1;
                 } else if (turretPot.get() < 0) {
@@ -94,14 +95,14 @@ public class Turret {
                 }
                 break;
             case 4: // reset after lime search
-                cmdUpdate(-.2);
+                cmdUpdate(-.3);
                 if (turretPot.get() < 0) {
                     if (turretPot.get() >= -10 && turretPot.get() <= 10) {
                         state = 0;
                     }
                 }
             case 5: // reset after lime search
-                cmdUpdate(-.2);
+                cmdUpdate(-.3);
                 if (turretPot.get() > 0) {
                     if (turretPot.get() >= -10 && turretPot.get() <= 10) {
                         state = 0;
