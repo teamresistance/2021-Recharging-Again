@@ -241,7 +241,7 @@ public class JS_IO {
         axRightY.setAxis(gamePad, 5);
 
         // Drive buttons
-        // btnScaledDrive.setButton(gamePad, 4); // Y
+        btnScaledDrive.setButton(gamePad, 4); // Y
         // btnHoldZero.setButton(gamePad, 5);  // LB
         // btnHold180.setButton(gamePad, 6);   // RB
         // btnInvOrientation.setButton(gamePad, 10); // r-stick push
@@ -251,9 +251,9 @@ public class JS_IO {
         btnTglSnorArmDn.setButton(gamePad, 1); // A
 
         // turret buttons
-        limeLightOnOff.setButton(gamePad, 5); // LB
-        btnLimeSearch.setButton(gamePad, 6); // RB
-        btnLimeAim.setButton(gamePad, 4); // Y
+        // limeLightOnOff.setButton(gamePad, 5); // LB
+        // btnLimeSearch.setButton(gamePad, 6); // RB
+        // btnLimeAim.setButton(gamePad, 4); // Y
 
         // shooting buttons
         btnRampShooter.setButton(gamePad, 3); // X
