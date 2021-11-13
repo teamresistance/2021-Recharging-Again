@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj.Relay;
 public class Robot extends TimedRobot {
     // Used to signal Auto drv/Snorfler, need to find FMSInfo call
     private static int mode = 0; // 0=Not Init, 1=autoPeriodic, 2=teleopPeriodic
-    private static boolean cmprEna = false;  //Don't need cmpr when testing drive.
+    private static boolean cmprEna = true;  //Don't need cmpr when testing drive.
 
     /**
      * This function is run when the robot is first started up and should be used
