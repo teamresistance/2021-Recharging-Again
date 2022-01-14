@@ -2,8 +2,8 @@ package frc.robot.Subsystem;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Counter;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.InvertibleDigitalInput;
@@ -150,7 +150,7 @@ public class Turret2 {
         SmartDashboard.putBoolean("Turret/atLeftLimit", ccwLmtSwAlm);
         SmartDashboard.putBoolean("Turret/atRightLimit", cwLmtSwAlm);
         SmartDashboard.putNumber("Turret/Potentiometer", turretPot.get());
-        SmartDashboard.putNumber("Turret/speed", turret.getSpeed());
+        SmartDashboard.putNumber("Turret/speed", turret.get());
         SmartDashboard.putBoolean("Turret/Lime on target", isOnTarget());
         SmartDashboard.putBoolean("Turret/limeToggle", limeToggle);
     }
@@ -160,13 +160,13 @@ public class Turret2 {
     }
 
     private static void checkLim() {
-        if (turret.getSpeed() < -.1) { // if rotating away from limit, calling positive right
+        if (turret.get() < -.1) { // if rotating away from limit, calling positive right
             ccwLmtSwAlm = false;
         }
         if (ccwLmtSw.get()) { // if at the limit
             ccwLmtSwAlm = true;
         }
-        if (turret.getSpeed() > .1) { // if rotating away from limit
+        if (turret.get() > .1) { // if rotating away from limit
             cwLmtSwAlm = false;
         }
         if (cwLmtSw.get()) {
@@ -174,7 +174,7 @@ public class Turret2 {
         }
 
         //---------- New -----------
-        if(ccwLmtSwAlm && turret.getSpeed() < -.1){
+        if(ccwLmtSwAlm && turret.get() < -.1){
             if(ccwRstTmr.hasExpired());
         }
     }

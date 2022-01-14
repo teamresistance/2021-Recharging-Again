@@ -3,7 +3,7 @@ package frc.robot.Subsystem;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.InvertibleDigitalInput;
@@ -119,7 +119,7 @@ public class Turret {
         SmartDashboard.putBoolean("atLeftLimit", atLimitLeft);
         SmartDashboard.putBoolean("atRightLimit", atLimitRight);
         SmartDashboard.putNumber("Potentiometer", turretPot.get());
-        SmartDashboard.putNumber("turret spd", turret.getSpeed());
+        SmartDashboard.putNumber("turret spd", turret.get());
         SmartDashboard.putBoolean("Lime on target", isOnTarget());
         SmartDashboard.putBoolean("limeToggle", limeToggle);
     }
@@ -150,13 +150,13 @@ public class Turret {
     }
 
     private static void checkLim() {
-        if (turret.getSpeed() < -.1) { // if rotating away from limit, calling positive right
+        if (turret.get() < -.1) { // if rotating away from limit, calling positive right
             atLimitLeft = false;
         }
         if (leftMag.get()) { // if at the limit
             atLimitLeft = true;
         }
-        if (turret.getSpeed() > .1) { // if rotating away from limit
+        if (turret.get() > .1) { // if rotating away from limit
             atLimitRight = false;
         }
         if (rightMag.get()) {

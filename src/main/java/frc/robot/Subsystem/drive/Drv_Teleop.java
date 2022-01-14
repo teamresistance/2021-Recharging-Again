@@ -94,7 +94,7 @@ public class Drv_Teleop extends Drive {
             cmdUpdate(); // Stop moving
             break;
             case 1: // Tank mode.
-            cmdUpdate(tnkLeft(), tnkRight(), false, 1); // Apply Hold, swap & scaling then send
+            cmdUpdate(tnkLeft(), -tnkRight(), false, 1); // Apply Hold, swap & scaling then send
             break;
             case 2: // Arcade mode.
             cmdUpdate(arcMove(), arcRot(), false, 2); // Apply Hold, swap & scaling then send

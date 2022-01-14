@@ -6,7 +6,7 @@ until requested to deliever them to the shooter.
 */
 package frc.robot.Subsystem.ballHandler;
 
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.InvertibleDigitalInput;

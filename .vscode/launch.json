@@ -9,7 +9,7 @@
       "name": "Launch Main",
       "request": "launch",
       "mainClass": "frc.robot.Main",
-      "projectName": "2021-Recharging-Again"
+      "projectName": "2021-Recharging-Again-main-Imported"
     },
     {
       "type": "wpilib",

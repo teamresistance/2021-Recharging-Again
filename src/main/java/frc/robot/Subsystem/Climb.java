@@ -8,8 +8,8 @@ History
 */
 package frc.robot.Subsystem;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
 import frc.io.hdw_io.ISolenoid;
@@ -24,7 +24,7 @@ public class Climb {
 
     private static Victor climbV = IO.climberHoist;
     private static ISolenoid climbSole = IO.climberExt;
-    private static PowerDistributionPanel pdp = IO.pdp;
+    private static PowerDistribution pdp = IO.pdp;
 
     private static int state;
     private static Timer timer;
