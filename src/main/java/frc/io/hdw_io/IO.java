@@ -25,9 +25,10 @@ public class IO {
     public static PowerDistribution pdp = new PowerDistribution(21,ModuleType.kCTRE);
 
     // Air
-    public static Compressor compressor = new Compressor(22,PneumaticsModuleType.CTREPCM);
+    public static Compressor compressor = new Compressor(0,PneumaticsModuleType.CTREPCM);
     public static Relay compressorRelay = new Relay(0);
 
+    //-__
     // Drive
     public static WPI_TalonSRX drvMasterTSRX_L = new WPI_TalonSRX(1); // Cmds left wheels. Includes encoders
     public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
@@ -68,12 +69,12 @@ public class IO {
     // Snorfler
     public static Victor snorfFeedMain = new Victor(9);
     public static Victor snorfFeedScdy = new Victor(6);
-    public static ISolenoid snorflerExt = new InvertibleSolenoid(PneumaticsModuleType.CTREPCM, 6); // Extends both feeders
+    public static ISolenoid snorflerExt = new InvertibleSolenoid(PneumaticsModuleType.CTREPCM, 6, false); // Extends both feeders
     public static InvertibleDigitalInput snorfHasBall = new InvertibleDigitalInput(2, false);
 
     // Climb
     public static Victor climberHoist = new Victor(3); // Extends climber
-    public static ISolenoid climberExt = new InvertibleSolenoid(PneumaticsModuleType.CTREPCM, 7);
+    public static ISolenoid climberExt = new InvertibleSolenoid(PneumaticsModuleType.CTREPCM, 7, false);
 
     // ---------- WoF, Color Sensor -----------------
     /**
