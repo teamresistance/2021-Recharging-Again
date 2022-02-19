@@ -13,7 +13,7 @@ IE., to default 0.0 pass 100.  For -1.0 pass -110.  For 1.0 pass 110.
 */
 
 import edu.wpi.first.wpilibj.Joystick;
-
+	
 public class Axis{
 	
 	private Joystick joystick;
@@ -49,6 +49,11 @@ public class Axis{
 		axisID = inAxisID;
 		exists = joystick != null;
 		exDefault = 0;
+	}
+
+	/**Clear assignment.  Joystick = null & axisID = 0. */
+	public void setAxis(){
+		setAxis(null, 0);
 	}
 
 	// get the axis value
