@@ -5,9 +5,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.io.hdw_io.Encoder;
 import frc.io.hdw_io.IO;
-import frc.io.hdw_io.ISolenoid;
+import frc.io.hdw_io.util.Encoder_Tln;
+import frc.io.hdw_io.util.ISolenoid;
 import frc.io.joysticks.JS_IO;
 import frc.util.Timer;
 
@@ -64,7 +64,7 @@ import frc.util.Timer;
  */
 public class Shooter {
     private static WPI_TalonSRX shooter = IO.shooterTSRX;
-    private static Encoder encSh = IO.shooter_Encoder;
+    private static Encoder_Tln encSh = IO.shooter_Encoder;
     private static ISolenoid ballHood = IO.shooterHoodUp;
 
     private static int state; // Shooter state machine. 0=Off by pct, 1=On by velocity, RPM

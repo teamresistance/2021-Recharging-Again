@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.*;
+import frc.io.hdw_io.util.ISolenoid;
+import frc.io.hdw_io.util.InvertibleDigitalInput;
 import frc.io.joysticks.JS_IO;
 import frc.robot.Robot;
 import frc.util.Timer;

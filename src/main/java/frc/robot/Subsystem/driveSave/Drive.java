@@ -9,8 +9,8 @@ package frc.robot.Subsystem.driveSave;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.io.hdw_io.Encoder;
 import frc.io.hdw_io.IO;
+import frc.io.hdw_io.util.Encoder_Tln;
 import frc.io.joysticks.JS_IO;
 
 /**
@@ -35,8 +35,8 @@ public class Drive {
     // private static TalonSRX right = IO.drvMasterTSRX_R;
     // private static VictorSPX leftSlave = IO.drvFollowerVSPX_L;
     // private static VictorSPX rightSlave = IO.drvFollowerVSPX_R;
-    private static Encoder encL = IO.drvEnc_L;
-    private static Encoder encR = IO.drvEnc_R;
+    private static Encoder_Tln encL = IO.drvEnc_L;
+    private static Encoder_Tln encR = IO.drvEnc_R;
 
     // Assignments used by DiffDrv. Slaves sent same command.
     private static DifferentialDrive diffDrv_M = IO.diffDrv_M;

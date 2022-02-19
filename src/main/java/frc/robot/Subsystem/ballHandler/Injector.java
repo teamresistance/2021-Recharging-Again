@@ -18,8 +18,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
-import frc.io.hdw_io.InvertibleDigitalInput;
-import frc.io.hdw_io.InvertibleSolenoid;
+import frc.io.hdw_io.util.InvertibleDigitalInput;
+import frc.io.hdw_io.util.InvertibleSolenoid;
 import frc.io.joysticks.JS_IO;
 import frc.util.Timer;
 

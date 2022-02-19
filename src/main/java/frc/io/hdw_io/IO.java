@@ -10,6 +10,11 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.util.Encoder_Tln;
+import frc.io.hdw_io.util.ISolenoid;
+import frc.io.hdw_io.util.InvertibleDigitalInput;
+import frc.io.hdw_io.util.InvertibleSolenoid;
+import frc.io.hdw_io.util.NavX;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 // import com.revrobotics.ColorSensorV3;
 
@@ -38,13 +43,13 @@ public class IO {
 
     public static final double drvMasterTPF_L = 368.4;  // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
     public static final double drvMasterTPF_R = -368.4; // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
-    public static Encoder drvEnc_L = new Encoder(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
-    public static Encoder drvEnc_R = new Encoder(drvMasterTSRX_R, drvMasterTPF_R);
+    public static Encoder_Tln drvEnc_L = new Encoder_Tln(drvMasterTSRX_L, drvMasterTPF_L);  //Interface for feet, ticks, reset
+    public static Encoder_Tln drvEnc_R = new Encoder_Tln(drvMasterTSRX_R, drvMasterTPF_R);
     public static void drvFeetRst() { drvEnc_L.reset(); drvEnc_R.reset(); }
     public static double drvFeet() { return (drvEnc_L.feet() + drvEnc_R.feet()) / 2.0; }
 
     public static WPI_TalonSRX shooterTSRX = new WPI_TalonSRX(9);
-    public static Encoder shooter_Encoder = new Encoder(shooterTSRX, 0);
+    public static Encoder_Tln shooter_Encoder = new Encoder_Tln(shooterTSRX, 0);
     public static ISolenoid shooterHoodUp = new InvertibleSolenoid(PneumaticsModuleType.CTREPCM, 4, false);
 
     // Turret-- LL defines itself

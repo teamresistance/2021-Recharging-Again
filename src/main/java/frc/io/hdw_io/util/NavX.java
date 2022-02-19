@@ -1,4 +1,4 @@
-package frc.io.hdw_io;
+package frc.io.hdw_io.util;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;

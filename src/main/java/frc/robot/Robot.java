@@ -10,10 +10,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.joysticks.JS_IO;
+import frc.io.vision.LimeLight;
+import frc.io.vision.RPI;
 import frc.io.hdw_io.IO;
-import frc.io.hdw_io.vision.LimeLight;
-import frc.io.hdw_io.vision.RPI;
-
 import frc.robot.Subsystem.drive.Drive;
 import frc.robot.Subsystem.drive.Drv_Auto;
 import frc.robot.Subsystem.drive.Drv_Teleop;

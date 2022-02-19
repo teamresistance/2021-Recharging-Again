@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
-import frc.io.hdw_io.ISolenoid;
+import frc.io.hdw_io.util.ISolenoid;
 import frc.io.joysticks.JS_IO;
 import frc.util.Timer;
 
