@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -24,7 +25,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class IO {
     // navX
-    public static NavX navX = new NavX();
+    public static NavX navX = new NavX(SPI.Port.kMXP);
 
     // PDP
     public static PowerDistribution pdp = new PowerDistribution(21,ModuleType.kCTRE);

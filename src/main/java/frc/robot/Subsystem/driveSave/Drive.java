@@ -50,7 +50,7 @@ public class Drive {
     public static void distRst() { IO.drvEnc_L.reset(); IO.drvEnc_R.reset(); }
     private static double dist_Avg;
 
-    public static double hdgFB() {return IO.navX.getNormalizeTo180();}  //Only need hdg to Hold Angle 0 or 180
+    public static double hdgFB() {return IO.navX.getNormalizedTo180();}  //Only need hdg to Hold Angle 0 or 180
     private static double hdgOut;
 
     public static void init() {

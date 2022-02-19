@@ -23,7 +23,7 @@ public abstract class ATrajFunction {
     private static boolean done = false;
     public static PIDXController pidHdg, pidDist;
 
-    public static double hdgFB() {return IO.navX.getNormalizeTo180();}  //Only need hdg to Hold Angle 0 or 180
+    public static double hdgFB() {return IO.navX.getNormalizedTo180();}  //Only need hdg to Hold Angle 0 or 180
     public static double distFB() {return IO.drvFeet();}  //Only need hdg to Hold Angle 0 or 180
     public static double[] trajCmd = new double[2];
     public static boolean sqOrQT = false;
