@@ -14,13 +14,10 @@ import frc.util.Timer;
 /**
  * Original Author: Jim & Anthony
  * <p>
- * <p>
  * History:
- * <p>
  * 1/20/20 - Original Release
- * <p>
  * 2/2021 - KB - Added Chooser for RPM SPs & other cleanup
- * <p>
+ * 2/19/22 = Copied Shooter to mod for 2022 testing
  * <p>
  * Desc: Handles the shooter subsystem
  * <p>
@@ -31,10 +28,8 @@ import frc.util.Timer;
  * Revolver. The Revolver also works with the Snofler to gather and store the
  * balls.
  * <p>
- * <p>
  * determ: When button rampUp(3) if state == 0 goto state 1 else goto state 0,
  * shut it all down, initialize.
- * <p>
  * <p>
  * Seq of Operation - Shooter
  * <p>
@@ -42,27 +37,19 @@ import frc.util.Timer;
  * <p>
  * 0. Initialized. Shooter disabled, flywheel off, injector Disabled (4-wheel
  * off, pickup off, flipper down), hood down. No request to revolver, false.
- * <p>
- * 1. Starts the flywheel ramping to rpmSP (or power). At setpt goto state 2.
+ * <p> 1. Starts the flywheel ramping to rpmSP (or power). At setpt goto state 2.
  * Read (1).onPressed to clear since used in next state.
- * <p>
- * 2. When button shoot(1).onPressed, go to state 3
- * <p>
- * 3. Requests injector enable (4-whl, pickup, flipper enabled & hood up). Wait
+ * <p> 2. When button shoot(1).onPressed, go to state 3
+ * <p> 3. Requests injector enable (4-whl, pickup, flipper enabled & hood up). Wait
  * a period to get started then state 4
- * <p>
- * 4. When button shoot(1).onPressed 2nd time goto state 5
- * <p>
- * 5. Set revolver.start, index revolver 1 time. Goto state 6
- * <p>
- * 6. Wait for revolver to finish indexing goto state 7
- * <p>
- * 7. Wait some time goto state 8
- * <p>
- * 8. If shoot(1).isDown, stilled pressed, goto state 6, continue shooting, else
+ * <p> 4. When button shoot(1).onPressed 2nd time goto state 5
+ * <p> 5. Set revolver.start, index revolver 1 time. Goto state 6
+ * <p> 6. Wait for revolver to finish indexing goto state 7
+ * <p> 7. Wait some time goto state 8
+ * <p> 8. If shoot(1).isDown, stilled pressed, goto state 6, continue shooting, else
  * goto 4, single shot
  */
-public class Shooter {
+public class Shooter22 {
     private static WPI_TalonSRX shooter = IO.shooterTSRX;
     private static Encoder_Tln encSh = IO.shooter_Encoder;
     private static ISolenoid ballHood = IO.shooterHoodUp;
