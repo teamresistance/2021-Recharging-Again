@@ -70,6 +70,8 @@ public class Shooter {
     private static int state; // Shooter state machine. 0=Off by pct, 1=On by velocity, RPM
     private static Timer stateTmr = new Timer(.05); // Timer for state machine
 
+    public static boolean reqShootDrvAuto = false; // Added for testing 2022 auto
+
     private static boolean joelMode = false; // Control seq for Joel
     private static double joelShtrWSP = 0.45; // Percent to send shooter
     private static double joelShtrBSP = 1.00; // Percent to boost after shot
