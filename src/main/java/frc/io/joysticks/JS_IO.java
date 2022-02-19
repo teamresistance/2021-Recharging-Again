@@ -17,10 +17,9 @@ Desc: Reads joystick (gamePad) values.  Can be used for different stick configur
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import frc.io.joysticks.Axis;
-import frc.io.joysticks.Button;
-import frc.io.joysticks.Pov;
+import frc.io.joysticks.util.Axis;
+import frc.io.joysticks.util.Button;
+import frc.io.joysticks.util.Pov;
 
 //TODO: ASSIGN BUTTON PORTS FOR EACH BUTTON INITIALIZED !!!
 
