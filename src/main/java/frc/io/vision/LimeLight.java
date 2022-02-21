@@ -62,6 +62,15 @@ public class LimeLight {
         limeTable.getEntry("ledMode").setNumber(ledmode);
     }
 
+    /**
+     * Set LED Mode: 0 - use pipeline default, 1 off, 2 - on,
+     * <p>3 - blinking, 4 - left, 5 - right
+     * <p>Added for 2022 testing but this should work better.  Maybe add enum.
+     */ 
+    public static void setLED(int led) {
+        limeTable.getEntry("ledMode").setNumber(led);
+    }
+
     public static void setLEDOff(){
         limeTable.getEntry("ledMode").setNumber(1);
     }

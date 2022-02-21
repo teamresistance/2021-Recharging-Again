@@ -57,6 +57,7 @@ public class JS_IO {
     // Shooter
     public static Button btnRampShooter = new Button();
     public static Button btnFireShooter = new Button();
+    public static Axis axGoalSel = new Axis();               //Added for 2022 testing
 
     // Revolver
     public static Button btnIndex = new Button();
@@ -207,6 +208,7 @@ public class JS_IO {
         btnRampShooter.setButton(coJoystick, 4);
         btnFireShooter.setButton(coJoystick, 1);
         btnIndex.setButton(coJoystick, 6);
+        axGoalSel.setAxis(coJoystick, 3);    //Added for 2022 testing
 
         btnStop.setButton(coJoystick, 11);
 
@@ -258,6 +260,7 @@ public class JS_IO {
         btnRampShooter.setButton(gamePad, 3); // X
         btnFireShooter.setButton(gamePad, 2); // B
         btnIndex.setButton(gamePad, 7); // Back
+        axGoalSel.setAxis(gamePad, 3);    //Added for 2022 testing
 
         btnStop.setButton(gamePad, 8); // start
 
