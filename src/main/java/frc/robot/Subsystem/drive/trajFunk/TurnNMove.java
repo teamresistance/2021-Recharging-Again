@@ -30,12 +30,12 @@ public class TurnNMove extends ATrajFunction {
         // update();
         switch (state) {
         case 0: // Init Trajectory, (1)turn to hdg then (2)moveto dist ...
-            pidHdg = new PIDXController(1.0/70, 0.0, 0.0);
+            pidHdg = new PIDXController(1.0/50, 0.0, 0.0);
             pidHdg.enableContinuousInput(-180.0, 180.0);
             //Set extended values SP, DB, Mn, Mx, Exp, Cmp
-            PIDXController.setExt(pidHdg, hdgSP, 2.0, 0.35, pwrMx, 2.0, true);
+            PIDXController.setExt(pidHdg, hdgSP, 2.0, 0.5, pwrMx, 2.0, true);
 
-            pidDist = new PIDXController(-1.0/10, 0.0, 0.0);
+            pidDist = new PIDXController(-1.0/5, 0.0, 0.0);
             //Set extended values SP, DB, Mn, Mx, Exp, Cmp
             PIDXController.setExt(pidDist, distSP, 1.0, 0.2, pwrMx, 1.0, true);
 
@@ -51,7 +51,8 @@ public class TurnNMove extends ATrajFunction {
                 state++;    // Chk hdg only
                 Drive.distRst();
             }
-            prtShtuff("TNM");
+            System.out.println("HERE1: " + hdgFB());
+            // prtShtuff("TNM");   //This only works with calculateX
             break;
         case 2: // Move forward, steer Auto Heading and Dist
             trajCmd[0] = pidHdg.calculate(hdgFB());
@@ -59,7 +60,9 @@ public class TurnNMove extends ATrajFunction {
             Drive.cmdUpdate(trajCmd[1], trajCmd[0], false, 2);
             // Chk if distance is done
             if (pidDist.atSetpoint()) state++; // Chk distance only
-            prtShtuff("TNM");
+            System.out.println("HERE2d -  distSP: " + pidDist.getSetpoint() + "\tdistFB: " + distFB() + "\tSpd Cmd: " + trajCmd[1]);
+            System.out.println("HERE2h -  hdgSP:  " + pidHdg.getSetpoint() + "\thdgFB: " + hdgFB() + "\tHdg Cmd: " + trajCmd[0]);
+            // prtShtuff("TNM");   //This only works with calculateX
             break;
         case 3:
             setDone();

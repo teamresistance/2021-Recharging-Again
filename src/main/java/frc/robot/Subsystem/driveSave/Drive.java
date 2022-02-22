@@ -127,7 +127,7 @@ public class Drive {
     public static void update() {
         if(JS_IO.btnRstGyro.onButtonPressed()){     //Testing location
             IO.navX.reset();
-            IO.resetCoor();
+            IO.coorXY.reset();
         } 
         determ();
         sdbUpdate();
@@ -188,12 +188,12 @@ public class Drive {
 
         // Location test
         SmartDashboard.putNumber("ALoc/Angle", IO.navX.getAngle());
-        SmartDashboard.putNumber("ALoc/Distance", IO.getDeltaD());
-        SmartDashboard.putNumber("ALoc/X", IO.getCoorX());
-        SmartDashboard.putNumber("ALoc/Y", IO.getCoorY());
-        SmartDashboard.putNumberArray("ALoc/arXY", IO.getCoor());
-        SmartDashboard.putNumber("ALoc/arX", IO.getCoor()[0]);
-        SmartDashboard.putNumber("ALoc/arY", IO.getCoor()[1]);
+        SmartDashboard.putNumber("ALoc/Distance", IO.coorXY.getDeltaD());
+        SmartDashboard.putNumber("ALoc/X", IO.coorXY.getX());
+        SmartDashboard.putNumber("ALoc/Y", IO.coorXY.getY());
+        SmartDashboard.putNumberArray("ALoc/arXY", IO.coorXY.get());
+        SmartDashboard.putNumber("ALoc/arX", IO.coorXY.get()[0]);
+        SmartDashboard.putNumber("ALoc/arY", IO.coorXY.get()[1]);
     }
 
     public static int getState() {

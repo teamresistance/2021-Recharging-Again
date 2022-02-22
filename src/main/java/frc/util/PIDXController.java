@@ -32,6 +32,7 @@ public class PIDXController extends PIDController{
 
     public double calculateX( double _fb, double _sp){
         kInFB = _fb;    //for troubleshooting
+        System.out.println("HERE3: " + kInFB);
         kOut = super.calculate(_fb, _sp);   //This sets setpoint to _sp
         kAdj = (atSetpoint() ? 0 : calcX(kOut)) + kFF;
         if( KClamp ){ kAdj = MathUtil.clamp(kAdj, -kOutMx, kOutMx); }

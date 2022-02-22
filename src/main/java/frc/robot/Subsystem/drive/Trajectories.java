@@ -9,7 +9,7 @@ public class Trajectories {
     private static double dfltPwr = 0.9;
     private static SendableChooser<String> chsr = new SendableChooser<String>();
     private static String[] chsrDesc = {
-        "getEmpty", "getSlalom", "getBarrel", "getBounce", "getSquare_TNM", "getSquare_MOH",
+        "getEmpty", "getCargoAB", "getSlalom", "getBarrel", "getBounce", "getSquare_TNM", "getSquare_MOH",
         "getFigure8R", "getFigure8L", "getFigure8WPT",
         "getPathRedA", "getPathBluA", "getPathRedB", "getPathBluB", "getPAthBlue", "getPathGalaxtic",
         "getCurveTry"
@@ -87,6 +87,8 @@ public class Trajectories {
             return getCurve5_7(pwr);
             case "getCurve5_5":
             return getCurve5_5(pwr);
+            case "getCargoAB":
+            return getCargoAB(pwr);
             default:
             System.out.println("Traj/Bad Traj Desc - " + chsr.getSelected());
             return getEmpty(0);
@@ -114,6 +116,23 @@ public class Trajectories {
 
     public static ATrajFunction[] getEmpty(double pwr) {
         ATrajFunction[] traj = { new TurnNMove(0.0, 0.0, pwr) };
+        return traj;
+    }
+
+    public static ATrajFunction[] getCargoAB(double pwr) {
+        ATrajFunction traj[] = {
+            new CoorOffset(24.0, 2.1, -2.1),    //Setup for 24 hdg, 2.1 X & -2.1 Y
+            new TurnNMove(24.0, -2.5, pwr),
+            new TurnNMove(90.0, 5.0,  pwr),
+            // new TurnNMove(-55, 5.17, pwr), 
+            // new TurnNMove(0,    8.5, pwr),
+            // new TurnNMove(57,   3.2, pwr),
+            // new TankTurnHdg(135, 0.0,  0.80),
+            // new TurnNMove(132,  5.0, pwr),
+            // new TurnNMove(180,  8.5, pwr), 
+            // new TurnNMove(-125,4.57, pwr),
+            // new TurnNMove(180,  2.0, pwr)
+        };
         return traj;
     }
 

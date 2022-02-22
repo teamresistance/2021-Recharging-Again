@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.util.CoorSys;
 import frc.io.hdw_io.util.Encoder_Tln;
 import frc.io.hdw_io.util.ISolenoid;
 import frc.io.hdw_io.util.InvertibleDigitalInput;
@@ -48,6 +49,8 @@ public class IO {
     public static Encoder_Tln drvEnc_R = new Encoder_Tln(drvMasterTSRX_R, drvMasterTPF_R);
     public static void drvFeetRst() { drvEnc_L.reset(); drvEnc_R.reset(); }
     public static double drvFeet() { return (drvEnc_L.feet() + drvEnc_R.feet()) / 2.0; }
+
+    public static CoorSys coorXY = new CoorSys(navX, drvEnc_L, drvEnc_R);   //CoorXY & drvFeet
 
     public static WPI_TalonSRX shooterTSRX = new WPI_TalonSRX(9);
     public static Encoder_Tln shooter_Encoder = new Encoder_Tln(shooterTSRX, 0);
@@ -99,7 +102,7 @@ public class IO {
         // revTimer = new Timer(0);
         drvsInit();
         motorsInit();
-        resetCoor();
+        coorXY.reset();
         // turCCWCntr.setUpSourceEdge(true, true);
         // turCWCntr.setUpSourceEdge(true, true);
     }
@@ -168,7 +171,7 @@ public class IO {
         SmartDashboard.putNumber("Robot/Mtr12 Cmd", drvMasterTSRX_L.get());
         SmartDashboard.putNumber("Robot/Mtr11 Cmd", drvFollowerVSPX_L.get());
         drvAutoPwr = SmartDashboard.getNumber("Robot/Feet Pwr2", drvAutoPwr);  //Testing
-        coorUpdate();    //Update the XY location
+        coorXY.update();    //Update the XY location
     }
 
     public static void victorSPXfollower() {
@@ -176,74 +179,74 @@ public class IO {
         drvFollowerVSPX_R.follow(drvMasterTSRX_R);
     }
 
-    //--------------------  XY Coordinates -----------------------------------
-    private static double prstDist;     //Present distance traveled since last reset.
-    private static double prvDist;      //previous distance traveled since last reset.
-    private static double deltaD;       //Distance traveled during this period.
-    private static double coorX = 0;    //Calculated X (Left/Right) coordinate on field
-    private static double coorY = 0;    //Calculated Y (Fwd/Bkwd) coordinate on field.
+    // //--------------------  XY Coordinates -----------------------------------
+    // private static double prstDist;     //Present distance traveled since last reset.
+    // private static double prvDist;      //previous distance traveled since last reset.
+    // private static double deltaD;       //Distance traveled during this period.
+    // private static double coorX = 0;    //Calculated X (Left/Right) coordinate on field
+    // private static double coorY = 0;    //Calculated Y (Fwd/Bkwd) coordinate on field.
     
-    /**Calculates the XY coordinates by taken the delta distance and applying the sinh/cosh 
-     * of the gyro heading.
-     * <p>Initialize by calling resetLoc.
-     * <p>Needs to be called periodically from IO.update called in robotPeriodic in Robot.
-     */
-    public static void coorUpdate(){
-        // prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;   //Distance since last reset.
-        prstDist = drvFeet();   //Distance since last reset.
-        deltaD = prstDist - prvDist;                        //Distancce this pass
-        prvDist = prstDist;                                 //Save for next pass
+    // /**Calculates the XY coordinates by taken the delta distance and applying the sinh/cosh 
+    //  * of the gyro heading.
+    //  * <p>Initialize by calling resetLoc.
+    //  * <p>Needs to be called periodically from IO.update called in robotPeriodic in Robot.
+    //  */
+    // public static void coorUpdate(){
+    //     // prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;   //Distance since last reset.
+    //     prstDist = drvFeet();   //Distance since last reset.
+    //     deltaD = prstDist - prvDist;                        //Distancce this pass
+    //     prvDist = prstDist;                                 //Save for next pass
 
-        //If encoders are reset by another method, may cause large deltaD.
-        //During testing deltaD never exceeded 0.15 on a 20mS update.
-        if (Math.abs(deltaD) > 0.2) deltaD = 0.0;       //Skip this update if too large.
+    //     //If encoders are reset by another method, may cause large deltaD.
+    //     //During testing deltaD never exceeded 0.15 on a 20mS update.
+    //     if (Math.abs(deltaD) > 0.2) deltaD = 0.0;       //Skip this update if too large.
 
-        if (Math.abs(deltaD) > 0.0){    //Deadband for encoders if needed (vibration?).  Presently set to 0.0
-            coorY += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle())) * 1.0;
-            coorX += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle())) * 1.1;
-        }
-    }
+    //     if (Math.abs(deltaD) > 0.0){    //Deadband for encoders if needed (vibration?).  Presently set to 0.0
+    //         coorY += deltaD * Math.cos(Math.toRadians(IO.navX.getAngle())) * 1.0;
+    //         coorX += deltaD * Math.sin(Math.toRadians(IO.navX.getAngle())) * 1.1;
+    //     }
+    // }
 
-    /**Reset the location on the field to 0.0, 0.0.
-     * If needed navX.Reset must be called separtely.
-     */
-    public static void resetCoor(){
-        // IO.navX.reset();
-        // encL.reset();
-        // encR.reset();
-        coorX = 0;
-        coorY = 0;
-        prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;
-        prvDist = prstDist;
-        deltaD = 0;
-    }
+    // /**Reset the location on the field to 0.0, 0.0.
+    //  * If needed navX.Reset must be called separtely.
+    //  */
+    // public static void resetCoor(){
+    //     // IO.navX.reset();
+    //     // encL.reset();
+    //     // encR.reset();
+    //     coorX = 0;
+    //     coorY = 0;
+    //     prstDist = (drvEnc_L.feet() + drvEnc_R.feet())/2;
+    //     prvDist = prstDist;
+    //     deltaD = 0;
+    // }
 
-    /**
-     * @return an array of the calculated X and Y coordinate on the field since the last reset.
-     */
-    public static double[] getCoor(){
-        double[] coorXY = {coorX, coorY};
-        return coorXY;
-    }
+    // /**
+    //  * @return an array of the calculated X and Y coordinate on the field since the last reset.
+    //  */
+    // public static double[] getCoor(){
+    //     double[] coorXY = {coorX, coorY};
+    //     return coorXY;
+    // }
 
-    /**
-     * @return the calculated X (left/right) coordinate on the field since the last reset.
-     */
-    public static double getCoorX(){
-        return coorX;
-    }
+    // /**
+    //  * @return the calculated X (left/right) coordinate on the field since the last reset.
+    //  */
+    // public static double getCoorX(){
+    //     return coorX;
+    // }
 
-    /**
-     * @return the calculated Y (fwd/bkwd) coordinate on the field since the last reset.
-     */
-    public static double getCoorY(){
-        return coorY;
-    }
+    // /**
+    //  * @return the calculated Y (fwd/bkwd) coordinate on the field since the last reset.
+    //  */
+    // public static double getCoorY(){
+    //     return coorY;
+    // }
 
-    /**
-     * @return the calculated Y (fwd/bkwd) coordinate on the field since the last reset.
-     */
-    public static double getDeltaD(){
-        return deltaD;
-    }
+    // /**
+    //  * @return the calculated Y (fwd/bkwd) coordinate on the field since the last reset.
+    //  */
+    // public static double getDeltaD(){
+    //     return deltaD;
+    // }
 }
