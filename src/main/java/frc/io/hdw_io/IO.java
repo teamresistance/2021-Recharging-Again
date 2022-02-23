@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 /* temp to fill with latest faults */
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
+import com.revrobotics.ColorSensorV3;
 
 public class IO {
     // navX
@@ -95,7 +96,7 @@ public class IO {
      * A Rev Color Sensor V3 object is constructed with an I2C port as a parameter.
      * The device will be automatically initialized with default parameters.
      */
-    // public static ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+    public static ColorSensorV3 ballColorSensor = new ColorSensorV3(i2cPort);
 
     // Initialize any hardware here
     public static void init() {

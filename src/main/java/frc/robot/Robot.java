@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.joysticks.JS_IO;
 import frc.io.vision.LimeLight;
@@ -31,6 +32,27 @@ public class Robot extends TimedRobot {
     private static int mode = 0; // 0=Not Init, 1=autoPeriodic, 2=teleopPeriodic
     private static boolean cmprEna = true;  //Don't need cmpr when testing drive.
 
+    //---------- Team Color Chooser -----------------
+    public static SendableChooser<String> teamColorchsr = new SendableChooser<String>();
+    private static String[] chsrDesc = {
+        "Blue", "Red"
+    };
+
+    /**Initialize Traj chooser for Driver to select team's alliance */
+    public static void teamColorchsrInit(){
+        for(int i = 0; i < chsrDesc.length; i++){
+            teamColorchsr.addOption(chsrDesc[i], chsrDesc[i]);
+        }
+        teamColorchsr.setDefaultOption(chsrDesc[0] + " (Default)", chsrDesc[0]);   //Default MUST have a different name
+        SmartDashboard.putData("Robot/TeamColor", teamColorchsr);
+    }
+
+    /**Show on sdb traj chooser info.  Called from robotPeriodic  */
+    public static void teamColorchsrUpdate(){
+        SmartDashboard.putString("Robot/TeamColorChoosen", teamColorchsr.getSelected());
+    }
+    //-----------------------------------------------
+
     /**
      * This function is run when the robot is first started up and should be used
      * for any initialization code.
@@ -43,7 +65,8 @@ public class Robot extends TimedRobot {
         Shooter.chsrInit();         //Shooter preset RPMs Chooser
         Drv_Teleop.chsrInit();      //Drv_Teleop init JS Chooser.
         Trajectories.chsrInit();    //Drv_Auto init Traj Chooser.
-
+        teamColorchsrInit();        //Allows Driver to select team's alliance
+        //Allows Driver to disable compressor during testing due to leak.
         SmartDashboard.putBoolean("Robot/Cmpr Enabled", cmprEna);
     }
 
@@ -54,6 +77,7 @@ public class Robot extends TimedRobot {
         IO.compressorRelay.set(IO.compressor.enabled() && cmprEna ? Relay.Value.kForward : Relay.Value.kOff);
         IO.update();
         JS_IO.update();
+        teamColorchsrUpdate();
 
         SmartDashboard.putNumber("Robot/Mode", mode);
         Trajectories.chsrUpdate();
