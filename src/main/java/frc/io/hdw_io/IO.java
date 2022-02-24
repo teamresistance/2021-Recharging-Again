@@ -42,6 +42,7 @@ public class IO {
     public static WPI_TalonSRX drvMasterTSRX_R = new WPI_TalonSRX(5); // Cmds right wheels. Includes encoders
     public static WPI_VictorSPX drvFollowerVSPX_L = new WPI_VictorSPX(2); // Resrvd 3 & 4 maybe
     public static WPI_VictorSPX drvFollowerVSPX_R = new WPI_VictorSPX(6); // Resrvd 7 & 8 maybe
+    //As of 2022 DifferentialDrive no longer inverts the right motor.  Do this in the motor controller.
     public static DifferentialDrive diffDrv_M = new DifferentialDrive(IO.drvMasterTSRX_L, IO.drvMasterTSRX_R);
 
     public static final double drvMasterTPF_L = 368.4;  // 1024 t/r (0.5' * 3.14)/r 9:60 gr = 385.4  calibrated= 364.63
@@ -112,7 +113,7 @@ public class IO {
     public static void drvsInit() {
         drvMasterTSRX_L.configFactoryDefault();
         drvMasterTSRX_R.configFactoryDefault();
-        //---- Invertion set by wiring.  Leave these TRUE! ------
+        //---- Invertion set chged in 2022.  Leave these TRUE! ------
         drvMasterTSRX_L.setInverted(true); // Inverts motor direction and encoder if attached
         drvMasterTSRX_R.setInverted(true); // Inverts motor direction and encoder if attached
         drvMasterTSRX_L.setSensorPhase(false); // Adjust this to correct phasing with motor
