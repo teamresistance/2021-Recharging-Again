@@ -36,18 +36,22 @@ public class Drv_Teleop extends Drive {
         for(int i=0; i < teleDrvType.length; i++){
             teleDrvChsr.addOption(teleDrvType[i], i);
         }
-        teleDrvChsr.setDefaultOption(teleDrvType[0] + " (Dflt)", 0);
+        //Change both to change default.        \/              \/
+        teleDrvChsr.setDefaultOption(teleDrvType[1] + " (Dflt)", 1);
+        teleDrvChoice = teleDrvChsr.getSelected();  //This can also be chgd bby driver button press.
+        chsrUpdate();
+    }
 
+    public static void chsrUpdate(){
         SmartDashboard.putData("Drv/Tele/Choice", teleDrvChsr);   //Put Chsr on sdb
         SmartDashboard.putString("Drv/Tele/Choosen", teleDrvType[teleDrvChsr.getSelected()]);   //Put selected on sdb
     }
- 
+
     /**Initial items to teleop driving */
     public static void init() {
         Drive.init();
 
         sdbInit();
-        teleDrvChoice = teleDrvChsr.getSelected();
         cmdUpdate(0, 0);
         IO.navX.reset();
 
@@ -59,17 +63,20 @@ public class Drv_Teleop extends Drive {
     /**
      * Determine any state that needs to interupt the present state, usually by way of a JS button but
      * can be caused by other events.
-     * <p>Added sdb chooser to select.  Can chg from btn or chooser.
+     * <p>Added sdb chooser to select.  Can chg from btn or chooser (don't think this works).
      */
-    public static void determ() {
-        if(JS_IO.btnSelDrv.onButtonPressed()){          //On btn prsd Incr thru drive types with btn press
-            state = ((++state) % teleDrvType.length);
-        }
+    public static void update() {
+        //Don't think this works.
+        // if(JS_IO.btnSelDrv.onButtonPressed()){          //On btn prsd Incr thru drive types with btn press
+        //     state = ((++state) % teleDrvType.length);
+        // }
 
-        if(teleDrvChoice != teleDrvChsr.getSelected()){ //If sdb chgs switch states to sdb choice
-            state = teleDrvChsr.getSelected();
-            teleDrvChoice = state;
-        }
+        // if(teleDrvChoice != teleDrvChsr.getSelected()){ //If sdb chgs switch states to sdb choice
+        //     state = teleDrvChsr.getSelected();
+        //     teleDrvChoice = state;
+        // }
+
+        state = teleDrvChsr.getSelected();
 
         if(tglFrontBtn()) setSwapFront(!isSwappedFront());  //Switch the direction of the front
         if(tglScaleBtn()) setScaled(!isScaled());           //Apply scale limiting
@@ -80,21 +87,22 @@ public class Drv_Teleop extends Drive {
         }else{
             relHdgHold();           //else release
         }
+
+        smUpdate(); //All determined, state machine update now.
     }
 
     /**
      * Called from Robot telopPerodic every 20mS to Update the drive sub system.
      */
-    public static void update() {
+    public static void smUpdate() {
         Drive.update();
-        determ();
         sdbUpdate();
         switch (state) {
             case 0: // Stop Moving
             cmdUpdate(); // Stop moving
             break;
             case 1: // Tank mode.
-            cmdUpdate(tnkLeft(), -tnkRight(), false, 1); // Apply Hold, swap & scaling then send
+            cmdUpdate(tnkLeft(), tnkRight(), false, 1); // Apply Hold, swap & scaling then send
             break;
             case 2: // Arcade mode.
             cmdUpdate(arcMove(), arcRot(), false, 2); // Apply Hold, swap & scaling then send

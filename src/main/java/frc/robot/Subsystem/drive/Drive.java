@@ -88,9 +88,7 @@ public class Drive {
             diffDrv.tankDrive(-lSpdY, -rSpdRot_XY, isSqOrQT);
             break;
             case 2:     //Arcade
-            // diffDrv.arcadeDrive(-lSpdY, rSpdRot_XY, isSqOrQT);
-            diffDrv.arcadeDrive(rSpdRot_XY, -lSpdY, isSqOrQT);  //WTF:  Appears to be reversed!!!
-            // System.out.println("Arc: /tSpd: " + lSpdY + "\tRot: " + rSpdRot_XY);
+            diffDrv.arcadeDrive(-lSpdY, rSpdRot_XY, isSqOrQT);
             break;
             case 3:     //Curvature
             diffDrv.curvatureDrive(-lSpdY, rSpdRot_XY, isSqOrQT);

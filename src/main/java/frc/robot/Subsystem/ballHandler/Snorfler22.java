@@ -31,13 +31,13 @@ public class Snorfler22 {
     public static Victor snorfElvLo_Mtr = IO.snorfFeedScdy; //Lower elevator motor
     public static Victor snorfElvHi_Mtr = IO.snorfFeedScdy; //High elevator motor
 
-    //Defines RevRobotics 3 color sensor and RGB colors to sensr ball colors, Red & Blue.
-    private static ColorSensorV3 ballColorSensor = IO.ballColorSensor;
-    private static final ColorMatch colorMatcher = new ColorMatch();
-    private static final Color kBlueTarget = new Color(0.17, 0.41, 0.41); // blue: R-17 G-41 B-41
-    private static final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
-    private static final Color kRedTarget = new Color(0.49, 0.35, 0.15); // red R-49 G-35 B-15
-    private static final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
+    // //Defines RevRobotics 3 color sensor and RGB colors to sensr ball colors, Red & Blue.
+    // private static ColorSensorV3 ballColorSensor; // = IO.ballColorSensor;
+    // private static final ColorMatch colorMatcher = new ColorMatch();
+    // private static final Color kBlueTarget = new Color(0.17, 0.41, 0.41); // blue: R-17 G-41 B-41
+    // private static final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
+    // private static final Color kRedTarget = new Color(0.49, 0.35, 0.15); // red R-49 G-35 B-15
+    // private static final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
 
     // joystick buttons:
     private static Button btnSnorfle = JS_IO.btnTglSnorArmDn;
@@ -49,12 +49,11 @@ public class Snorfler22 {
     private static Timer colorTimer = new Timer(0.1);
     public static boolean reqsnorfDrvAuto;  //Request to enable the snorfler from Drv Auto system
     
-    public static Color detectedColor;      //Hold 3 color values detected by sensor
-    public static String colorString;       //Holds evaluated color string 
-    public static ColorMatchResult match;
+    // public static Color detectedColor;      //Hold 3 color values detected by sensor
+    // public static String colorString;       //Holds evaluated color string 
+    // public static ColorMatchResult match;
     private static String teamColor;
     private static String enemyColor;
-
 
     public static enum dirSnorfler { OFF, FWD, REJ }
 
@@ -68,10 +67,10 @@ public class Snorfler22 {
         state = 0;          // Start at state 0
         reqsnorfDrvAuto = false;    //Request from Drv_Auto, autonomous mode.
 
-        colorMatcher.addColorMatch(kBlueTarget);
-        colorMatcher.addColorMatch(kGreenTarget);
-        colorMatcher.addColorMatch(kRedTarget);
-        colorMatcher.addColorMatch(kYellowTarget);
+        // colorMatcher.addColorMatch(kBlueTarget);
+        // colorMatcher.addColorMatch(kGreenTarget);
+        // colorMatcher.addColorMatch(kRedTarget);
+        // colorMatcher.addColorMatch(kYellowTarget);
 
     }
 
@@ -85,25 +84,26 @@ public class Snorfler22 {
         teamColor = Robot.teamColorchsr.getSelected();      //Driver choosen team color
         enemyColor = teamColor == "Blue" ? "Red" : "Blue";  //The bad guy's color.
 
-        if (match.color == kBlueTarget) {
-            colorString = "Blue";
-        } else if (match.color == kRedTarget) {
-            colorString = "Red";
-        } else if (match.color == kGreenTarget) {
-            colorString = "Green";
-        } else if (match.color == kYellowTarget) {
-            colorString = "Yellow";
-        } else {
-            colorString = "Unknown";
-        }
-
-        detectedColor = ballColorSensor.getColor();
-        match = colorMatcher.matchClosestColor(detectedColor);
-
         if ((btnSnorfle.isDown() || reqsnorfDrvAuto) && state == 0)  state = 1; // Starts the state machine
-        if ((btnSnorfle.isUp() || !reqsnorfDrvAuto) && state != 0) state = 0;
-        if (btnRejectSnorfle.isDown() && state < 3)  state = 3; 
+        if ((btnSnorfle.isUp() && !reqsnorfDrvAuto) && state != 0) state = 0;
+        if (btnRejectSnorfle.isDown() && state == 2)  state = 3; 
         if (btnRejectSnorfle.isUp() && state == 4) state = 0; // Goes back to off
+
+
+        // if (match.color == kBlueTarget) {
+        //     colorString = "Blue";
+        // } else if (match.color == kRedTarget) {
+        //     colorString = "Red";
+        // } else if (match.color == kGreenTarget) {
+        //     colorString = "Green";
+        // } else if (match.color == kYellowTarget) {
+        //     colorString = "Yellow";
+        // } else {
+        //     colorString = "Unknown";
+        // }
+
+        // detectedColor = ballColorSensor.getColor();
+        // match = colorMatcher.matchClosestColor(detectedColor);
 
         smUpdate();
         sdbUpdate();
@@ -115,24 +115,25 @@ public class Snorfler22 {
         switch (state) {
             case 0: // Everything is off
                 cmdUpdate(false, dirSnorfler.OFF);
+                // if ((btnSnorfle.isDown() || reqsnorfDrvAuto))  state = 1;
+                snorfTimer.clearTimer();
                 break;
             case 1: // Waiting a bit before forward
                 cmdUpdate(true,dirSnorfler.OFF);
-                if (snorfTimer.hasExpired(0.1,state)) {
-                    state++;
-                }
+                if (snorfTimer.hasExpired(0.1,state)) state++;
                 break;
             case 2: // Start snorfler forward
                 cmdUpdate(true, dirSnorfler.FWD);
+                // if ((btnSnorfle.isUp() && !reqsnorfDrvAuto)) state = 0;
+                if (btnRejectSnorfle.isDown()) state = 3; 
                 break;
             case 3: // Waiting a bit before going back
                 cmdUpdate(true, dirSnorfler.OFF);
-                if (snorfTimer.hasExpired(0.1,state)) {
-                    state++;
-                }
+                if (snorfTimer.hasExpired(0.1,state)) state++;
                 break;  
             case 4: //Go back and reject
                 cmdUpdate(true, dirSnorfler.REJ);
+                // if (btnRejectSnorfle.isUp() || btnSnorfle.isUp()) state = 0; // Goes back to off
                 break;           
             default: // all off
                 cmdUpdate(false,dirSnorfler.OFF);
@@ -171,7 +172,8 @@ public class Snorfler22 {
     }
 
     private static boolean checkColorOK() {
-        return !(colorTimer.hasExpired(0.1, colorString.equals(enemyColor)));
+        return false;
+        // return !(colorTimer.hasExpired(0.1, colorString.equals(enemyColor)));
     }
 
     /*-------------------------  SDB Stuff --------------------------------------
@@ -183,11 +185,9 @@ public class Snorfler22 {
 
     /**Update the Smartdashboard. */
     private static void sdbUpdate() {
-        //Put stuff to retrieve from sdb here.  Must have been initialized in sdbInit().
-        // sumpthin = SmartDashboard.getBoolean("ZZ_Template/Sumpthin", sumpthin.get());
-
-        //Put other stuff to be displayed here
-        SmartDashboard.putNumber("Snorfler/state", state);
+        SmartDashboard.putNumber("Snorfler22/1. state", state);
+        SmartDashboard.putBoolean("Snorfler22/2. btn Snorfe", btnSnorfle.isDown());
+        SmartDashboard.putBoolean("Snorfler22/3. btn Reject", btnRejectSnorfle.isDown());
     }
 
     // ----------------- Shooter statuses and misc.-----------------
