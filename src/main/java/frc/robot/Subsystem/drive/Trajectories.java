@@ -123,7 +123,10 @@ public class Trajectories {
         ATrajFunction traj[] = {
             new CoorOffset(24.0, 2.1, -2.1),    //Setup for 24 hdg, 2.1 X & -2.1 Y
             new TurnNMove(24.0, -2.5, pwr),
-            new TurnNMove(90.0, 5.0,  pwr),
+            new SnorfDrvAuto22(true),
+            new TurnNMove(115.0, 7.0,  65),
+            new TrajDelay(2.0),
+            new SnorfDrvAuto22(false)
             // new TurnNMove(-55, 5.17, pwr), 
             // new TurnNMove(0,    8.5, pwr),
             // new TurnNMove(57,   3.2, pwr),
