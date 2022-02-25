@@ -1,6 +1,8 @@
 package frc.robot.Subsystem.ballHandler;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.io.hdw_io.IO;
+import frc.io.hdw_io.util.ISolenoid;
 import frc.io.joysticks.JS_IO;
 import frc.io.joysticks.util.Axis;
 import frc.io.joysticks.util.Button;
@@ -19,8 +21,14 @@ import frc.util.Timer;
  */
 public class Shooter22 {
     //Hdw
-    //Using LL Left & Right LEDs to indicate L/R catapults
-    //Need sumpthin for low/hi prs.  Might just use Smartdashboard.
+    /*
+     * Using LL Leds to indicate Lo/Hi pressure select.
+     * Flipper is left caltapult.  Hood is right.
+     */
+    private static ISolenoid select_low_SV; // Defaults to high pressure; switches to low pressure.
+    private static ISolenoid left_catapult_SV = IO.injectorFlipper; // Left catapult trigger.
+    private static ISolenoid right_catapult_SV = IO.shooterHoodUp; // Right catapult trigger.
+
 
     //Joystick
     private static Axis axSelLow = JS_IO.axGoalSel;             //CoDvr Slider
@@ -137,12 +145,10 @@ public class Shooter22 {
      * 
      */
     private static void cmdUpdate(boolean select_low, boolean left_trigger, boolean right_trigger) {
-        // select_low_SV.set(select_low);  //Need to find sumthin to indicate low/hi goal
-
-        int tmpLed = 0;
-        tmpLed += left_trigger ? 4 : 0; //Left LED on, left catapult
-        tmpLed += right_trigger ? 1 : 0;    //Right LED on, right catapult
-        LimeLight.setLED(tmpLed);
+        LimeLight.setLED(select_low ? 1 : 3);   //LEDs Off - Low Prs, On - Hi Prs
+        // select_low_SV.set(select_low);
+        left_catapult_SV.set(left_trigger);
+        right_catapult_SV.set(right_trigger);
     }
     
 
@@ -153,9 +159,11 @@ public class Shooter22 {
 
     public static void sdbUpdate() {
         // Put general Shooter info on sdb
-        SmartDashboard.putNumber("Shooter/State", state);
-        SmartDashboard.putBoolean("Shooter/On", ((state == 1) ? true : false));
-        SmartDashboard.putBoolean("Shooter/low_select", low_select);
+        SmartDashboard.putNumber("Shooter22/1. State", state);
+        SmartDashboard.putBoolean("Shooter22/2. On", ((state == 1) ? true : false));
+        SmartDashboard.putBoolean("Shooter22/3. low_select", low_select);
+        SmartDashboard.putBoolean("Shooter22/4. left cat", left_catapult_SV.get());
+        SmartDashboard.putBoolean("Shooter22/5. right cat", right_catapult_SV.get());
     }
 
     // ------------------- Shooter statuses and misc. -------------------------
