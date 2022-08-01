@@ -20,6 +20,7 @@ import frc.robot.Subsystem.drive.Drv_Teleop;
 import frc.robot.Subsystem.drive.Trajectories;
 
 import frc.robot.Subsystem.Turret;
+import frc.robot.Subsystem.Turret3;
 import frc.robot.Subsystem.ballHandler.Injector;
 import frc.robot.Subsystem.ballHandler.Revolver;
 import frc.robot.Subsystem.ballHandler.Shooter;
@@ -111,7 +112,8 @@ public class Robot extends TimedRobot {
         Revolver.init();
         Shooter.init();
         Injector.init();
-        Turret.init();
+        //Turret.init();
+        Turret3.init();
         LimeLight.init();
         RPI.init();
 
@@ -128,7 +130,8 @@ public class Robot extends TimedRobot {
         Revolver.update();
         Shooter.update();
         Injector.update();
-        Turret.update();
+        //Turret.update();
+        Turret3.update();
         LimeLight.update();     // Changed from sbdUpdate - AS
         RPI.sdbUpdate();
 
