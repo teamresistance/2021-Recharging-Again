@@ -9,6 +9,10 @@
       "/LiveWindow/Ungrouped/DigitalInput[4]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[5]": "Digital Input",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
       "/LiveWindow/Ungrouped/Talon SRX [9]": "Motor Controller",
       "/LiveWindow/Ungrouped/Victor SPX [2]": "Motor Controller",
       "/LiveWindow/Ungrouped/Victor SPX [6]": "Motor Controller",
@@ -22,7 +26,8 @@
       "/SmartDashboard/Drv/Tele/Choice": "String Chooser",
       "/SmartDashboard/Drv/Traj/Choice": "String Chooser",
       "/SmartDashboard/JS/Choice": "String Chooser",
-      "/SmartDashboard/Robot/TeamColor": "String Chooser"
+      "/SmartDashboard/Robot/TeamColor": "String Chooser",
+      "/SmartDashboard/Shooter/RPM/Selection": "String Chooser"
     }
   }
 }
