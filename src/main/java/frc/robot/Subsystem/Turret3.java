@@ -36,13 +36,13 @@ public class Turret3 {
     private static boolean photonToggle;  //???
 
     private static int state;
-    private static PIDController turPID = new PIDController(1.0, 0.0, 0.0); //Used by LL X fdbk
+    private static PIDController turPID = new PIDController(1.0, 0.0, 0.0); //!Used by LL X fdbk, Look at docs later
     private static double turCmdVal;    //Calc cmd signal for turret motor
 
     private static NetworkTableInstance netable;
     private static PhotonPipelineResult result;
     private static PhotonCamera camera;
-    private static Transform2d targetOffset;
+    private static Transform2d foundTarget;
 
 
     public static void init() {
@@ -52,6 +52,8 @@ public class Turret3 {
         ccwLmtSwAlm = false;
         cwLmtSwAlm = false;
         photonToggle = true;
+        camera = new PhotonCamera(netable,"gloworm");
+        camera.setPipelineIndex(1);
     }
 
     /**
@@ -82,16 +84,16 @@ public class Turret3 {
         checkLim();
         // cmdUpdate(0);
         result = camera.getLatestResult();
-        targetOffset = result.getBestTarget().getCameraToTarget();
+        foundTarget = result.getBestTarget().getCameraToTarget();
 
         switch (state) {
             case 0: // Joystick Control
-                cmdUpdate(JS_IO.axTurretRot.get() * .4 * Math.abs(JS_IO.axTurretRot.get()));
+                cmdUpdate(JS_IO.axTurretRot.get() * 0.4 * Math.abs(JS_IO.axTurretRot.get()));
                 break;
             case 1: // Limeight Aim Control
                 if (isOnTarget()) {
                     // cmdUpdate(PropMath.SegLine(LimeLight.getLLX(), span2));
-                    turCmdVal = turPID.calculate(targetOffset.getX());
+                    turCmdVal = turPID.calculate(foundTarget.getX());
                 } else {
                     turCmdVal = 0.0;
                 }
