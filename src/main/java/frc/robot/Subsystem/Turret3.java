@@ -52,6 +52,7 @@ public class Turret3 {
         ccwLmtSwAlm = false;
         cwLmtSwAlm = false;
         photonToggle = true;
+        netable = NetworkTableInstance.getDefault();
         camera = new PhotonCamera(netable,"gloworm");
         camera.setPipelineIndex(1);
     }
@@ -85,7 +86,7 @@ public class Turret3 {
         // cmdUpdate(0);
         result = camera.getLatestResult();
         foundTarget = result.getBestTarget().getCameraToTarget();
-
+        
         switch (state) {
             case 0: // Joystick Control
                 cmdUpdate(JS_IO.axTurretRot.get() * 0.4 * Math.abs(JS_IO.axTurretRot.get()));
