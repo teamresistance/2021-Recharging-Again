@@ -79,12 +79,13 @@ public class Turret3 {
     }
 
     public static void update() {
+        result = camera.getLatestResult();
+        foundTarget = result.hasTargets() ? result.getBestTarget().getCameraToTarget() : null;
+
         sdbUpdate();
         determ();
         checkLim();
         // cmdUpdate(0);
-        result = camera.getLatestResult();
-        foundTarget = result.getBestTarget().getCameraToTarget();
 
         switch (state) {
             case 0: // Joystick Control
@@ -160,6 +161,8 @@ public class Turret3 {
         SmartDashboard.putNumber("Turret/speed", turret.get());
         SmartDashboard.putBoolean("Turret/Lime on target", isOnTarget());
         SmartDashboard.putBoolean("Turret/photonToggle", photonToggle);
+        SmartDashboard.putNumber("Turret/foundTargetX", foundTarget.getX());
+        SmartDashboard.putNumber("Turret/foundTargetY", foundTarget.getY());
     }
 
     public static int getState() {
@@ -186,87 +189,12 @@ public class Turret3 {
         }
     }
 
-    public static boolean isOnTarget() {
-        return Math.abs(result.getBestTarget().getCameraToTarget().getTranslation().getX()) <= 1; //TODO: change this to be more accurate
-        // if (LimeLight.llOnTarget() == 0) {
-        //     return true;
-        // }
-        // return false;
+    public static Boolean isOnTarget() {
+        if (foundTarget != null) {
+            return Math.abs(foundTarget.getTranslation().getX()) <= 1;
+        } else {
+            return null;
+        }
+        //return Math.abs(result.getBestTarget().getCameraToTarget().getTranslation().getX()) <= 1; //TODO: change this to be more accurate
     }
 }
-//     private static Victor turret = IO.turretRot;
-//     private static InvertibleDigitalInput leftMag = IO.turCCWLimitSw; // right rel to bot
-//     private static InvertibleDigitalInput rightMag = IO.turCWLimitSw;
-//     private static AnalogPotentiometer turretPot = IO.turretPosition;
-
-//     private static boolean atLimitLeft;
-//     private static boolean atLimitRight;
-//     private static boolean ccwLmtSwAlm;  //CCW Limit Sw Exceeded, zero neg. cmd.
-//     private static boolean cwLmtSwAlm;   //CW Limit Sw Exceeded, zero pos. cmd.
-//     private static Timer ccwRstTmr = new Timer(0.1);    //When moving CW for this time reset ccwLmtSwCntr
-//     private static Timer cwRstTmr = new Time(0.1);    //When moving CW for this time reset ccwLmtSwCntr
-//     private static NetworkTableInstance netable;
-//     private static PhotonPipelineResult result;
-//     private static PhotonCamera camera;
-
-
-//     public static void init() {
-//         atLimitLeft = false;
-//         atLimitRight = false;
-//         turret.set(0);
-//         netable = NetworkTableInstance.getDefault();
-//         camera = new PhotonCamera(netable,"gloworm");
-//         camera.setPipelineIndex(1);
-
-//     }
-
-//     public static void update() {
-//         result = camera.getLatestResult();
-//         Transform2d pose = result.getBestTarget().getCameraToTarget();
-//         SmartDashboard.putNumber("X", pose.getTranslation().getX());
-//         // System.out.println("Target PX: " + netable.getEntry("gloworm/targetPixelsX").getDouble(0)); // must use instance of netable to get entry
-//         // System.out.println("Target PY: " + netable.getEntry("gloworm/targetPixelsY").getDouble(0));
-        
-//     }
-
-//     private static void cmdUpdate(double val) {
-//         if (val < 0 && (turretPot.get() < -120 || ccwLmtSwAlm)) {        //Check CCW limits
-//             val = 0;
-//         } else if (val > 0 && (turretPot.get() > 120 || cwLmtSwAlm)) {   //Check CW Limits
-//             val = 0;
-//         }
-//         val *= Math.abs(val);   //Square control value, carry sign
-//         turret.set(val);
-//     }
-    
-//     private static void checkLim() {
-//         if (turret.get() < -.1) { // if rotating away from limit, calling positive right
-//             ccwLmtSwAlm = false;
-//         }
-//         if (ccwLmtSw.get()) { // if at the limit
-//             ccwLmtSwAlm = true;
-//         }
-//         if (turret.get() > .1) { // if rotating away from limit
-//             cwLmtSwAlm = false;
-//         }
-//         if (cwLmtSw.get()) {
-//             cwLmtSwAlm = true;
-//         }
-
-//         //---------- New -----------
-//         if(ccwLmtSwAlm && turret.get() < -.1){
-//             if(ccwRstTmr.hasExpired());
-//         }
-//     }
-
-//     public static void sdbUpdate() {
-//         SmartDashboard.putNumber("Turret/State", state);
-//         SmartDashboard.putBoolean("Turret/atLeftLimit", ccwLmtSwAlm);
-//         SmartDashboard.putBoolean("Turret/atRightLimit", cwLmtSwAlm);
-//         SmartDashboard.putNumber("Turret/Potentiometer", turretPot.get());
-//         SmartDashboard.putNumber("Turret/speed", turret.get());
-//         // SmartDashboard.putBoolean("Turret/Lime on target", isOnTarget());
-//         // SmartDashboard.putBoolean("Turret/photonToggle", photonToggle);
-//     }
-
-// }
