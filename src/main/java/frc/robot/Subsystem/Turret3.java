@@ -169,6 +169,7 @@ public class Turret3 {
                 } else {
                     turCmdVal = 0.0;
                 }
+                break;
             default: // stop.
                 turCmdVal = 0.0;
                 break;
