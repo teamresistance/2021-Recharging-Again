@@ -62,21 +62,21 @@ public class Turret3 {
      */
     private static void determ() {
         if (JS_IO.btnLimeAim.onButtonPressed()) {
-            state = state == 1 ? 0 : 1;
+            state = state > 0 ? 0 : 1;
         }
 
-        if (JS_IO.btnLimeSearch.onButtonPressed()) {
-            if (photonToggle) {
-                state = 2;
-            } else {
-                if (turretPot.get() < -5) {
-                    state = 4;
-                } else if (turretPot.get() > -5) {
-                    state = 5;
-                }
-            }
-            photonToggle = !photonToggle;
-        }
+        // if (JS_IO.btnLimeSearch.onButtonPressed()) {
+        //     if (photonToggle) {
+        //         state = 2;
+        //     } else {
+        //         if (turretPot.get() < -5) {
+        //             state = 4;
+        //         } else if (turretPot.get() > -5) {
+        //             state = 5;
+        //         }
+        //     }
+        //     photonToggle = !photonToggle;
+        // }
     }
 
     public static void update() {
@@ -90,34 +90,38 @@ public class Turret3 {
 
         switch (state) {
             case 0: // Joystick Control
-                cmdUpdate(JS_IO.axTurretRot.get() * 0.4 * Math.abs(JS_IO.axTurretRot.get()));
+                double joyVal = JS_IO.axTurretRot.get();
+                cmdUpdate(joyVal * 0.4 * Math.abs(joyVal));
                 break;
             case 1: // Limeight Aim Control
-                if (isOnTarget()) {
-                    // cmdUpdate(PropMath.SegLine(LimeLight.getLLX(), span2));
-                    turCmdVal = turPID.calculate(foundTarget.getX());
+                if (isOnTarget() != null) { // null if not in frame of the camera
+                    if (!isOnTarget()) { // false if the camera is not on the target 
+                        turCmdVal = turPID.calculate(foundTarget.getX());
+                    } else { // on target within deadband
+                        turCmdVal = 0.0;
+                    }
                 } else {
-                    turCmdVal = 0.0;
+                    state = 2;
                 }
                 break;
-            case 2: // 
+            case 2: // search clock wise
                 turCmdVal = 0.1;
-                if (!isOnTarget()) {
+                if (isOnTarget() != null) {
                     state = 1;
-                } else if (turretPot.get() > 0) {
+                } else if (turretPot.get() > 115) {
                     state = 3;
                 }
                 break;
-            case 3:
+            case 3: // search counter clock wise
                 turCmdVal = -0.1;
-                if (!isOnTarget()) {
+                if (isOnTarget() != null) {
                     state = 1;
-                } else if (turretPot.get() < 0) {
+                } else if (turretPot.get() < -115) {
                     state = 2;
                 }
                 break;
             case 4: // reset after lime search //? no clue
-                turCmdVal = -0.2;
+                turCmdVal = 0.2;
                 if (turretPot.get() < 0) {
                     if (turretPot.get() >= -10 && turretPot.get() <= 10) {
                         state = 0;
@@ -196,6 +200,5 @@ public class Turret3 {
         } else {
             return null;
         }
-        //return Math.abs(result.getBestTarget().getCameraToTarget().getTranslation().getX()) <= 1; //TODO: change this to be more accurate
     }
 }
