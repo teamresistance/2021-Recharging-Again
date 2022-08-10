@@ -148,7 +148,7 @@ public class Turret3 {
                 }
             case 6: //coordinate system turret alignment to coordinate (homeX, homeY)
                 // calculates the angle in degrees between the positive x-axis and the ray from (coorX, coorY) to the point (0,0) using the inverse of tangent
-                turnDegree = Math.atan2(Math.abs(coorY - homeY), Math.abs(coorX - homeX)) * 180 / Math.PI; //subtract home coordinates from present ones 
+                turnDegree = Math.atan2(coorY - homeY, coorX - homeX) * 180 / Math.PI; //subtract home coordinates from present ones 
                 
                 turnDegree = -90 - turnDegree; //translates turnDegree into a value relative to turret position
                 //normalizes to 0-180 degrees
