@@ -52,6 +52,7 @@ public class Turret3 {
         ccwLmtSwAlm = false;
         cwLmtSwAlm = false;
         photonToggle = true;
+        netable = NetworkTableInstance.getDefault();
         camera = new PhotonCamera(netable,"gloworm");
         camera.setPipelineIndex(1);
     }
