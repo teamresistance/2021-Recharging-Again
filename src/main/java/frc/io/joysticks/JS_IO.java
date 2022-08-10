@@ -70,6 +70,7 @@ public class JS_IO {
     public static Axis axTurretRot = new Axis(); // Rotate turret
     public static Button btnLimeAim = new Button();
     public static Button btnLimeSearch = new Button();
+    public static Button btnTurretHome = new Button();
 
     // Climb
     public static Axis axClimb = new Axis();
@@ -203,6 +204,7 @@ public class JS_IO {
         // turret buttons
         btnLimeSearch.setButton(coJoystick, 12);
         btnLimeAim.setButton(coJoystick, 10);
+        btnTurretHome.setButton(coJoystick, 9);
 
         // shooting buttons
         btnRampShooter.setButton(coJoystick, 4);

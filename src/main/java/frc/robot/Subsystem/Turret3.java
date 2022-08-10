@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.io.hdw_io.IO;
+import frc.io.hdw_io.util.CoorSys;
 import frc.io.hdw_io.util.InvertibleDigitalInput;
 import frc.io.joysticks.JS_IO;
 import frc.util.PropMath;
@@ -43,6 +44,13 @@ public class Turret3 {
     private static PhotonPipelineResult result;
     private static PhotonCamera camera;
     private static Transform2d foundTarget;
+    
+    private static double homeX = 0.0;
+    private static double homeY = 0.0;
+    private static double coorX;
+    private static double coorY;
+    private static double turnDegree;
+    private static double heading;
 
 
     public static void init() {
@@ -77,6 +85,10 @@ public class Turret3 {
             }
             photonToggle = !photonToggle;
         }
+
+        if (JS_IO.btnTurretHome.onButtonPressed()) {
+            state = state != 6 ? 6 : 0;
+        }
     }
 
     public static void update() {
@@ -86,6 +98,10 @@ public class Turret3 {
         // cmdUpdate(0);
         result = camera.getLatestResult();
         foundTarget = result.getBestTarget().getCameraToTarget();
+        
+        coorX = IO.coorXY.getX();
+        coorY = IO.coorXY.getY();
+        heading = IO.navX.getNormalizedTo180();
         
         switch (state) {
             case 0: // Joystick Control
@@ -129,6 +145,16 @@ public class Turret3 {
                         state = 0;
                     }
                 }
+            case 6: //coordinate system turret alignment to coordinate (0.0, 0.0)
+                // calculates the angle in degrees between y-intercept and the ray from (coorX, coorY) to the point (0,0) using the inverse of tangent
+                turnDegree = Math.atan2(coorY - homeY, coorX - homeX) * 180 / Math.PI; //subtract home coordinates from present ones 
+                
+                if (coorX >= 0.0 && coorY >= 0.0) turnDegree = (-90 - turnDegree) - heading; //translates turnDegree into a value within turret range relative to its position and subtracts robot heading
+                else if (coorX < 0.0 && coorY < 0.0) turnDegree = (90 - turnDegree) - heading; 
+                else if (coorX >= 0.0 && coorY < 0.0) turnDegree = (-90 + turnDegree) - heading;
+                else if (coorX < 0.0 && coorY >= 0.0) turnDegree = (90 + turnDegree) - heading;
+                
+                turCmdVal = (turnDegree > -120 && turnDegree < 120) ? turPID.calculate(turnDegree) : 0.0; // restrict input
             default: // stop.
                 turCmdVal = 0.0;
                 break;
