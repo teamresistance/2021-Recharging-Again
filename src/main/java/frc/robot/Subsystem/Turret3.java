@@ -162,7 +162,7 @@ public class Turret3 {
                 turnDegree -= heading; //subtracts robot heading
 
                 if (turnDegree > -120 && turnDegree < 120){ // restrict input
-                    turCmdVal = turnDegree > 0 ? 0.2 : -0.2; //check which way to turn
+                    turCmdVal = turnDegree > turretPot.get() ? 0.2 : -0.2; //check which way to turn
                     if (turretPot.get() > turnDegree - 5 && turretPot.get() < turnDegree + 5) { //10 degree margin
                         turCmdVal = 0.0;
                     }
