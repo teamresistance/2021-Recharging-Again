@@ -37,7 +37,7 @@ public class Turret3 {
     private static boolean photonToggle;  //???
 
     private static int state;
-    private static PIDController turPID = new PIDController(1.0, 0.0, 0.0); //!Used by LL X fdbk, Look at docs later
+    private static PIDController turPID = new PIDController(0.25, 0.0, 0.0); //!Used by LL X fdbk, Look at docs later
     private static double turCmdVal;    //Calc cmd signal for turret motor
 
     private static NetworkTableInstance netable;
@@ -106,7 +106,7 @@ public class Turret3 {
         
         switch (state) {
             case 0: // Joystick Control
-                cmdUpdate(JS_IO.axTurretRot.get() * 0.4 * Math.abs(JS_IO.axTurretRot.get()));
+                turCmdVal = JS_IO.axTurretRot.get() * 0.4 * Math.abs(JS_IO.axTurretRot.get());
                 break;
             case 1: // Limeight Aim Control
                 if (isOnTarget()) {
