@@ -105,6 +105,7 @@ public class Turret3 {
                         // if(foundTarget.getYaw() ==0 )turCmdVal  = 0;
                     } else { // on target within deadband.
                         turCmdVal = 0.0;
+                    }
                 } else {
                     state = 2;
                 }
@@ -112,7 +113,6 @@ public class Turret3 {
             case 2: // search clock wise
                 turCmdVal = 0.1;
                 if (isOnTarget() != null) {
-                    }
                     state = 1;
                 } else if (turretPot.get() > 115) {
                     state = 3;
