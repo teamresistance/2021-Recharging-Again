@@ -39,7 +39,7 @@ public class Turret3 {
     private static boolean photonToggle;  //???
 
     private static int state;
-    private static PIDController turPID = new PIDController(1.0, 0.0, 0.0); //!Used by LL X fdbk, Look at docs later
+    private static PIDController turPID = new PIDController(0.25, 0.0, 0.0); //!Used by LL X fdbk, Look at docs later
     private static double turCmdVal;    //Calc cmd signal for turret motor
 
     private static NetworkTableInstance netable;
@@ -100,7 +100,7 @@ public class Turret3 {
             case 1: // Limeight Aim Control(
                 if (isOnTarget() != null) { // null if not in frame of the camera
                     if (!isOnTarget()) { // false if the camera is not on the target 
-                        turCmdVal = turPID.calculate( Math.min(2.0, -foundTarget.getYaw()));
+                        turCmdVal = Math.max(-1.0, Math.min(1.0,turPID.calculate(-foundTarget.getYaw())));
                         // turCmdVal = (foundTarget.getYaw() > 0) ? 0.2 : -0.2;
                         // if(foundTarget.getYaw() ==0 )turCmdVal  = 0;
                     } else { // on target within deadband.
@@ -144,6 +144,7 @@ public class Turret3 {
                 turCmdVal = 0.0;
                 break;
         }
+        System.out.println(turCmdVal);
         cmdUpdate(turCmdVal);
     }
 
@@ -208,7 +209,7 @@ public class Turret3 {
 
     public static Boolean isOnTarget() {
         if (foundTarget != null) {
-            return Math.abs(foundTarget.getYaw()) <= 1;
+            return Math.abs(foundTarget.getYaw()) <= 10;
         } else {
             return null;
         }
