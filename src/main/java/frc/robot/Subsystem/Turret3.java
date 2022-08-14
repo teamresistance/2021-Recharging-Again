@@ -100,9 +100,7 @@ public class Turret3 {
             case 1: // Limeight Aim Control(
                 if (isOnTarget() != null) { // null if not in frame of the camera
                     if (!isOnTarget()) { // false if the camera is not on the target 
-                        turCmdVal = Math.max(-1.0, Math.min(1.0,turPID.calculate(-foundTarget.getYaw())));
-                        // turCmdVal = (foundTarget.getYaw() > 0) ? 0.2 : -0.2;
-                        // if(foundTarget.getYaw() ==0 )turCmdVal  = 0;
+                        turCmdVal = Math.max(-0.5, Math.min(0.5,turPID.calculate(-foundTarget.getYaw())));
                     } else { // on target within deadband.
                         turCmdVal = 0.0;
                     }
