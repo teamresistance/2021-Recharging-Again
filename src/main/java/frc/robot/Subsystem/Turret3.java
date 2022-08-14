@@ -93,12 +93,12 @@ public class Turret3 {
     }
 
     public static void update() {
-        sdbUpdate();
+        //sdbUpdate();
         determ();
         checkLim();
         // cmdUpdate(0);
-        result = camera.getLatestResult();
-        foundTarget = result.getBestTarget().getCameraToTarget();
+        //result = camera.getLatestResult();
+        ///foundTarget = result.getBestTarget().getCameraToTarget();
         
         coorX = IO.coorXY.getX();
         coorY = IO.coorXY.getY();
@@ -163,7 +163,7 @@ public class Turret3 {
 
                 if (turnDegree > -120 && turnDegree < 120){ // restrict input
                     turCmdVal = turnDegree > turretPot.get() ? 0.2 : -0.2; //check which way to turn
-                    if (turretPot.get() > turnDegree - 5 && turretPot.get() < turnDegree + 5) { //10 degree margin
+                    if (turretPot.get() > turnDegree - 3 && turretPot.get() < turnDegree + 3) { //10 degree margin
                         turCmdVal = 0.0;
                     }
                 } else {
@@ -205,7 +205,7 @@ public class Turret3 {
         SmartDashboard.putBoolean("Turret/atRightLimit", cwLmtSwAlm);
         SmartDashboard.putNumber("Turret/Potentiometer", turretPot.get());
         SmartDashboard.putNumber("Turret/speed", turret.get());
-        SmartDashboard.putBoolean("Turret/Lime on target", isOnTarget());
+        //SmartDashboard.putBoolean("Turret/Lime on target", isOnTarget());
         SmartDashboard.putBoolean("Turret/photonToggle", photonToggle);
 
         homeX = SmartDashboard.getNumber("Turret/homeY", homeX);
