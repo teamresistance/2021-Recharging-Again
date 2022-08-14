@@ -12,8 +12,11 @@ import frc.io.joysticks.JS_IO;
 import frc.util.PropMath;
 import frc.util.Timer;
 
+import java.io.Console;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -42,7 +45,7 @@ public class Turret3 {
     private static NetworkTableInstance netable;
     private static PhotonPipelineResult result;
     private static PhotonCamera camera;
-    private static Transform2d foundTarget;
+    private static PhotonTrackedTarget foundTarget;
 
 
     public static void init() {
@@ -63,6 +66,7 @@ public class Turret3 {
     private static void determ() {
         if (JS_IO.btnLimeAim.onButtonPressed()) {
             state = state > 0 ? 0 : 1;
+            System.out.println(state);
         }
 
         // if (JS_IO.btnLimeSearch.onButtonPressed()) {
@@ -81,7 +85,7 @@ public class Turret3 {
 
     public static void update() {
         result = camera.getLatestResult();
-        foundTarget = result.hasTargets() ? result.getBestTarget().getCameraToTarget() : null;
+        foundTarget = result.hasTargets() ? result.getBestTarget() : null;
 
         sdbUpdate();
         determ();
@@ -91,15 +95,16 @@ public class Turret3 {
         switch (state) {
             case 0: // Joystick Control
                 double joyVal = JS_IO.axTurretRot.get();
-                cmdUpdate(joyVal * 0.4 * Math.abs(joyVal));
+                turCmdVal =  joyVal * 0.4 * Math.abs(joyVal);
                 break;
-            case 1: // Limeight Aim Control
+            case 1: // Limeight Aim Control(
                 if (isOnTarget() != null) { // null if not in frame of the camera
                     if (!isOnTarget()) { // false if the camera is not on the target 
-                        turCmdVal = turPID.calculate(foundTarget.getX());
-                    } else { // on target within deadband
+                        turCmdVal = turPID.calculate( Math.min(2.0, -foundTarget.getYaw()));
+                        // turCmdVal = (foundTarget.getYaw() > 0) ? 0.2 : -0.2;
+                        // if(foundTarget.getYaw() ==0 )turCmdVal  = 0;
+                    } else { // on target within deadband.
                         turCmdVal = 0.0;
-                    }
                 } else {
                     state = 2;
                 }
@@ -107,6 +112,7 @@ public class Turret3 {
             case 2: // search clock wise
                 turCmdVal = 0.1;
                 if (isOnTarget() != null) {
+                    }
                     state = 1;
                 } else if (turretPot.get() > 115) {
                     state = 3;
@@ -164,10 +170,16 @@ public class Turret3 {
         SmartDashboard.putBoolean("Turret/atRightLimit", cwLmtSwAlm);
         SmartDashboard.putNumber("Turret/Potentiometer", turretPot.get());
         SmartDashboard.putNumber("Turret/speed", turret.get());
-        SmartDashboard.putBoolean("Turret/Lime on target", isOnTarget());
+        SmartDashboard.putBoolean("Turret/Lime on target", isOnTarget() != null ? isOnTarget() : false );
         SmartDashboard.putBoolean("Turret/photonToggle", photonToggle);
-        SmartDashboard.putNumber("Turret/foundTargetX", foundTarget.getX());
-        SmartDashboard.putNumber("Turret/foundTargetY", foundTarget.getY());
+        if (foundTarget != null) {
+            SmartDashboard.putNumber("Turret/foundTargetX", foundTarget.getYaw());
+            //SmartDashboard.putNumber("Turret/foundTargetY", foundTarget.getY());
+        } else {
+            SmartDashboard.putNumber("Turret/foundTargetX", -999);
+            SmartDashboard.putNumber("Turret/foundTargetY", -999);
+        }
+
     }
 
     public static int getState() {
@@ -196,7 +208,7 @@ public class Turret3 {
 
     public static Boolean isOnTarget() {
         if (foundTarget != null) {
-            return Math.abs(foundTarget.getTranslation().getX()) <= 1;
+            return Math.abs(foundTarget.getYaw()) <= 1;
         } else {
             return null;
         }
