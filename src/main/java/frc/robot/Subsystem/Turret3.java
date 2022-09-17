@@ -45,8 +45,8 @@ public class Turret3 {
     private static PhotonCamera camera;
     private static Transform2d foundTarget;
     
-    private static double homeX = 0.0; //default to 0.0
-    private static double homeY = 0.0; //default to 0.0
+    private static double homeX;
+    private static double homeY;
     private static double coorX;
     private static double coorY;
     private static double turnDegree;
@@ -63,6 +63,8 @@ public class Turret3 {
         netable = NetworkTableInstance.getDefault();
         camera = new PhotonCamera(netable,"gloworm");
         camera.setPipelineIndex(1);
+        homeX = IO.coorXY.getX(); //default to init position
+        homeY = IO.coorXY.getY(); //default to init position
         sdbInit();
     }
 
@@ -148,7 +150,7 @@ public class Turret3 {
                 }
             case 6: //coordinate system turret alignment to coordinate (homeX, homeY)
                 // calculates the angle in degrees between the positive x-axis and the ray from (coorX, coorY) to the point (0,0) using the inverse of tangent
-                turnDegree = Math.atan2(coorY - homeY, coorX - homeX) * 180 / Math.PI; //subtract home coordinates from present ones 
+                turnDegree = Math.toDegrees(Math.atan2(coorY - homeY, coorX - homeX)); //subtract home coordinates from present ones 
                 
                 turnDegree = -90 - turnDegree; //translates turnDegree into a value relative to turret position
                 //normalizes to 0-180 degrees
