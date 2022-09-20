@@ -12,6 +12,8 @@ import frc.io.joysticks.JS_IO;
 import frc.util.PropMath;
 import frc.util.Timer;
 
+//import frc.robot.Subsystem.ballHandler.Shooter;
+
 import java.io.Console;
 
 import org.photonvision.PhotonCamera;
@@ -47,6 +49,11 @@ public class Turret3 {
     private static PhotonCamera camera;
     private static PhotonTrackedTarget foundTarget;
 
+    private static double distFromTgt;
+    private static double angleToGoal;
+    private static double camAngle = 25; //angle in degrees
+    private static double tgtHeight = 5; //height in feet
+    private static double camHeight = 1.5;
 
     public static void init() {
         turPID.setTolerance(0.05);
@@ -105,6 +112,10 @@ public class Turret3 {
                         // if(foundTarget.getYaw() ==0 )turCmdVal  = 0;
                     } else { // on target within deadband.
                         turCmdVal = 0.0;
+                        //Shooter.limeShoot = true;
+                        //get dist from limelight
+                        angleToGoal = Math.toRadians(camAngle + foundTarget.getPitch()); //angle in radians
+                        distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in feet
                     }
                 } else {
                     state = 2;
@@ -175,6 +186,7 @@ public class Turret3 {
         SmartDashboard.putBoolean("Turret/photonToggle", photonToggle);
         if (foundTarget != null) {
             SmartDashboard.putNumber("Turret/foundTargetX", foundTarget.getYaw());
+            SmartDashboard.putNumber("Turret/foundTargetY", foundTarget.getPitch());
             //SmartDashboard.putNumber("Turret/foundTargetY", foundTarget.getY());
         } else {
             SmartDashboard.putNumber("Turret/foundTargetX", -999);

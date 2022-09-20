@@ -11,6 +11,8 @@ import frc.io.hdw_io.util.ISolenoid;
 import frc.io.joysticks.JS_IO;
 import frc.util.Timer;
 
+//import org.photonvision.targeting.PhotonTrackedTarget;
+
 /**
  * Original Author: Jim & Anthony
  * <p>
@@ -97,6 +99,14 @@ public class Shooter {
     private static String[] rpmName = { "Zone1", "RPM2", "RPM3", "RPM4", "RPM_Adj1", "RPM_Adj2", "RPM_Adj3" };
     private static Integer[] rpmSP = { 1000, 4500, 4750, 4000, -1, -2, -3 }; // Values to use (return)
 
+    //private static PhotonTrackedTarget foundTarget;
+    //public static boolean limeShoot = false;
+    /*private static double distFromTgt;
+    private static double angleToGoal;
+    private static double camAngle = 25; //angle in degrees
+    private static double tgtHeight = 5; //height in feet
+    private static double camHeight = 1.5;*/
+
     /**Initializes the Chooser (drop down) for RPM selection.  
      * First 4 are fixed and the last 3 (negative) use another adjustable variable.
      * <p>Can only be called once.  Called from robotInit() in Robot.
@@ -142,7 +152,13 @@ public class Shooter {
         if (JS_IO.btnRampShooter.onButtonPressed()) { // Enable/Disable shooter, start/stop flywheel
             state = state != 0 ? 0 : joelMode ? 11 : 1; // ADDED - Joel mode, Bang/Bang
         }
-
+        /*if (limeShoot) {  
+            //get dist from limelight
+            angleToGoal = Math.toRadians(camAngle + foundTarget.getPitch()); //angle in radians
+            distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in feet
+            rpmWSP = //use projectile motion equation to find rpm here;
+            state = 1;
+        }*/
         if (JS_IO.allStop.onButtonPressed())
             state = 99;
     }
