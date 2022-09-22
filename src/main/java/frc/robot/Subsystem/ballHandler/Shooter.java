@@ -9,6 +9,7 @@ import frc.io.hdw_io.IO;
 import frc.io.hdw_io.util.Encoder_Tln;
 import frc.io.hdw_io.util.ISolenoid;
 import frc.io.joysticks.JS_IO;
+import frc.robot.Subsystem.Turret3;
 import frc.util.Timer;
 
 //import org.photonvision.targeting.PhotonTrackedTarget;
@@ -99,13 +100,12 @@ public class Shooter {
     private static String[] rpmName = { "Zone1", "RPM2", "RPM3", "RPM4", "RPM_Adj1", "RPM_Adj2", "RPM_Adj3" };
     private static Integer[] rpmSP = { 1000, 4500, 4750, 4000, -1, -2, -3 }; // Values to use (return)
 
-    //private static PhotonTrackedTarget foundTarget;
-    //public static boolean limeShoot = false;
-    /*private static double distFromTgt;
+    public static boolean limeShoot = false;
+    private static double distFromTgt;
     private static double angleToGoal;
     private static double camAngle = 25; //angle in degrees
     private static double tgtHeight = 5; //height in feet
-    private static double camHeight = 1.5;*/
+    private static double camHeight = 1.5;
 
     /**Initializes the Chooser (drop down) for RPM selection.  
      * First 4 are fixed and the last 3 (negative) use another adjustable variable.
@@ -152,13 +152,13 @@ public class Shooter {
         if (JS_IO.btnRampShooter.onButtonPressed()) { // Enable/Disable shooter, start/stop flywheel
             state = state != 0 ? 0 : joelMode ? 11 : 1; // ADDED - Joel mode, Bang/Bang
         }
-        /*if (limeShoot) {  
+        if (limeShoot) {  
             //get dist from limelight
-            angleToGoal = Math.toRadians(camAngle + foundTarget.getPitch()); //angle in radians
+            angleToGoal = Math.toRadians(camAngle + Turret3.foundTarget.getPitch()); //angle in radians
             distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in feet
-            rpmWSP = //use projectile motion equation to find rpm here;
+            rpmWSP = 0;//use projectile motion equation to find rpm here;
             state = 1;
-        }*/
+        }
         if (JS_IO.allStop.onButtonPressed())
             state = 99;
     }
