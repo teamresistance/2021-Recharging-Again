@@ -87,6 +87,7 @@ public class Turret3 {
         //         }
         //     }
         //     photonToggle = !photonToggle;
+        //     Shooter.limeShoot = false;
         // }
     }
 
