@@ -156,7 +156,9 @@ public class Shooter {
             //get dist from limelight
             angleToGoal = Math.toRadians(camAngle + Turret3.foundTarget.getPitch()); //angle in radians
             distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in feet
-            rpmWSP = 0;//use projectile motion equation to find rpm here;
+            int ballVelocity = 2;
+            rpmWSP = (int)((60 * 2 * ballVelocity)/ 2 * Math.PI //* shooter radius
+            );//use projectile motion equation to find rpm here;
             state = 1;
         }
         if (JS_IO.allStop.onButtonPressed())
