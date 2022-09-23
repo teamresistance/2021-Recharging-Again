@@ -47,7 +47,7 @@ public class Turret3 {
     private static NetworkTableInstance netable;
     private static PhotonPipelineResult result;
     private static PhotonCamera camera;
-    private static PhotonTrackedTarget foundTarget;
+    public static PhotonTrackedTarget foundTarget;
 
     private static double distFromTgt;
     private static double angleToGoal;
