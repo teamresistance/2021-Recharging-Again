@@ -3,6 +3,7 @@ package frc.robot.Subsystem.ballHandler;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+//import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.io.hdw_io.IO;
@@ -71,6 +72,7 @@ public class Shooter {
     private static ISolenoid ballHood = IO.shooterHoodUp;
 
     private static int state; // Shooter state machine. 0=Off by pct, 1=On by velocity, RPM
+    //private static PIDController shootPID = new PIDController(0.25, 0.0, 0.0);
     private static Timer stateTmr = new Timer(.05); // Timer for state machine
 
     private static boolean joelMode = false; // Control seq for Joel
@@ -378,6 +380,8 @@ public class Shooter {
             }
         }
 
+        //rpmWSP = (int)shootPID.calculate(4500, rpmWSP);
+        
         // Put general Shooter info on sdb
         SmartDashboard.putNumber("Shooter/State", state);
         SmartDashboard.putBoolean("Shooter/On", ((state == 1) ? true : false));
