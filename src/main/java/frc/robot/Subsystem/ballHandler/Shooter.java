@@ -104,8 +104,12 @@ public class Shooter {
     private static double distFromTgt;
     private static double angleToGoal;
     private static double camAngle = 25; //angle in degrees
-    private static double tgtHeight = 5; //height in feet
+    private static double tgtHeight = 5; //height in meters
     private static double camHeight = 1.5;
+    private static double ballVelocity;
+    private static double turretAngle = Math.toRadians(45);
+    private static double turretHeight = 1;
+    private static double wheelRadius = 0.5;
 
     /**Initializes the Chooser (drop down) for RPM selection.  
      * First 4 are fixed and the last 3 (negative) use another adjustable variable.
@@ -151,14 +155,17 @@ public class Shooter {
     private static void determ() {
         if (JS_IO.btnRampShooter.onButtonPressed()) { // Enable/Disable shooter, start/stop flywheel
             state = state != 0 ? 0 : joelMode ? 11 : 1; // ADDED - Joel mode, Bang/Bang
+        } 
+        if (limeShoot && JS_IO.btnLimeSearch.onButtonPressed()){
+            limeShoot = false;
+            state = 0;
         }
         if (limeShoot) {  
             //get dist from limelight
             angleToGoal = Math.toRadians(camAngle + Turret3.foundTarget.getPitch()); //angle in radians
-            distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in feet
-            int ballVelocity = 2;
-            rpmWSP = (int)((60 * 2 * ballVelocity)/ 2 * Math.PI //* shooter radius
-            );//use projectile motion equation to find rpm here;
+            distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in meters
+            ballVelocity = Math.pow(((tgtHeight - turretHeight) - (distFromTgt * 9.8))/(Math.sin(turretAngle) + (2 * Math.cos(turretAngle))), 0.5);//use projectile motion equation to find velocity here;
+            rpmWSP = (int)((60 * 2 * ballVelocity)/(2 * Math.PI * wheelRadius));//convert to rpm
             state = 1;
         }
         if (JS_IO.allStop.onButtonPressed())
