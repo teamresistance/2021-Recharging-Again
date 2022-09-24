@@ -82,6 +82,7 @@ public class Shooter {
     private static int rpmSPAdj1 = 4250; // Adjustable RPM setpoint when chosen
     private static int rpmSPAdj2 = 4650; // Adjustable RPM setpoint when chosen
     private static int rpmSPAdj3 = 5000; // Adjustable RPM setpoint when chosen
+    private static int limelightRPM = 0; // Adjustable RPM setpoint when chosen
 
     private static int atSpeedDB = 100; // (WSP - DB) < RPM < (WSP + DB)
     private static int nearSpdDB = 400; // RPM > (WSP - DB)
@@ -97,8 +98,8 @@ public class Shooter {
     // RPM Chooser. Allows driver to select pre-select RPMs. [0]is default [last] is
     // adjustable.  Names assigned (+ "- value").
     private static SendableChooser<Integer> rpmChsr = new SendableChooser<Integer>();
-    private static String[] rpmName = { "Zone1", "RPM2", "RPM3", "RPM4", "RPM_Adj1", "RPM_Adj2", "RPM_Adj3" };
-    private static Integer[] rpmSP = { 1000, 4500, 4750, 4000, -1, -2, -3 }; // Values to use (return)
+    private static String[] rpmName = { "Zone1", "RPM2", "RPM3", "RPM4", "RPM_Adj1", "RPM_Adj2", "RPM_Adj3", "RPM_limelight" };
+    private static Integer[] rpmSP = { 1000, 4500, 4750, 4000, -1, -2, -3, -4 }; // Values to use (return)
 
     public static boolean limeShoot = false;
     private static double distFromTgt;
@@ -159,14 +160,6 @@ public class Shooter {
         if (limeShoot && JS_IO.btnLimeSearch.onButtonPressed()){
             limeShoot = false;
             state = 0;
-        }
-        if (limeShoot) {  
-            //get dist from limelight
-            angleToGoal = Math.toRadians(camAngle + Turret3.foundTarget.getPitch()); //angle in radians
-            distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in meters
-            ballVelocity = Math.pow(((tgtHeight - turretHeight) - (distFromTgt * 9.8))/(Math.sin(turretAngle) + (2 * Math.cos(turretAngle))), 0.5);//use projectile motion equation to find velocity here;
-            rpmWSP = (int)((60 * 2 * ballVelocity)/(2 * Math.PI * wheelRadius));//convert to rpm
-            state = 1;
         }
         if (JS_IO.allStop.onButtonPressed())
             state = 99;
@@ -340,6 +333,7 @@ public class Shooter {
         SmartDashboard.putNumber("Shooter/RPM/Adj SP1", rpmSPAdj1); // Put rpmSPAdj on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP2", rpmSPAdj2); // Put rpmSPAdj on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP3", rpmSPAdj3); // Put rpmSPAdj on sdb
+        SmartDashboard.putNumber("Shooter/RPM/limelight RPM", limelightRPM); // Put Limelight calculated rpm
 
         SmartDashboard.putBoolean("Shooter/Joel Mode", joelMode); // Put Joel mode on sdb
         rpmWSP = rpmSP[0];
@@ -354,6 +348,13 @@ public class Shooter {
         rpmSPAdj1 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP1", rpmSPAdj1); // Get adjustable RPM SP from sdb
         rpmSPAdj2 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP2", rpmSPAdj2); // Get adjustable RPM SP from sdb
         rpmSPAdj3 = (int) SmartDashboard.getNumber("Shooter/RPM/Adj SP3", rpmSPAdj3); // Get adjustable RPM SP from sdb
+        if (limeShoot) {  
+            //get dist from limelight
+            angleToGoal = Math.toRadians(camAngle + Turret3.foundTarget.getPitch()); //angle in radians
+            distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in meters
+            ballVelocity = Math.pow(((tgtHeight - turretHeight) - (distFromTgt * 9.8))/(Math.sin(turretAngle) + (2 * Math.cos(turretAngle))), 0.5);//use projectile motion equation to find velocity here;
+            limelightRPM = (int)((60 * 2 * ballVelocity)/(2 * Math.PI * wheelRadius));//convert to rpm
+        }
 
         SmartDashboard.putNumber("Shooter/RPM/Wkg SP", rpmWSP); // Put the working RPM SP,rpmWSP
         rpmWSP = rpmChsr.getSelected() == null ? 1000 : (int) rpmChsr.getSelected();
@@ -368,6 +369,9 @@ public class Shooter {
                     break;
                 case -3:
                     rpmWSP = rpmSPAdj3; // If value is -3 (last choice) use adjustable SP
+                    break;
+                case -4:
+                    rpmWSP = limelightRPM;
                     break;
                 default:
                     rpmWSP = 4500;
