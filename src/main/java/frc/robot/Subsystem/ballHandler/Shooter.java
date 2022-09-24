@@ -372,7 +372,10 @@ public class Shooter {
                     rpmWSP = rpmSPAdj3; // If value is -3 (last choice) use adjustable SP
                     break;
                 case -4:
-                    rpmWSP = limelightRPM;
+                    if (limelightRPM <= 5000)
+                        rpmWSP = limelightRPM;
+                    else 
+                        System.out.println("Turret out of range");
                     break;
                 default:
                     rpmWSP = 4500;
@@ -380,7 +383,7 @@ public class Shooter {
             }
         }
 
-        //rpmWSP = (int)shootPID.calculate(4500, rpmWSP);
+        //rpmWSP = (int)shootPID.calculate(5000, rpmWSP);
         
         // Put general Shooter info on sdb
         SmartDashboard.putNumber("Shooter/State", state);
