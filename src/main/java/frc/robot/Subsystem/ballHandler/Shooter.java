@@ -333,7 +333,6 @@ public class Shooter {
         SmartDashboard.putNumber("Shooter/RPM/Adj SP1", rpmSPAdj1); // Put rpmSPAdj on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP2", rpmSPAdj2); // Put rpmSPAdj on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP3", rpmSPAdj3); // Put rpmSPAdj on sdb
-        SmartDashboard.putNumber("Shooter/RPM/limelight RPM", limelightRPM); // Put Limelight calculated rpm
 
         SmartDashboard.putBoolean("Shooter/Joel Mode", joelMode); // Put Joel mode on sdb
         rpmWSP = rpmSP[0];
@@ -392,6 +391,7 @@ public class Shooter {
         SmartDashboard.putNumber("Shooter/Flywheel/RPM", shooter.getSelectedSensorVelocity() * 600 / 47);
         SmartDashboard.putNumber("Shooter/Flywheel/SRX curr", shooter.getStatorCurrent());
         SmartDashboard.putNumber("Shooter/Flywheel/pdp curr", IO.pdp.getCurrent(13));
+        SmartDashboard.putNumber("Shooter/RPM/limelight RPM", limelightRPM); // Put Limelight calculated rpm
     }
 
     // ------------------------------ Shooter statuses and misc.
