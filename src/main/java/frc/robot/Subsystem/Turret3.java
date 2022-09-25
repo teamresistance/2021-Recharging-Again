@@ -111,6 +111,7 @@ public class Turret3 {
                     }
                 } else {
                     state = 2;
+                    Shooter.limeShoot = false;
                 }
                 break;
             case 2: // search clock wise

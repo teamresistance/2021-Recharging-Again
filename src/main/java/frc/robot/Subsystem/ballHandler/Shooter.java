@@ -335,6 +335,7 @@ public class Shooter {
         SmartDashboard.putNumber("Shooter/RPM/Adj SP1", rpmSPAdj1); // Put rpmSPAdj on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP2", rpmSPAdj2); // Put rpmSPAdj on sdb
         SmartDashboard.putNumber("Shooter/RPM/Adj SP3", rpmSPAdj3); // Put rpmSPAdj on sdb
+        SmartDashboard.putNumber("Shooter/RPM/limelight", limelightRPM); // Put rpmSPAdj on sdb
 
         SmartDashboard.putBoolean("Shooter/Joel Mode", joelMode); // Put Joel mode on sdb
         rpmWSP = rpmSP[0];
@@ -372,11 +373,12 @@ public class Shooter {
                     rpmWSP = rpmSPAdj3; // If value is -3 (last choice) use adjustable SP
                     break;
                 case -4:
-                    if (limelightRPM <= 5000)
-                        rpmWSP = limelightRPM;
-                    else 
-                        System.out.println("Turret out of range");
-                    break;
+                    // if (limelightRPM <= 5000)
+                         //rpmWSP = limelightRPM;
+
+                    // else 
+                    //     System.out.println("Turret out of range");
+                    // break;
                 default:
                     rpmWSP = 4500;
                     System.out.println("Bad rpm choice: " + rpmWSP);
@@ -399,6 +401,7 @@ public class Shooter {
         SmartDashboard.putNumber("Shooter/Flywheel/SRX curr", shooter.getStatorCurrent());
         SmartDashboard.putNumber("Shooter/Flywheel/pdp curr", IO.pdp.getCurrent(13));
         SmartDashboard.putNumber("Shooter/RPM/limelight RPM", limelightRPM); // Put Limelight calculated rpm
+        SmartDashboard.putNumber("Shooter/RPM/distanceToTarget", distFromTgt);
     }
 
     // ------------------------------ Shooter statuses and misc.
