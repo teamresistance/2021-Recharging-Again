@@ -84,7 +84,7 @@ public class Shooter {
     private static int rpmSPAdj1 = 4250; // Adjustable RPM setpoint when chosen
     private static int rpmSPAdj2 = 4650; // Adjustable RPM setpoint when chosen
     private static int rpmSPAdj3 = 5000; // Adjustable RPM setpoint when chosen
-    private static int limelightRPM = 0; // Adjustable RPM setpoint when chosen
+    private static int limelightRPM = 0; 
 
     private static int atSpeedDB = 100; // (WSP - DB) < RPM < (WSP + DB)
     private static int nearSpdDB = 400; // RPM > (WSP - DB)
@@ -353,7 +353,7 @@ public class Shooter {
             //get dist from limelight
             angleToGoal = Math.toRadians(camAngle + Turret3.foundTarget.getPitch()); //angle in radians
             distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in meters
-            ballVelocity = Math.pow(((tgtHeight - turretHeight) - (distFromTgt * 9.8))/(Math.sin(turretAngle) + (2 * Math.cos(turretAngle))), 0.5);//use projectile motion equation to find velocity here;
+            ballVelocity = (distFromTgt * Math.sqrt(2 * Math.cos(turretAngle) * 9.8 * (((tgtHeight - turretHeight) * Math.cos(turretAngle)) - (Math.sin(turretAngle) * distFromTgt)))) / 2 * Math.cos(turretAngle) * (((tgtHeight - turretHeight) * Math.cos(turretAngle)) - (Math.sin(turretAngle) * distFromTgt));//use projectile motion equation to find velocity here;
             limelightRPM = (int)((60 * 2 * ballVelocity)/(2 * Math.PI * wheelRadius));//convert to rpm
         }
 
