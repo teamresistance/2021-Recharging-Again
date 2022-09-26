@@ -94,6 +94,7 @@ public class Turret3 {
         checkLim();
         // cmdUpdate(0);
 
+
         switch (state) {
             case 0: // Joystick Control
                 double joyVal = JS_IO.axTurretRot.get();
@@ -102,7 +103,7 @@ public class Turret3 {
             case 1: // Limeight Aim Control(
                 if (isOnTarget() != null) { // null if not in frame of the camera
                     if (!isOnTarget()) { // false if the camera is not on the target 
-                        turCmdVal = Math.max(-1.0, Math.min(1.0,turPID.calculate(-foundTarget.getYaw())));
+                        turCmdVal = Math.max(-0.25, Math.min(0.25,turPID.calculate(-foundTarget.getYaw())));
                         // turCmdVal = (foundTarget.getYaw() > 0) ? 0.2 : -0.2;
                         // if(foundTarget.getYaw() ==0 )turCmdVal  = 0;
                     } else { // on target within deadband.
@@ -214,7 +215,7 @@ public class Turret3 {
 
     public static Boolean isOnTarget() {
         if (foundTarget != null) {
-            return Math.abs(foundTarget.getYaw()) <= 10;
+            return Math.abs(foundTarget.getYaw()) <= 4;
         } else {
             return null;
         }

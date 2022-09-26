@@ -107,12 +107,12 @@ public class Shooter {
     private static double distFromTgt;
     private static double angleToGoal;
     private static double camAngle = 25; //angle in degrees
-    private static double tgtHeight = 5; //height in meters
-    private static double camHeight = 1.5;
+    private static double tgtHeight = 1.529; //height in meters
+    private static double camHeight = 0.43815;
     private static double ballVelocity;
-    private static double turretAngle = Math.toRadians(45);
-    private static double turretHeight = 1;
-    private static double wheelRadius = 0.5;
+    private static double turretAngle = Math.toRadians(35);
+    private static double turretHeight = 0.6096;
+    private static double wheelRadius = 0.0635;
 
     /**Initializes the Chooser (drop down) for RPM selection.  
      * First 4 are fixed and the last 3 (negative) use another adjustable variable.
@@ -301,7 +301,8 @@ public class Shooter {
      * @param revCmd   - Request revolver to index 1 time.
      */
     public static void cmdUpdate(double spd, boolean isVelCmd, boolean injCmd, boolean revCmd) { // control through
-                                                                                                 // velocity or percent
+                                 
+        // velocity or percent
         // shooter.set(ControlMode.Disabled, 0); // Don't think we need this
 
         Injector.reqInjShtr = injCmd; // Request injector to start & stop.
@@ -354,8 +355,8 @@ public class Shooter {
             //get dist from limelight
             angleToGoal = Math.toRadians(camAngle + Turret3.foundTarget.getPitch()); //angle in radians
             distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in meters
-            ballVelocity = (distFromTgt * Math.sqrt(2 * Math.cos(turretAngle) * 9.8 * (((tgtHeight - turretHeight) * Math.cos(turretAngle)) - (Math.sin(turretAngle) * distFromTgt)))) / 2 * Math.cos(turretAngle) * (((tgtHeight - turretHeight) * Math.cos(turretAngle)) - (Math.sin(turretAngle) * distFromTgt));//use projectile motion equation to find velocity here;
-            limelightRPM = (int)((60 * 2 * ballVelocity)/(2 * Math.PI * wheelRadius));//convert to rpm
+            ballVelocity = Math.sqrt((Math.pow(distFromTgt,2) * -9.8)/((tgtHeight - turretHeight - distFromTgt * Math.tan(turretAngle)) * 2 * Math.pow(Math.cos(turretAngle), 2)));
+            limelightRPM = (int)((460 * ballVelocity));//convert to rpm
         }
 
         SmartDashboard.putNumber("Shooter/RPM/Wkg SP", rpmWSP); // Put the working RPM SP,rpmWSP
@@ -373,12 +374,8 @@ public class Shooter {
                     rpmWSP = rpmSPAdj3; // If value is -3 (last choice) use adjustable SP
                     break;
                 case -4:
-                    // if (limelightRPM <= 5000)
-                         //rpmWSP = limelightRPM;
-
-                    // else 
-                    //     System.out.println("Turret out of range");
-                    // break;
+                    rpmWSP = limelightRPM;
+                    break;
                 default:
                     rpmWSP = 4500;
                     System.out.println("Bad rpm choice: " + rpmWSP);
@@ -402,6 +399,7 @@ public class Shooter {
         SmartDashboard.putNumber("Shooter/Flywheel/pdp curr", IO.pdp.getCurrent(13));
         SmartDashboard.putNumber("Shooter/RPM/limelight RPM", limelightRPM); // Put Limelight calculated rpm
         SmartDashboard.putNumber("Shooter/RPM/distanceToTarget", distFromTgt);
+        SmartDashboard.putNumber("Shooter/RPM/ballVelocity", ballVelocity);
     }
 
     // ------------------------------ Shooter statuses and misc.
