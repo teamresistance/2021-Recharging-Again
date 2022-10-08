@@ -215,7 +215,7 @@ public class Turret3 {
 
     public static Boolean isOnTarget() {
         if (foundTarget != null) {
-            return Math.abs(foundTarget.getYaw()) <= 4;
+            return Math.abs(foundTarget.getYaw()) <= 10;
         } else {
             return null;
         }

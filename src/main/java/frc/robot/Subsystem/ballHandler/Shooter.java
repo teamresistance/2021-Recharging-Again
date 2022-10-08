@@ -107,7 +107,7 @@ public class Shooter {
     private static double distFromTgt;
     private static double angleToGoal;
     private static double camAngle = 25; //angle in degrees
-    private static double tgtHeight = 1.529; //height in meters
+    private static double tgtHeight = 1; //height in meters
     private static double camHeight = 0.43815;
     private static double ballVelocity;
     private static double turretAngle = Math.toRadians(35);
@@ -355,8 +355,8 @@ public class Shooter {
             //get dist from limelight
             angleToGoal = Math.toRadians(camAngle + Turret3.foundTarget.getPitch()); //angle in radians
             distFromTgt = (tgtHeight - camHeight)/Math.tan(angleToGoal); // dist in meters
-            ballVelocity = Math.sqrt((Math.pow(distFromTgt,2) * -9.8)/((tgtHeight - turretHeight - distFromTgt * Math.tan(turretAngle)) * 2 * Math.pow(Math.cos(turretAngle), 2)));
-            limelightRPM = (int)((460 * ballVelocity));//convert to rpm
+            //ballVelocity = Math.sqrt((Math.pow(distFromTgt,2) * -9.8)/((tgtHeight - turretHeight - distFromTgt * Math.tan(turretAngle)) * 2 * Math.pow(Math.cos(turretAngle), 2)));
+            limelightRPM = (int)((1000 * distFromTgt));//convert to rpm
         }
 
         SmartDashboard.putNumber("Shooter/RPM/Wkg SP", rpmWSP); // Put the working RPM SP,rpmWSP

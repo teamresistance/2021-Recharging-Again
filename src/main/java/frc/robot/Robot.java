@@ -26,6 +26,9 @@ import frc.robot.Subsystem.ballHandler.Revolver;
 import frc.robot.Subsystem.ballHandler.Shooter;
 import frc.robot.Subsystem.ballHandler.Snorfler;
 import frc.robot.Subsystem.ballHandler.Snorfler22;
+
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.Relay;
 
 public class Robot extends TimedRobot {
@@ -69,6 +72,7 @@ public class Robot extends TimedRobot {
         teamColorchsrInit();        //Allows Driver to select team's alliance
         //Allows Driver to disable compressor during testing due to leak.
         SmartDashboard.putBoolean("Robot/Cmpr Enabled", cmprEna);
+        PhotonCamera.setVersionCheckEnabled(false);
     }
 
     @Override
