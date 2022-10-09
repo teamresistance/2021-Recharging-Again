@@ -201,8 +201,8 @@ public class JS_IO {
         btnTglSnorArmDn.setButton(coJoystick, 3);
 
         // turret buttons
-        btnLimeSearch.setButton(coJoystick, 12);
-        btnLimeAim.setButton(coJoystick, 10);
+        btnLimeSearch.setButton(coJoystick, 11);
+        //btnLimeAim.setButton(coJoystick, 10);
 
         // shooting buttons
         btnRampShooter.setButton(coJoystick, 4);

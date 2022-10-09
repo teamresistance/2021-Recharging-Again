@@ -41,7 +41,7 @@ public class Turret3 {
     private static boolean photonToggle;  //???
 
     private static int state;
-    private static PIDController turPID = new PIDController(0.25, 0.0, 0.0); //!Used by LL X fdbk, Look at docs later
+    private static PIDController turPID = new PIDController(0.5, 0.0, 0.0); //!Used by LL X fdbk, Look at docs later
     private static double turCmdVal;    //Calc cmd signal for turret motor
 
     private static NetworkTableInstance netable;
@@ -71,14 +71,11 @@ public class Turret3 {
         //}
 
         if (JS_IO.btnLimeSearch.onButtonPressed()) {
+            System.out.println("why iss" + state);
             if (photonToggle) {
                 state = 2;
             } else {
-                if (turretPot.get() < -5) {
-                    state = 4;
-                } else if (turretPot.get() > -5) {
-                    state = 5;
-                }
+               state = 0;
             }
             photonToggle = !photonToggle;
             Shooter.limeShoot = false;
@@ -101,9 +98,9 @@ public class Turret3 {
                 turCmdVal =  joyVal * 0.4 * Math.abs(joyVal);
                 break;
             case 1: // Limeight Aim Control(
-                if (TgtInFrame() != false) { // null if not in frame of the camera
+                if (TgtInFrame() == true) { // null if not in frame of the camera
                     if (!TgtLockedOn()) { // false if the camera is not on the target 
-                        turCmdVal = Math.max(-0.25, Math.min(0.25,turPID.calculate(-foundTarget.getYaw())));
+                        turCmdVal = Math.max(-0.25, Math.min(0.25,turPID.calculate(-foundTarget.getYaw(),0)));
                         // turCmdVal = (foundTarget.getYaw() > 0) ? 0.2 : -0.2;
                         // if(foundTarget.getYaw() ==0 )turCmdVal  = 0;
                     } else { // on target within deadband.
@@ -111,21 +108,21 @@ public class Turret3 {
                         Shooter.limeShoot = true;
                     }
                 } else {
-                    state = 2;
+                    //state = 2;
                     Shooter.limeShoot = false;
                 }
                 break;
             case 2: // search clock wise
-                turCmdVal = 0.1;
-                if (!TgtInFrame()) {
+                turCmdVal = 0.2;
+                if (TgtInFrame()) {
                     state = 1;
                 } else if (turretPot.get() > 115) {
                     state = 3;
                 }
                 break;
             case 3: // search counter clock wise
-                turCmdVal = -0.1;
-                if (!TgtInFrame()) {
+                turCmdVal = -0.2;
+                if (TgtInFrame()) {
                     state = 1;
                 } else if (turretPot.get() < -115) {
                     state = 2;
