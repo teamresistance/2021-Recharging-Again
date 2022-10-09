@@ -161,9 +161,9 @@ public class Turret3 {
      */
     private static void cmdUpdate(double val) {
         //? I think this may be locking up the turret. 
-        if (val < 0 && (turretPot.get() < -120 || ccwLmtSwAlm)) {        //Check CCW limits
+        if (val < 0 && (turretPot.get() < -120 || ccwLmtSwAlm  && val < 0)) {        //Check CCW limits
             val = 0;
-        } else if (val > 0 && (turretPot.get() > 120 || cwLmtSwAlm)) {   //Check CW Limits
+        } else if (val > 0 && (turretPot.get() > 120 || cwLmtSwAlm  && val < 0)) {   //Check CW Limits
             val = 0;
         }
         turret.set(val);
