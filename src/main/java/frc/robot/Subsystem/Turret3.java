@@ -176,7 +176,8 @@ public class Turret3 {
         SmartDashboard.putBoolean("Turret/atRightLimit", cwLmtSwAlm);
         SmartDashboard.putNumber("Turret/Potentiometer", turretPot.get());
         SmartDashboard.putNumber("Turret/speed", turret.get());
-        SmartDashboard.putBoolean("Turret/Lime on target", isOnTarget() != null ? isOnTarget() : false );
+        SmartDashboard.putBoolean("Turret/Larget in frame", TgtInFrame());
+        SmartDashboard.putBoolean("Turret/Lime locked on", TgtLockedOn());
         SmartDashboard.putBoolean("Turret/photonToggle", photonToggle);
         if (foundTarget != null) {
             SmartDashboard.putNumber("Turret/foundTargetX", foundTarget.getYaw());
