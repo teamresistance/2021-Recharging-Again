@@ -65,10 +65,10 @@ public class Turret3 {
      * Determine control.  Usually from a joystick button.
      */
     private static void determ() {
-        if (JS_IO.btnLimeAim.onButtonPressed()) {
-            state = state > 0 ? 0 : 1;
-            System.out.println(state);
-        }
+        //if (JS_IO.btnLimeAim.onButtonPressed()) {
+           // state = state > 0 ? 0 : 1;
+            //System.out.println(state);
+        //}
 
         if (JS_IO.btnLimeSearch.onButtonPressed()) {
             if (photonToggle) {
