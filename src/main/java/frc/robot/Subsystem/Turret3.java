@@ -101,8 +101,8 @@ public class Turret3 {
                 turCmdVal =  joyVal * 0.4 * Math.abs(joyVal);
                 break;
             case 1: // Limeight Aim Control(
-                if (isOnTarget() != null) { // null if not in frame of the camera
-                    if (!isOnTarget()) { // false if the camera is not on the target 
+                if (TgtInFrame() != false) { // null if not in frame of the camera
+                    if (!TgtLockedOn()) { // false if the camera is not on the target 
                         turCmdVal = Math.max(-0.25, Math.min(0.25,turPID.calculate(-foundTarget.getYaw())));
                         // turCmdVal = (foundTarget.getYaw() > 0) ? 0.2 : -0.2;
                         // if(foundTarget.getYaw() ==0 )turCmdVal  = 0;
@@ -117,7 +117,7 @@ public class Turret3 {
                 break;
             case 2: // search clock wise
                 turCmdVal = 0.1;
-                if (isOnTarget() != null) {
+                if (!TgtInFrame()) {
                     state = 1;
                 } else if (turretPot.get() > 115) {
                     state = 3;
@@ -125,7 +125,7 @@ public class Turret3 {
                 break;
             case 3: // search counter clock wise
                 turCmdVal = -0.1;
-                if (isOnTarget() != null) {
+                if (!TgtInFrame()) {
                     state = 1;
                 } else if (turretPot.get() < -115) {
                     state = 2;
@@ -213,11 +213,19 @@ public class Turret3 {
         }
     }
 
-    public static Boolean isOnTarget() {
-        if (foundTarget != null) {
-            return Math.abs(foundTarget.getYaw()) <= 10;
+
+    // Target Ii/isnot in frame TgtInFrame
+    // Target is in limit TgtLockedOn
+
+    public static boolean TgtInFrame() {
+        return foundTarget != null;
+    }
+    
+    public static boolean TgtLockedOn() {
+        if (!TgtInFrame()) {
+            return false;
         } else {
-            return null;
+           return Math.abs(foundTarget.getYaw()) <= 10;
         }
     }
 }
