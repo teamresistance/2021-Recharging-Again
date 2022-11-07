@@ -38,14 +38,9 @@ public class Turret3 {
     private static boolean ccwLmtSwAlm; // CCW Limit Sw Exceeded, zero neg. cmd.
     private static boolean cwLmtSwAlm; // CW Limit Sw Exceeded, zero pos. cmd.
     private static Timer ccwRstTmr = new Timer(0.1); // When moving CW for this time reset ccwLmtSwCntr
-    private static Timer cwRstTmr = new Timer(0.1); // When moving CW for this time reset ccwLmtSwCntr
     private static boolean photonToggle; // ???
 
     private static int state;
-    private static double kp = 1;
-    private static double ki = 0;
-    private static double kd = 0;
-    private static PIDController turPID = new PIDController(kp, ki, kd); // !Used by LL X fdbk, Look at docs later
     private static double turCmdVal; // Calc cmd signal for turret motor
 
     private static NetworkTableInstance netable;
@@ -54,7 +49,6 @@ public class Turret3 {
     public static PhotonTrackedTarget foundTarget;
 
     public static void init() {
-        turPID.setTolerance(0.05);
         state = 0;
         turret.set(0);
         ccwLmtSwAlm = false;
@@ -63,9 +57,6 @@ public class Turret3 {
         netable = NetworkTableInstance.getDefault();
         camera = new PhotonCamera(netable, "gloworm");
         camera.setPipelineIndex(1);
-        SmartDashboard.putNumber("PIDkp", kp);
-        SmartDashboard.putNumber("PIDki", ki);
-        SmartDashboard.putNumber("PIDkd", kd);
     }
 
     /**
@@ -120,7 +111,7 @@ public class Turret3 {
                 }
                 break;
             case 2: // search clock wise
-                turCmdVal = 0.2;
+                turCmdVal = 0.25;
                 if (TgtInFrame()) {
                     state = 1;
                 } else if (turretPot.get() > 115) {
@@ -128,7 +119,7 @@ public class Turret3 {
                 }
                 break;
             case 3: // search counter clock wise
-                turCmdVal = -0.2;
+                turCmdVal = -0.25;
                 if (TgtInFrame()) {
                     state = 1;
                 } else if (turretPot.get() < -115) {
@@ -216,7 +207,8 @@ public class Turret3 {
 
         // ---------- New -----------
         if (ccwLmtSwAlm && turret.get() < -.1) {
-            if (ccwRstTmr.hasExpired());
+            if (ccwRstTmr.hasExpired())
+                ;
         }
     }
 
