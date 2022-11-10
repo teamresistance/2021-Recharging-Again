@@ -64,6 +64,8 @@ public class Turret3 {
         netable = NetworkTableInstance.getDefault();
         camera = new PhotonCamera(netable, "gloworm");
         camera.setPipelineIndex(1);
+        homeX = IO.coorXY.getX(); //default to init position
+        homeY = IO.coorXY.getY(); //default to init position
     }
 
     /**
