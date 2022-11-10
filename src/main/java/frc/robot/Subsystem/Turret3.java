@@ -140,6 +140,30 @@ public class Turret3 {
                         state = 0;
                     }
                 }
+                case 6: //coordinate system turret alignment to coordinate (homeX, homeY)
+                // calculates the angle in degrees between the positive x-axis and the ray from (coorX, coorY) to the point (0,0) using the inverse of tangent
+                turnDegree = Math.toDegrees(Math.atan2(coorY - homeY, coorX - homeX)); //subtract home coordinates from present ones 
+                
+                turnDegree = -90 - turnDegree; //translates turnDegree into a value relative to turret position
+                //normalizes to 0-180 degrees
+                turnDegree = turnDegree % 360.0;  //Modulo 0 to 360
+                if( turnDegree < -180.0 ){    //If LT -180 add 360 for complement angle
+                    turnDegree += 360.0;
+                }else if(turnDegree > 180){   //If GT +180 substract 360 for complement angle
+                    turnDegree -= 360;
+                }
+
+                turnDegree -= heading; //subtracts robot heading
+
+                if (turnDegree > -120 && turnDegree < 120){ // restrict input
+                    turCmdVal = turnDegree > turretPot.get() ? 0.2 : -0.2; //check which way to turn
+                    if (turretPot.get() > turnDegree - 3 && turretPot.get() < turnDegree + 3) { //10 degree margin
+                        turCmdVal = 0.0;
+                    }
+                } else {
+                    turCmdVal = 0.0;
+                }
+                break;
             default: // stop.
                 turCmdVal = 0.0;
                 break;
