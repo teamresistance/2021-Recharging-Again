@@ -48,6 +48,13 @@ public class Turret3 {
     private static PhotonCamera camera;
     public static PhotonTrackedTarget foundTarget;
 
+    private static double homeX;
+    private static double homeY;
+    private static double coorX;
+    private static double coorY;
+    private static double turnDegree;
+    private static double heading;
+
     public static void init() {
         state = 0;
         turret.set(0);
