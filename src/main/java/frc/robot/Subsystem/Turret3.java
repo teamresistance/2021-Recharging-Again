@@ -66,6 +66,7 @@ public class Turret3 {
         camera.setPipelineIndex(1);
         homeX = IO.coorXY.getX(); //default to init position
         homeY = IO.coorXY.getY(); //default to init position
+        sdbinit();
     }
 
     /**
@@ -203,6 +204,11 @@ public class Turret3 {
         turret.set(val);
     }
 
+    public static void sdbinit(){
+        SmartDashboard.putNumber("Turret/homeY", homeX);
+        SmartDashboard.putNumber("Turret/homeY", homeY);
+    }
+
     /** Update itemson the Smartdashboard. */
     public static void sdbUpdate() {
         SmartDashboard.putNumber("Turret/State", state);
@@ -214,6 +220,8 @@ public class Turret3 {
         SmartDashboard.putBoolean("Turret/Lime locked on", TgtLockedOn());
         SmartDashboard.putBoolean("Turret/photonToggle", photonToggle);
         SmartDashboard.putNumber("Turret/CMDVal", turCmdVal);
+        homeX = SmartDashboard.getNumber("Turret/homeY", homeX);
+        homeY = SmartDashboard.getNumber("Turret/homeY", homeY);
         if (foundTarget != null) {
             SmartDashboard.putNumber("Turret/foundTargetX", foundTarget.getYaw());
             SmartDashboard.putNumber("Turret/foundTargetY", foundTarget.getPitch());
