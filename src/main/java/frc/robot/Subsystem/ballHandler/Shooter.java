@@ -104,7 +104,7 @@ public class Shooter {
     private static Integer[] rpmSP = { 1000, 4500, 4750, 4000, -1, -2, -3, -4 }; // Values to use (return)
 
     public static boolean limeShoot = false;
-    private static double distFromTgt;
+    public static double distFromTgt;
     private static double angleToGoal;
     private static double camAngle = 25; //angle in degrees
     private static double tgtHeight = 1; //height in meters

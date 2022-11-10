@@ -98,6 +98,10 @@ public class Turret3 {
         checkLim();
         // cmdUpdate(0);
 
+        coorX = IO.coorXY.getX();
+        coorY = IO.coorXY.getY();
+        heading = IO.navX.getNormalizedTo180();
+
         switch (state) {
             case 0: // Joystick Control
                 double joyVal = JS_IO.axTurretRot.get();
@@ -112,10 +116,11 @@ public class Turret3 {
                     } else { // on target within deadband.
                         turCmdVal = 0.0;
                         Shooter.limeShoot = true;
+                        setHome();
                     }
                 } else {
                     turCmdVal = 0.0;
-                    // state = 2;
+                    state = 6;
                     Shooter.limeShoot = false;
                 }
                 break;
@@ -149,7 +154,7 @@ public class Turret3 {
                         state = 0;
                     }
                 }
-                case 6: //coordinate system turret alignment to coordinate (homeX, homeY)
+            case 6: //coordinate system turret alignment to coordinate (homeX, homeY)
                 // calculates the angle in degrees between the positive x-axis and the ray from (coorX, coorY) to the point (0,0) using the inverse of tangent
                 turnDegree = Math.toDegrees(Math.atan2(coorY - homeY, coorX - homeX)); //subtract home coordinates from present ones 
                 
@@ -258,5 +263,10 @@ public class Turret3 {
         } else {
             return Math.abs(foundTarget.getYaw()) <= 5;
         }
+    }
+
+    public static void setHome() {
+        homeY = Math.sin(turretPot.get() + heading) * Shooter.distFromTgt;
+        homeX = Math.cos(turretPot.get() + heading) * Shooter.distFromTgt;
     }
 }
