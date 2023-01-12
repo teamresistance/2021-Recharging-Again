@@ -48,8 +48,8 @@ public class Turret3 {
     private static PhotonCamera camera;
     public static PhotonTrackedTarget foundTarget;
 
-    private static double homeX;
-    private static double homeY;
+    private static Double homeX;
+    private static Double homeY;
     private static double coorX;
     private static double coorY;
     private static double turnDegree;
@@ -64,8 +64,8 @@ public class Turret3 {
         netable = NetworkTableInstance.getDefault();
         camera = new PhotonCamera(netable, "gloworm");
         camera.setPipelineIndex(1);
-        homeX = IO.coorXY.getX(); //default to init position
-        homeY = IO.coorXY.getY(); //default to init position
+        homeX = null; //default to init position
+        homeY = null; //default to init position
         sdbinit();
     }
 
@@ -121,7 +121,7 @@ public class Turret3 {
                     }
                 } else {
                     turCmdVal = 0.0;
-                    state = 6;
+                    if (homeX != null) state = 6;
                     Shooter.limeShoot = false;
                 }
                 break;
@@ -174,6 +174,7 @@ public class Turret3 {
                     turCmdVal = turnDegree > turretPot.get() ? 0.2 : -0.2; //check which way to turn
                     if (turretPot.get() > turnDegree - 3 && turretPot.get() < turnDegree + 3) { //10 degree margin
                         turCmdVal = 0.0;
+                        state = 1;
                     }
                 } else {
                     turCmdVal = 0.0;
@@ -205,7 +206,7 @@ public class Turret3 {
     }
 
     public static void sdbinit(){
-        SmartDashboard.putNumber("Turret/homeY", homeX);
+        SmartDashboard.putNumber("Turret/homeX", homeX);
         SmartDashboard.putNumber("Turret/homeY", homeY);
     }
 
@@ -220,7 +221,7 @@ public class Turret3 {
         SmartDashboard.putBoolean("Turret/Lime locked on", TgtLockedOn());
         SmartDashboard.putBoolean("Turret/photonToggle", photonToggle);
         SmartDashboard.putNumber("Turret/CMDVal", turCmdVal);
-        homeX = SmartDashboard.getNumber("Turret/homeY", homeX);
+        homeX = SmartDashboard.getNumber("Turret/homeX", homeX);
         homeY = SmartDashboard.getNumber("Turret/homeY", homeY);
         if (foundTarget != null) {
             SmartDashboard.putNumber("Turret/foundTargetX", foundTarget.getYaw());
@@ -274,7 +275,7 @@ public class Turret3 {
     }
 
     public static void setHome() {
-        homeY = Math.sin(turretPot.get() + heading) * Shooter.distFromTgt;
-        homeX = Math.cos(turretPot.get() + heading) * Shooter.distFromTgt;
+        homeY = Math.sin(Math.toRadians(turretPot.get() + heading)) * Shooter.distFromTgt + coorX;
+        homeX = Math.cos(Math.toRadians(turretPot.get() + heading)) * Shooter.distFromTgt + coorY;
     }
 }

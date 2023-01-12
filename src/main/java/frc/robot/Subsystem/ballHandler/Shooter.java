@@ -329,6 +329,8 @@ public class Shooter {
     /*-------------------------  SDB Stuff --------------------------------------
     /**Initialize sdb */
     public static void sdbInit() {
+        SmartDashboard.putNumber("Shooter/tgtHeight", tgtHeight);
+
         SmartDashboard.putNumber("Shooter/RPM/kP", kP); // Put kP on sdb
         SmartDashboard.putNumber("Shooter/RPM/kF", kF); // Put kF on sdb
 
@@ -343,6 +345,8 @@ public class Shooter {
     }
 
     public static void sdbUpdate() {
+        tgtHeight = SmartDashboard.getNumber("Shooter/tgtHeight", tgtHeight);
+
         kF = SmartDashboard.getNumber("Shooter/RPM/kF", kF); // Get kP from sdb
         kP = SmartDashboard.getNumber("Shooter/RPM/kP", kP); // Get kF from sdb
         shooter.config_kF(0, kF); // Send kP new value to Talon
