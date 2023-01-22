@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         //Pneu. system has leak.  Dont need it when testing drive.
         cmprEna = SmartDashboard.getBoolean("Robot/Cmpr Enabled", cmprEna);
-        IO.compressorRelay.set(IO.compressor.enabled() && cmprEna ? Relay.Value.kForward : Relay.Value.kOff);
+        IO.compressorRelay.set(IO.compressor.isEnabled() && cmprEna ? Relay.Value.kForward : Relay.Value.kOff);
         IO.update();
         JS_IO.update();
         Drv_Teleop.chsrUpdate();
